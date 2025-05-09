@@ -1,11 +1,23 @@
 'use client';
 
 import { useAuth } from '@/lib/useAuth';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function DashboardPage() {
   const { isLoggedIn } = useAuth();
+  const router = useRouter();
+  const [loading, setLoading] = useState(true);
 
-  if (!isLoggedIn) return null; // Tránh render khi đang chuyển hướng
+  useEffect(() => {
+    if (!isLoggedIn) {
+      router.replace('/auth/login');  // Chuyển hướng về trang đăng nhập nếu chưa đăng nhập
+    } else {
+      setLoading(false); // Đã đăng nhập, tiếp tục hiển thị trang
+    }
+  }, [isLoggedIn, router]);
+
+  if (loading) return <div>Loading...</div>; // Hiển thị loading cho đến khi kiểm tra xong
 
   return (
     <div className="space-y-6">

@@ -7,14 +7,15 @@ import { useRouter } from 'next/navigation';
 export const useAuth = () => {
   const router = useRouter();
 
-  // ⚠️ Giả lập trạng thái đăng nhập
-  const isLoggedIn = true; // true = login success
+  // Lấy JWT từ cookie hoặc localStorage
+  const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
 
   useEffect(() => {
-    if (!isLoggedIn) {
+    // Nếu không có token, chuyển hướng đến trang login
+    if (!token) {
       router.replace('/auth/login');
     }
-  }, [isLoggedIn, router]);
+  }, [token, router]);
 
-  return { isLoggedIn };
+  return { isLoggedIn: !!token };
 };
