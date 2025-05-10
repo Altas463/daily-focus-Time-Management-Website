@@ -1,10 +1,12 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { motion } from 'framer-motion';
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { jwtDecode } from 'jwt-decode';
+import Link from "next/link";
+import { motion } from "framer-motion";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { jwtDecode } from "jwt-decode";
+import { signIn } from "next-auth/react";
+import Image from "next/image";
 
 interface JwtPayload {
   name: string;
@@ -14,20 +16,20 @@ interface JwtPayload {
 }
 
 export default function LoginPage() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const router = useRouter();
 
   const validateInput = () => {
     if (!email || !password) {
-      setErrorMessage('Vui lòng điền đầy đủ các trường');
+      setErrorMessage("Vui lòng điền đầy đủ các trường");
       return false;
     }
 
     const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     if (!emailPattern.test(email)) {
-      setErrorMessage('Email không hợp lệ');
+      setErrorMessage("Email không hợp lệ");
       return false;
     }
 
@@ -40,34 +42,34 @@ export default function LoginPage() {
     if (!validateInput()) return;
 
     try {
-      const res = await fetch('/api/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const res = await fetch("/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
 
       if (!res.ok) {
         const error = await res.json();
-        setErrorMessage(error?.error || 'Đăng nhập thất bại');
+        setErrorMessage(error?.error || "Đăng nhập thất bại");
         return;
       }
 
       const { token } = await res.json();
 
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('token', token);
+      if (typeof window !== "undefined") {
+        localStorage.setItem("token", token);
         try {
           const decoded = jwtDecode<JwtPayload>(token);
-          localStorage.setItem('name', decoded.name);
+          localStorage.setItem("name", decoded.name);
         } catch (err) {
-          console.error('Lỗi khi giải mã token:', err);
+          console.error("Lỗi khi giải mã token:", err);
         }
       }
 
-      router.push('/dashboard');
+      router.push("/dashboard");
     } catch (err) {
-      console.error('Lỗi kết nối:', err);
-      setErrorMessage('Lỗi kết nối đến máy chủ');
+      console.error("Lỗi kết nối:", err);
+      setErrorMessage("Lỗi kết nối đến máy chủ");
     }
   };
 
@@ -76,7 +78,7 @@ export default function LoginPage() {
       <motion.div
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, ease: 'easeOut' }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
         className="w-full max-w-md bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8"
       >
         <h1 className="text-2xl font-bold text-center text-gray-800 dark:text-white mb-6">
@@ -86,7 +88,10 @@ export default function LoginPage() {
         <form onSubmit={handleLogin} className="space-y-4">
           {/* Email */}
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            <label
+              htmlFor="email"
+              className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+            >
               Email
             </label>
             <input
@@ -101,7 +106,10 @@ export default function LoginPage() {
 
           {/* Mật khẩu */}
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            <label
+              htmlFor="password"
+              className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+            >
               Mật khẩu
             </label>
             <input
@@ -122,14 +130,39 @@ export default function LoginPage() {
           {/* Nút đăng nhập */}
           <button
             type="submit"
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-xl transition"
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-xl transition cursor-pointer"
           >
             Đăng nhập
           </button>
         </form>
+        {/* Hoặc đăng nhập bằng Google */}
+        <div className="relative mt-6">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-gray-300 dark:border-gray-600" />
+          </div>
+          <div className="relative flex justify-center text-sm">
+            <span className="px-2 bg-white dark:bg-gray-800 text-gray-500">
+              hoặc
+            </span>
+          </div>
+        </div>
+
+        <button
+          onClick={() => signIn("google")}
+          type="button"
+          className="mt-4 w-full flex items-center justify-center gap-2 bg-white dark:bg-gray-100 border border-gray-300 text-gray-700 font-semibold py-2 px-4 rounded-xl hover:shadow transition cursor-pointer"
+        >
+          <Image
+            src="https://www.svgrepo.com/show/475656/google-color.svg"
+            alt="Google logo"
+            width={20}
+            height={20}
+          />
+          Đăng nhập với Google
+        </button>
 
         <p className="text-sm text-center text-gray-600 dark:text-gray-400 mt-6">
-          Chưa có tài khoản?{' '}
+          Chưa có tài khoản?{" "}
           <Link href="/auth/register" className="text-blue-600 hover:underline">
             Đăng ký
           </Link>

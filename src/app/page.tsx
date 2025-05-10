@@ -19,12 +19,12 @@ export default function HomePage() {
 
         <div className="flex flex-wrap gap-4 justify-center">
           <Link href="/auth/register">
-            <button className="px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition">
+            <button className="px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition cursor-pointer">
               Bắt đầu ngay
             </button>
           </Link>
           <Link href="/dashboard">
-            <button className="px-6 py-3 border border-gray-400 dark:border-gray-300 text-gray-700 dark:text-white rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition">
+            <button className="px-6 py-3 border border-gray-400 dark:border-gray-300 text-gray-700 dark:text-white rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition cursor-pointer">
               Xem thử Dashboard
             </button>
           </Link>

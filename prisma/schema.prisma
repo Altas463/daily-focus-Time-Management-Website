@@ -8,15 +8,19 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  password  String
-  name      String?  
-  createdAt DateTime @default(now())
+  id             String              @id @default(uuid())
+  email          String?             @unique
+  password       String?             // Để null nếu đăng nhập bằng Google
+  name           String?
+  image          String?             // Avatar từ tài khoản Google
+  emailVerified  DateTime?           // Xác thực email
+  provider       String?             // "google" hoặc "credentials"
+  createdAt      DateTime            @default(now())
 
-  tasks     Task[]
-  sessions  PomodoroSession[]
+  tasks          Task[]
+  sessions       PomodoroSession[]
 }
+
 
 model Task {
   id          String   @id @default(uuid())

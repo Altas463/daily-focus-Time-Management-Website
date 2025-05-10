@@ -1,21 +1,24 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 
-// Đây là hook kiểm tra đăng nhập
 export const useAuth = () => {
   const router = useRouter();
-
-  // Lấy JWT từ cookie hoặc localStorage
-  const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+  const { status } = useSession();
+  const [isTokenPresent, setIsTokenPresent] = useState<boolean | null>(null);
 
   useEffect(() => {
-    // Nếu không có token, chuyển hướng đến trang login
-    if (!token) {
+    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+    setIsTokenPresent(!!token);
+  }, []);
+
+  useEffect(() => {
+    if (status === 'unauthenticated' && isTokenPresent === false) {
       router.replace('/auth/login');
     }
-  }, [token, router]);
+  }, [status, isTokenPresent, router]);
 
-  return { isLoggedIn: !!token };
+  return { isLoggedIn: status === 'authenticated' || isTokenPresent };
 };
