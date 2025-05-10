@@ -19,46 +19,55 @@ export default function LoginPage() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const router = useRouter();
 
+  const validateInput = () => {
+    if (!email || !password) {
+      setErrorMessage('Vui lòng điền đầy đủ các trường');
+      return false;
+    }
+
+    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!emailPattern.test(email)) {
+      setErrorMessage('Email không hợp lệ');
+      return false;
+    }
+
+    return true;
+  };
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!email || !password) {
-      setErrorMessage('Vui lòng điền đầy đủ các trường');
-      return;
-    }
+    if (!validateInput()) return;
 
-    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
-    if (!emailPattern.test(email)) {
-      setErrorMessage('Email không hợp lệ');
-      return;
-    }
+    try {
+      const res = await fetch('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
 
-    const res = await fetch('/api/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ email, password }),
-    });
+      if (!res.ok) {
+        const error = await res.json();
+        setErrorMessage(error?.error || 'Đăng nhập thất bại');
+        return;
+      }
 
-    if (res.ok) {
-      const data = await res.json();
-      const { token } = data;
+      const { token } = await res.json();
 
       if (typeof window !== 'undefined') {
         localStorage.setItem('token', token);
-
         try {
           const decoded = jwtDecode<JwtPayload>(token);
-          localStorage.setItem('name', decoded.name);  // Lưu tên vào localStorage
+          localStorage.setItem('name', decoded.name);
         } catch (err) {
           console.error('Lỗi khi giải mã token:', err);
         }
       }
 
       router.push('/dashboard');
-    } else {
-      setErrorMessage('Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin');
+    } catch (err) {
+      console.error('Lỗi kết nối:', err);
+      setErrorMessage('Lỗi kết nối đến máy chủ');
     }
   };
 

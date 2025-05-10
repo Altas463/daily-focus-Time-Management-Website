@@ -6,7 +6,6 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { jwtDecode } from 'jwt-decode';
 
-
 interface JwtPayload {
   name: string;
   email: string;
@@ -19,39 +18,47 @@ export default function RegisterPage() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const router = useRouter();
 
-  const handleRegister = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    // Kiểm tra dữ liệu nhập vào
+  // Hàm kiểm tra dữ liệu nhập vào
+  const validateInput = () => {
     if (!name || !email || !password) {
       setErrorMessage('Vui lòng điền đầy đủ các trường');
-      return;
+      return false;
     }
 
-    // Kiểm tra định dạng email
     const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     if (!emailPattern.test(email)) {
       setErrorMessage('Email không hợp lệ');
-      return;
+      return false;
     }
 
-    // Gửi request tới API
-    const res = await fetch('/api/register', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ name, email, password }),
-    });
+    return true;
+  };
 
-    if (res.ok) {
-      const data = await res.json();
-      const { token } = data;
+  const handleRegister = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!validateInput()) return;
+
+    try {
+      const res = await fetch('/api/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name, email, password }),
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        setErrorMessage(errorData.error || 'Đăng ký thất bại. Vui lòng thử lại');
+        return;
+      }
+
+      const { token } = await res.json();
 
       if (typeof window !== 'undefined') {
         localStorage.setItem('token', token);
 
-        // Giải mã token và lưu tên
         try {
           const decoded: JwtPayload = jwtDecode(token);
           localStorage.setItem('name', decoded.name || 'User');
@@ -60,11 +67,10 @@ export default function RegisterPage() {
         }
       }
 
-      // Chuyển hướng tới trang đăng nhập
       router.push('/auth/login');
-    } else {
-      const errorData = await res.json();
-      setErrorMessage(errorData.message || 'Đăng ký thất bại. Vui lòng thử lại');
+    } catch (err) {
+      console.error('Lỗi kết nối:', err);
+      setErrorMessage('Lỗi kết nối đến máy chủ');
     }
   };
 
@@ -81,6 +87,7 @@ export default function RegisterPage() {
         </h1>
 
         <form onSubmit={handleRegister} className="space-y-4">
+          {/* Tên hiển thị */}
           <div>
             <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
               Tên hiển thị
@@ -95,6 +102,7 @@ export default function RegisterPage() {
             />
           </div>
 
+          {/* Email */}
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
               Email
@@ -109,6 +117,7 @@ export default function RegisterPage() {
             />
           </div>
 
+          {/* Mật khẩu */}
           <div>
             <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
               Mật khẩu
@@ -123,10 +132,12 @@ export default function RegisterPage() {
             />
           </div>
 
+          {/* Thông báo lỗi */}
           {errorMessage && (
             <div className="text-red-600 text-sm">{errorMessage}</div>
           )}
 
+          {/* Nút đăng ký */}
           <button
             type="submit"
             className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-xl transition"

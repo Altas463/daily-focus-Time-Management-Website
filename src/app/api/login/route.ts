@@ -1,37 +1,37 @@
+// app/api/login/route.ts
+
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import { validateLogin } from '@/lib/validators/auth';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'secret'; // Đặt thật trong .env
+const JWT_SECRET = process.env.JWT_SECRET as string;
 
 export async function POST(req: Request) {
   try {
     const { email, password } = await req.json();
 
-    if (!email || !password) {
-      return NextResponse.json({ error: 'Thiếu email hoặc mật khẩu' }, { status: 400 });
+    // Sử dụng hàm kiểm tra đầu vào từ validator
+    const validationError = validateLogin({ email, password });
+    if (validationError) {
+      return NextResponse.json({ error: validationError }, { status: 400 });
     }
 
-    const user = await prisma.user.findUnique({
-      where: { email },
-    });
-
+    const user = await prisma.user.findUnique({ where: { email } });
     if (!user || !user.password) {
       return NextResponse.json({ error: 'Email hoặc mật khẩu không đúng' }, { status: 401 });
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
-
     if (!isPasswordValid) {
       return NextResponse.json({ error: 'Email hoặc mật khẩu không đúng' }, { status: 401 });
     }
 
-    // Tạo JWT chứa name và email
     const token = jwt.sign(
       {
         userId: user.id,
-        name: user.name || '', // fallback nếu null
+        name: user.name || '',
         email: user.email,
       },
       JWT_SECRET,
