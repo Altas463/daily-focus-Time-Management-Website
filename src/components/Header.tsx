@@ -1,25 +1,18 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useSession, signOut } from 'next-auth/react';
 
 export default function Header() {
-  const [userName, setUserName] = useState<string | null>(null);
-  const router = useRouter();
+  const { data: session, status } = useSession();
 
-  useEffect(() => {
-    // Kiểm tra tên người dùng từ localStorage
-    const storedName = localStorage.getItem('name');
-    setUserName(storedName);
-  }, []);  // Lấy tên người dùng từ localStorage mỗi khi component render
+  // Kiểm tra nếu người dùng đăng nhập bằng Google
+  const isGoogleUser = session?.user?.email?.endsWith('@gmail.com');  // Hoặc cách kiểm tra khác nếu cần
+
+  // Lấy tên người dùng tùy vào loại tài khoản
+  const userName = isGoogleUser ? session?.user?.name : 'User';
 
   const handleLogout = () => {
-    // Xóa token và tên người dùng khỏi localStorage khi đăng xuất
-    localStorage.removeItem('token');
-    localStorage.removeItem('name');
-
-    // Điều hướng về trang đăng nhập
-    router.push('/auth/login');
+    signOut({ callbackUrl: '/auth/login' }); // Đăng xuất và quay lại trang login
   };
 
   return (
@@ -27,7 +20,7 @@ export default function Header() {
       <h1 className="text-xl font-semibold text-gray-800 dark:text-white">Dashboard</h1>
       <div className="flex items-center space-x-4">
         <span className="text-gray-600 dark:text-gray-300">
-          👋 Xin chào, {userName || 'User'}
+          👋 Xin chào, {status === 'loading' ? '...' : userName}
         </span>
         <button
           onClick={handleLogout}

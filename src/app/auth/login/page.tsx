@@ -4,16 +4,8 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { jwtDecode } from "jwt-decode";
 import { signIn } from "next-auth/react";
 import Image from "next/image";
-
-interface JwtPayload {
-  name: string;
-  email: string;
-  exp?: number;
-  iat?: number;
-}
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -21,6 +13,7 @@ export default function LoginPage() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const router = useRouter();
 
+  // Hàm kiểm tra hợp lệ của email và password
   const validateInput = () => {
     if (!email || !password) {
       setErrorMessage("Vui lòng điền đầy đủ các trường");
@@ -36,40 +29,23 @@ export default function LoginPage() {
     return true;
   };
 
+  // Hàm xử lý đăng nhập
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!validateInput()) return;
 
-    try {
-      const res = await fetch("/api/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
+    // Sử dụng signIn của NextAuth để đăng nhập với Credentials (email/password)
+    const res = await signIn("credentials", {
+      redirect: false,
+      email,
+      password,
+    });
 
-      if (!res.ok) {
-        const error = await res.json();
-        setErrorMessage(error?.error || "Đăng nhập thất bại");
-        return;
-      }
-
-      const { token } = await res.json();
-
-      if (typeof window !== "undefined") {
-        localStorage.setItem("token", token);
-        try {
-          const decoded = jwtDecode<JwtPayload>(token);
-          localStorage.setItem("name", decoded.name);
-        } catch (err) {
-          console.error("Lỗi khi giải mã token:", err);
-        }
-      }
-
-      router.push("/dashboard");
-    } catch (err) {
-      console.error("Lỗi kết nối:", err);
-      setErrorMessage("Lỗi kết nối đến máy chủ");
+    if (res?.error) {
+      setErrorMessage("Email hoặc mật khẩu không đúng");
+    } else {
+      router.push("/dashboard"); // Đưa người dùng tới dashboard sau khi đăng nhập thành công
     }
   };
 
@@ -135,6 +111,7 @@ export default function LoginPage() {
             Đăng nhập
           </button>
         </form>
+
         {/* Hoặc đăng nhập bằng Google */}
         <div className="relative mt-6">
           <div className="absolute inset-0 flex items-center">
@@ -148,7 +125,7 @@ export default function LoginPage() {
         </div>
 
         <button
-          onClick={() => signIn("google")}
+          onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
           type="button"
           className="mt-4 w-full flex items-center justify-center gap-2 bg-white dark:bg-gray-100 border border-gray-300 text-gray-700 font-semibold py-2 px-4 rounded-xl hover:shadow transition cursor-pointer"
         >

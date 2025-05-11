@@ -6,7 +6,7 @@ import { useSession } from 'next-auth/react';
 
 export const useAuth = () => {
   const router = useRouter();
-  const { status } = useSession();
+  const { data: session, status } = useSession();
   const [isTokenPresent, setIsTokenPresent] = useState<boolean | null>(null);
 
   useEffect(() => {
@@ -15,10 +15,14 @@ export const useAuth = () => {
   }, []);
 
   useEffect(() => {
+    // Nếu không có session và không có token local => chưa đăng nhập
     if (status === 'unauthenticated' && isTokenPresent === false) {
       router.replace('/auth/login');
     }
   }, [status, isTokenPresent, router]);
 
-  return { isLoggedIn: status === 'authenticated' || isTokenPresent };
+  return {
+    isLoggedIn: status === 'authenticated' || isTokenPresent,
+    user: session?.user || null,
+  };
 };

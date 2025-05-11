@@ -1,33 +1,38 @@
 'use client';
 
-import { useAuth } from '@/lib/useAuth';
-import { useEffect, useState } from 'react';
+import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 export default function DashboardPage() {
-  const { isLoggedIn } = useAuth();
+  const { status, data: session } = useSession();
   const router = useRouter();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!isLoggedIn) {
-      router.replace('/auth/login');  // Chuyển hướng về trang đăng nhập nếu chưa đăng nhập
-    } else {
-      setLoading(false); // Đã đăng nhập, tiếp tục hiển thị trang
-    }
-  }, [isLoggedIn, router]);
+    if (status === 'loading') return; // Đợi xác thực xong
 
-  if (loading) return <div>Loading...</div>; // Hiển thị loading cho đến khi kiểm tra xong
+    if (status === 'unauthenticated') {
+      router.replace('/auth/login'); // Nếu chưa login, chuyển hướng
+    } else {
+      setLoading(false); // Nếu đã login thì render trang
+    }
+  }, [status, router]);
+
+  if (loading || status === 'loading') return <div>Loading...</div>;
 
   return (
-    <div className="space-y-6">
-      <h2 className="text-2xl font-bold text-gray-800 dark:text-white">🎯 Hôm nay bạn sẽ tập trung vào điều gì?</h2>
+    <div className="space-y-6 p-4">
+      <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
+        🎯 Xin chào, {session?.user?.name || 'bạn'}! Hôm nay bạn sẽ tập trung vào điều gì?
+      </h2>
 
-      {/* Task Hôm Nay */}
+      {/* Task hôm nay */}
       <section className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
-        <h3 className="text-lg font-semibold text-gray-700 dark:text-white mb-2">📋 Danh sách công việc hôm nay</h3>
+        <h3 className="text-lg font-semibold text-gray-700 dark:text-white mb-2">
+          📋 Danh sách công việc hôm nay
+        </h3>
         <ul className="space-y-2">
-          {/* Sau này thay bằng map list task hôm nay */}
           <li className="flex justify-between items-center border-b pb-2">
             <span className="text-gray-800 dark:text-white">Hoàn thành chức năng đăng nhập</span>
             <span className="text-sm text-gray-500">⏰ 10:00 - 11:00</span>
@@ -39,17 +44,21 @@ export default function DashboardPage() {
         </ul>
       </section>
 
-      {/* Pomodoro Nhanh */}
+      {/* Pomodoro */}
       <section className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
         <h3 className="text-lg font-semibold text-gray-700 dark:text-white mb-2">⏱ Pomodoro hiện tại</h3>
         <div className="text-center text-4xl text-blue-600 font-mono">25:00</div>
         <div className="text-center mt-4 space-x-2">
-          <button className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700">▶ Bắt đầu</button>
-          <button className="bg-gray-400 text-white px-4 py-2 rounded-lg hover:bg-gray-500">🔁 Reset</button>
+          <button className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700">
+            ▶ Bắt đầu
+          </button>
+          <button className="bg-gray-400 text-white px-4 py-2 rounded-lg hover:bg-gray-500">
+            🔁 Reset
+          </button>
         </div>
       </section>
 
-      {/* Tổng kết nhanh */}
+      {/* Thống kê */}
       <section className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="p-4 bg-white dark:bg-gray-800 shadow rounded-lg">
           <h3 className="text-sm font-medium text-gray-600 dark:text-gray-300">Task hoàn thành hôm nay</h3>
