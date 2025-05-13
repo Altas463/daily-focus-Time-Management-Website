@@ -26,7 +26,8 @@ model Task {
   id          String   @id @default(uuid())
   title       String
   description String?
-  deadline    DateTime?
+  startDate   DateTime
+  endDate     DateTime
   completed   Boolean  @default(false)
   createdAt   DateTime @default(now())
 
