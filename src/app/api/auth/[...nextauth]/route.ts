@@ -34,6 +34,21 @@ export const authOptions: NextAuthOptions = {
         const user = await res.json();
 
         if (user) {
+          // Đảm bảo user có trong DB
+          const existingUser = await prisma.user.findUnique({
+            where: { email: user.email },
+          });
+
+          if (!existingUser) {
+            await prisma.user.create({
+              data: {
+                email: user.email,
+                name: user.name || "",
+                provider: "credentials",
+              },
+            });
+          }
+
           return {
             id: user.id,
             name: user.name,
@@ -90,13 +105,7 @@ export const authOptions: NextAuthOptions = {
       return token;
     },
 
-    async session({
-      session,
-      token,
-    }: {
-      session: Session;
-      token: JWT;
-    }) {
+    async session({ session, token }: { session: Session; token: JWT }) {
       session.user = {
         name: token.name as string,
         email: token.email as string,

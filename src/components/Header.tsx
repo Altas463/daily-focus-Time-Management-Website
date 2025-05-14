@@ -12,7 +12,7 @@ export default function Header() {
   const userName = isGoogleUser ? session?.user?.name : 'User';
 
   const handleLogout = () => {
-    signOut({ callbackUrl: '/auth/login' }); // Đăng xuất và quay lại trang login
+    signOut({ callbackUrl: '/' }); // Đăng xuất và quay lại trang chủ
   };
 
   return (

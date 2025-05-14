@@ -1,10 +1,10 @@
 // app/api/login/route.ts
 
-import { NextResponse } from 'next/server';
-import prisma from '@/lib/prisma';
-import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
-import { validateLogin } from '@/lib/validators/auth';
+import { NextResponse } from "next/server";
+import prisma from "@/lib/prisma";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import { validateLogin } from "@/lib/validators/auth";
 
 const JWT_SECRET = process.env.JWT_SECRET as string;
 
@@ -20,27 +20,38 @@ export async function POST(req: Request) {
 
     const user = await prisma.user.findUnique({ where: { email } });
     if (!user || !user.password) {
-      return NextResponse.json({ error: 'Email hoặc mật khẩu không đúng' }, { status: 401 });
+      return NextResponse.json(
+        { error: "Email hoặc mật khẩu không đúng" },
+        { status: 401 }
+      );
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      return NextResponse.json({ error: 'Email hoặc mật khẩu không đúng' }, { status: 401 });
+      return NextResponse.json(
+        { error: "Email hoặc mật khẩu không đúng" },
+        { status: 401 }
+      );
     }
 
     const token = jwt.sign(
       {
         userId: user.id,
-        name: user.name || '',
+        name: user.name || "",
         email: user.email,
       },
       JWT_SECRET,
-      { expiresIn: '7d' }
+      { expiresIn: "7d" }
     );
 
-    return NextResponse.json({ token });
+    return NextResponse.json({
+      id: user.id,
+      name: user.name || "",
+      email: user.email,
+      token,
+    });
   } catch (error) {
-    console.error('Login error:', error);
-    return NextResponse.json({ error: 'Lỗi server' }, { status: 500 });
+    console.error("Login error:", error);
+    return NextResponse.json({ error: "Lỗi server" }, { status: 500 });
   }
 }
