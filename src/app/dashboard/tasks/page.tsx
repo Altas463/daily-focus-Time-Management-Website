@@ -63,7 +63,10 @@ export default function TasksPage() {
 
     const res = await fetch("/api/tasks", {
       method: "POST",
-      body: JSON.stringify({ ...newTask, completed: column === "completed" }),
+      body: JSON.stringify({
+        title: newTask.title.trim(),
+        completed: column === "completed",
+      }),
       headers: { "Content-Type": "application/json" },
     });
 
@@ -100,7 +103,7 @@ export default function TasksPage() {
   };
 
   return (
-    <div className="space-y-6 px-4 md:px-10 py-6">
+    <div className="space-y-4">
       <BackToDashboardLink />
       <h2 className="text-3xl font-bold text-gray-800 dark:text-white">
         📋 Quản lý công việc
@@ -111,8 +114,8 @@ export default function TasksPage() {
           {(["incomplete", "completed"] as const).map((columnKey) => {
             const columnTitle =
               columnKey === "incomplete"
-                ? "🕒 Chưa hoàn thành"
-                : "✅ Đã hoàn thành";
+                ? "Chưa hoàn thành"
+                : "Đã hoàn thành";
             const columnTasks = tasks.filter(
               (t) => t.completed === (columnKey === "completed")
             );
@@ -171,124 +174,12 @@ export default function TasksPage() {
                             }))
                           }
                         />
-                        <textarea
-                          placeholder="Mô tả (tuỳ chọn)"
-                          className="w-full px-3 py-2 rounded border dark:bg-gray-800 border-gray-300 dark:border-gray-600 focus:outline-none"
-                          rows={2}
-                          value={newTaskMap[columnKey].description}
-                          onChange={(e) =>
-                            setNewTaskMap((prev) => ({
-                              ...prev,
-                              [columnKey]: {
-                                ...prev[columnKey],
-                                description: e.target.value,
-                              },
-                            }))
-                          }
-                        />
-                        <div className="flex gap-2">
-                          <div className="flex flex-col w-1/2">
-                            <label className="text-sm text-gray-500 dark:text-gray-400">
-                              Bắt đầu
-                            </label>
-                            <input
-                              type="date"
-                              className="px-2 py-1 rounded border dark:bg-gray-800 border-gray-300 dark:border-gray-600"
-                              value={
-                                newTaskMap[columnKey].startDate?.split(
-                                  "T"
-                                )[0] || ""
-                              }
-                              onChange={(e) =>
-                                setNewTaskMap((prev) => ({
-                                  ...prev,
-                                  [columnKey]: {
-                                    ...prev[columnKey],
-                                    startDate: `${e.target.value}T${
-                                      prev[columnKey].startDate?.split(
-                                        "T"
-                                      )[1] || "00:00"
-                                    }`,
-                                  },
-                                }))
-                              }
-                            />
-                            <input
-                              type="time"
-                              className="mt-1 px-2 py-1 rounded border dark:bg-gray-800 border-gray-300 dark:border-gray-600"
-                              value={
-                                newTaskMap[columnKey].startDate?.split(
-                                  "T"
-                                )[1] || ""
-                              }
-                              onChange={(e) =>
-                                setNewTaskMap((prev) => ({
-                                  ...prev,
-                                  [columnKey]: {
-                                    ...prev[columnKey],
-                                    startDate: `${
-                                      prev[columnKey].startDate?.split(
-                                        "T"
-                                      )[0] || ""
-                                    }T${e.target.value}`,
-                                  },
-                                }))
-                              }
-                            />
-                          </div>
-
-                          <div className="flex flex-col w-1/2">
-                            <label className="text-sm text-gray-500 dark:text-gray-400">
-                              Kết thúc
-                            </label>
-                            <input
-                              type="date"
-                              className="px-2 py-1 rounded border dark:bg-gray-800 border-gray-300 dark:border-gray-600"
-                              value={
-                                newTaskMap[columnKey].endDate?.split("T")[0] ||
-                                ""
-                              }
-                              onChange={(e) =>
-                                setNewTaskMap((prev) => ({
-                                  ...prev,
-                                  [columnKey]: {
-                                    ...prev[columnKey],
-                                    endDate: `${e.target.value}T${
-                                      prev[columnKey].endDate?.split("T")[1] ||
-                                      "00:00"
-                                    }`,
-                                  },
-                                }))
-                              }
-                            />
-                            <input
-                              type="time"
-                              className="mt-1 px-2 py-1 rounded border dark:bg-gray-800 border-gray-300 dark:border-gray-600"
-                              value={
-                                newTaskMap[columnKey].endDate?.split("T")[1] ||
-                                ""
-                              }
-                              onChange={(e) =>
-                                setNewTaskMap((prev) => ({
-                                  ...prev,
-                                  [columnKey]: {
-                                    ...prev[columnKey],
-                                    endDate: `${
-                                      prev[columnKey].endDate?.split("T")[0] ||
-                                      ""
-                                    }T${e.target.value}`,
-                                  },
-                                }))
-                              }
-                            />
-                          </div>
-                        </div>
-                        <div className="flex gap-2">
+                        <div className="flex items-center gap-3">
                           <button
                             onClick={() => handleCreateTask(columnKey)}
-                            className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+                            className="bg-blue-600 text-white px-4 py-1.5 rounded text-sm font-semibold hover:bg-blue-700 transition-colors"
                           >
-                            ✔ Thêm
+                            Thêm thẻ
                           </button>
                           <button
                             onClick={() =>
@@ -297,9 +188,10 @@ export default function TasksPage() {
                                 [columnKey]: false,
                               }))
                             }
-                            className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
+                            className="text-gray-500 hover:text-gray-800 dark:hover:text-gray-300 text-lg font-bold p-1 transition-colors cursor-pointer"
+                            aria-label="Huỷ thêm thẻ"
                           >
-                            ✖ Huỷ
+                            ✖
                           </button>
                         </div>
                       </div>

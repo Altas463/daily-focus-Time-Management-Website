@@ -26,8 +26,8 @@ model Task {
   id          String   @id @default(uuid())
   title       String
   description String?
-  startDate   DateTime
-  endDate     DateTime
+  startDate   DateTime?
+  endDate     DateTime?
   completed   Boolean  @default(false)
   createdAt   DateTime @default(now())
 

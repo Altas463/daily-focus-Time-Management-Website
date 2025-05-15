@@ -14,8 +14,8 @@ export async function POST(req: Request) {
   const body = await req.json();
   const { title, description, startDate, endDate } = body;
 
-  if (!title || !startDate || !endDate) {
-    return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+  if (!title) {
+    return NextResponse.json({ error: "Title is required" }, { status: 400 });
   }
 
   const user = await prisma.user.findUnique({
@@ -29,9 +29,9 @@ export async function POST(req: Request) {
   const task = await prisma.task.create({
     data: {
       title,
-      description,
-      startDate: new Date(startDate),
-      endDate: new Date(endDate),
+      description: description || null,
+      startDate: startDate ? new Date(startDate) : null,
+      endDate: endDate ? new Date(endDate) : null,
       userId: user.id,
     },
   });

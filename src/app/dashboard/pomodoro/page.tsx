@@ -36,7 +36,7 @@ export default function PomodoroPage() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[80vh] px-4 text-center space-y-6">
+    <div className="space-y-4">
       <BackToDashboardLink />
 
       <h2 className="text-3xl font-bold text-gray-800 dark:text-white">
