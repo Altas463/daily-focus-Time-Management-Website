@@ -3,12 +3,13 @@ import PomodoroTimer from '@/components/PomodoroTimer';
 
 export default function PomodoroPage() {
   return (
-    <div className="space-y-4 p-4">
-      <BackToDashboardLink />
+    <div className="relative flex flex-col items-center justify-center min-h-screen bg-gray-900 text-white">
+      {/* Nút thoát nhỏ gọn góc trên trái */}
+      <div className="absolute top-4 left-4">
+        <BackToDashboardLink />
+      </div>
 
-      <h1 className="text-4xl font-bold mb-6">Pomodoro Timer</h1>
-
-      <PomodoroTimer />
+      <PomodoroTimer focusMode />
     </div>
   );
 }

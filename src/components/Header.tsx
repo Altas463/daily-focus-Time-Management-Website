@@ -5,26 +5,28 @@ import { useSession, signOut } from 'next-auth/react';
 export default function Header() {
   const { data: session, status } = useSession();
 
-  // Kiểm tra nếu người dùng đăng nhập bằng Google
-  const isGoogleUser = session?.user?.email?.endsWith('@gmail.com');  // Hoặc cách kiểm tra khác nếu cần
-
-  // Lấy tên người dùng tùy vào loại tài khoản
+  const isGoogleUser = session?.user?.email?.endsWith('@gmail.com');
   const userName = isGoogleUser ? session?.user?.name : 'User';
 
   const handleLogout = () => {
-    signOut({ callbackUrl: '/' }); // Đăng xuất và quay lại trang chủ
+    signOut({ callbackUrl: '/' });
   };
 
   return (
-    <header className="w-full bg-white dark:bg-gray-800 shadow-md p-4 flex justify-between items-center">
-      <h1 className="text-xl font-semibold text-gray-800 dark:text-white">Dashboard</h1>
-      <div className="flex items-center space-x-4">
-        <span className="text-gray-600 dark:text-gray-300">
-          👋 Xin chào, {status === 'loading' ? '...' : userName}
+    <header className="w-full bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-700 shadow-sm px-6 py-4 flex justify-between items-center transition-all duration-300">
+      <h1 className="text-2xl font-bold text-gray-800 dark:text-white tracking-tight">
+        📊 Dashboard
+      </h1>
+
+      <div className="flex items-center gap-4">
+        <span className="text-sm md:text-base text-gray-700 dark:text-gray-300 font-medium flex items-center gap-2">
+          <span className="text-lg">👋</span>
+          {status === 'loading' ? 'Đang tải...' : `Xin chào, ${userName}`}
         </span>
+
         <button
           onClick={handleLogout}
-          className="px-3 py-1 bg-red-500 hover:bg-red-600 text-white text-sm rounded-lg"
+          className="px-4 py-2 text-sm font-medium rounded-lg text-white bg-red-500 hover:bg-red-600 active:scale-95 transition duration-200 shadow-sm cursor-pointer"
         >
           Đăng xuất
         </button>
