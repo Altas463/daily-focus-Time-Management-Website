@@ -4,7 +4,7 @@
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import PomodoroTimer from "@/components/PomodoroTimer";
+import PomodoroTimer from "@/components/pomodoro/PomodoroTimer";
 
 type Task = {
   id: string;
@@ -133,6 +133,9 @@ export default function DashboardPage() {
 
       {/* Pomodoro Timer */}
       <section>
+        <h3 className="text-lg font-semibold text-gray-700 dark:text-white mb-2">
+          ⏳ Đồng hồ Pomodoro
+        </h3>
         <PomodoroTimer />
       </section>
 

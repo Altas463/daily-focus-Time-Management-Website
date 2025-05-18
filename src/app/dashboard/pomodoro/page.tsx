@@ -1,5 +1,5 @@
 import BackToDashboardLink from '@/components/BackToDashboardLink';
-import PomodoroTimer from '@/components/PomodoroTimer';
+import PomodoroTimer from '@/components/pomodoro/PomodoroTimer';
 
 export default function PomodoroPage() {
   return (
@@ -8,7 +8,6 @@ export default function PomodoroPage() {
       <div className="absolute top-4 left-4">
         <BackToDashboardLink />
       </div>
-
       <PomodoroTimer focusMode />
     </div>
   );

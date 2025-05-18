@@ -7,7 +7,7 @@ import {
   Draggable,
   DropResult,
 } from "@hello-pangea/dnd";
-import TaskCard from "@/components/TaskCard";
+import TaskCard from "@/components/tasks/TaskCard";
 import BackToDashboardLink from "@/components/BackToDashboardLink";
 
 type Task = {
