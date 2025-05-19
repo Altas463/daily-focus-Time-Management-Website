@@ -1,10 +1,13 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 
 // PUT: Cập nhật toàn bộ task
-export async function PUT(request: Request, context: { params: { id: string } }) {
+export async function PUT(
+  request: NextRequest,
+  context: { params: { id: string } }
+) {
   const session = await getServerSession(authOptions);
   if (!session || !session.user?.email) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -28,12 +31,15 @@ export async function PUT(request: Request, context: { params: { id: string } })
 
     return NextResponse.json(task);
   } catch (error) {
-    return NextResponse.json({ error: "Update failed", details: error }, { status: 500 });
+    return NextResponse.json({ error: "Update failed", details: `${error}` }, { status: 500 });
   }
 }
 
-// PATCH: Cập nhật một phần, ví dụ completed
-export async function PATCH(request: Request, context: { params: { id: string } }) {
+// PATCH: Cập nhật một phần
+export async function PATCH(
+  request: NextRequest,
+  context: { params: { id: string } }
+) {
   const session = await getServerSession(authOptions);
   if (!session || !session.user?.email) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -53,12 +59,15 @@ export async function PATCH(request: Request, context: { params: { id: string } 
 
     return NextResponse.json(task);
   } catch (error) {
-    return NextResponse.json({ error: "Patch failed", details: error }, { status: 500 });
+    return NextResponse.json({ error: "Patch failed", details: `${error}` }, { status: 500 });
   }
 }
 
-// DELETE: Xoá một task
-export async function DELETE(request: Request, context: { params: { id: string } }) {
+// DELETE: Xoá task
+export async function DELETE(
+  request: NextRequest,
+  context: { params: { id: string } }
+) {
   const session = await getServerSession(authOptions);
   if (!session || !session.user?.email) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -73,6 +82,6 @@ export async function DELETE(request: Request, context: { params: { id: string }
 
     return NextResponse.json({ message: "Task deleted" });
   } catch (error) {
-    return NextResponse.json({ error: "Delete failed", details: error }, { status: 500 });
+    return NextResponse.json({ error: "Delete failed", details: `${error}` }, { status: 500 });
   }
 }
