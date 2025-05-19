@@ -4,14 +4,14 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 
 // PUT: Cập nhật toàn bộ task
-export async function PUT(req: Request, { params }: { params: { id: string } }) {
+export async function PUT(request: Request, context: { params: { id: string } }) {
   const session = await getServerSession(authOptions);
   if (!session || !session.user?.email) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const { id } = params;
-  const body = await req.json();
+  const { id } = context.params;
+  const body = await request.json();
   const { title, description, startDate, endDate, completed } = body;
 
   try {
@@ -33,21 +33,21 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
 }
 
 // PATCH: Cập nhật một phần, ví dụ completed
-export async function PATCH(req: Request, { params }: { params: { id: string } }) {
+export async function PATCH(request: Request, context: { params: { id: string } }) {
   const session = await getServerSession(authOptions);
   if (!session || !session.user?.email) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const { id } = params;
-  const body = await req.json();
+  const { id } = context.params;
+  const body = await request.json();
 
   try {
     const task = await prisma.task.update({
       where: { id },
       data: {
         ...("completed" in body && { completed: body.completed }),
-        // nếu muốn hỗ trợ patch nhiều field khác thì thêm ở đây
+        // thêm các field patch khác nếu cần
       },
     });
 
@@ -58,13 +58,13 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
 }
 
 // DELETE: Xoá một task
-export async function DELETE(_: Request, { params }: { params: { id: string } }) {
+export async function DELETE(request: Request, context: { params: { id: string } }) {
   const session = await getServerSession(authOptions);
   if (!session || !session.user?.email) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const { id } = params;
+  const { id } = context.params;
 
   try {
     await prisma.task.delete({
