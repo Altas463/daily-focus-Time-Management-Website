@@ -82,21 +82,21 @@ npm run dev
 ```
 
 🛤 Lộ trình phát triển
- ✅ Xác thực người dùng (JWT + Google OAuth)
- ✅ CRUD Task + Deadline
- ✅ Pomodoro Timer hoạt động
- ✅ Thống kê năng suất theo ngày/tuần/tháng
- ✅ Email nhắc nhở và thông báo hoàn thành
- ⏳ Đồng bộ đa thiết bị / đồng bộ thời gian thực
- 🔜 Hỗ trợ ngôn ngữ đa dạng (i18n)
+ - ✅ Xác thực người dùng (JWT + Google OAuth)
+ - ✅ CRUD Task + Deadline
+ - ✅ Pomodoro Timer hoạt động
+ - ✅ Thống kê năng suất theo ngày/tuần/tháng
+ - ✅ Email nhắc nhở và thông báo hoàn thành
+ - ⏳ Đồng bộ đa thiết bị / đồng bộ thời gian thực
+ - 🔜 Hỗ trợ ngôn ngữ đa dạng (i18n)
 
 🤝 Đóng góp
 Bạn có thể đóng góp bằng cách:
-Mở issue nếu phát hiện bug
-Tạo pull request với tính năng mới
-Cải thiện giao diện hoặc hiệu năng
+- Mở issue nếu phát hiện bug
+- Tạo pull request với tính năng mới
+- Cải thiện giao diện hoặc hiệu năng
 
 📬 Liên hệ
 Nếu bạn có bất kỳ câu hỏi hoặc đề xuất nào, hãy liên hệ:
-Email: atu3012@gmail.com
-GitHub: Altas463
+- Email: atu3012@gmail.com
+- GitHub: Altas463
