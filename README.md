@@ -53,12 +53,14 @@
 ```bash
 git clone https://github.com/your-username/daily-focus.git
 cd daily-focus
-
+```
 ### 2. Cài đặt dependencies
+```bash
 npm install
-
+```
 ### 3. Thiết lập biến môi trường .env.local
 Tạo file .env.local và thêm các biến sau:
+```bash
 DATABASE_URL=postgresql://username:password@localhost:5432/dailyfocus
 JWT_SECRET=your_jwt_secret
 EMAIL_USER=your_email@example.com
@@ -66,13 +68,18 @@ EMAIL_PASS=your_email_password
 GOOGLE_CLIENT_ID=your_google_client_id
 GOOGLE_CLIENT_SECRET=your_google_client_secret
 NEXTAUTH_SECRET=your_nextauth_secret
+```
 ⚠️ Đảm bảo đã cài và cấu hình PostgreSQL trên máy bạn.
 
 ### 4. Khởi tạo Database
+```bash
 npx prisma migrate dev --name init
+```
 
 ### 5. Chạy ứng dụng
+```bash
 npm run dev
+```
 
 🛤 Lộ trình phát triển
  ✅ Xác thực người dùng (JWT + Google OAuth)
