@@ -1,3 +1,5 @@
+// File: src/app/api/tasks/[id]/route.ts
+
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { getServerSession } from "next-auth";
@@ -6,14 +8,14 @@ import { authOptions } from "@/lib/auth";
 // PUT: Cập nhật toàn bộ task
 export async function PUT(
   request: NextRequest,
-  context: { params: { id: string } }
+  { params }: { params: { id: string } }
 ) {
   const session = await getServerSession(authOptions);
-  if (!session || !session.user?.email) {
+  if (!session?.user?.email) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const { id } = context.params;
+  const { id } = params;
   const body = await request.json();
   const { title, description, startDate, endDate, completed } = body;
 
@@ -38,14 +40,14 @@ export async function PUT(
 // PATCH: Cập nhật một phần
 export async function PATCH(
   request: NextRequest,
-  context: { params: { id: string } }
+  { params }: { params: { id: string } }
 ) {
   const session = await getServerSession(authOptions);
-  if (!session || !session.user?.email) {
+  if (!session?.user?.email) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const { id } = context.params;
+  const { id } = params;
   const body = await request.json();
 
   try {
@@ -66,14 +68,14 @@ export async function PATCH(
 // DELETE: Xoá task
 export async function DELETE(
   request: NextRequest,
-  context: { params: { id: string } }
+  { params }: { params: { id: string } }
 ) {
   const session = await getServerSession(authOptions);
-  if (!session || !session.user?.email) {
+  if (!session?.user?.email) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const { id } = context.params;
+  const { id } = params;
 
   try {
     await prisma.task.delete({
