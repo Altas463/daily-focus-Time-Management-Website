@@ -52,7 +52,6 @@
 ### 1. Clone repository
 ```bash
 git clone https://github.com/Altas463/daily-focus-Time-Management-Website.git
-cd daily-focus
 ```
 ### 2. Cài đặt dependencies
 ```bash
