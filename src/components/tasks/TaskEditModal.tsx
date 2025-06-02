@@ -93,81 +93,100 @@ const TaskEditModal: FC<Props> = ({ task, onClose, onUpdate, onDelete }) => {
           <FiX />
         </button>
         {/* Modal content */}
-        <div className="bg-white dark:bg-gray-900 rounded-xl shadow-2xl p-6 pt-8">
-          {/* Title input */}
-          <input
-            type="text"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            placeholder="Nhập tiêu đề task..."
-            className="w-full text-2xl font-semibold text-gray-900 dark:text-white bg-transparent border-none focus:outline-none placeholder-gray-400 dark:placeholder-gray-500 mb-6"
-          />
+        <div className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl rounded-2xl shadow-2xl p-8 pt-10 min-w-[350px] border border-gray-200 dark:border-gray-800">
+          {/* Title */}
+          <div className="mb-8">
+            <label className="block text-base font-bold text-blue-600 dark:text-blue-400 mb-3 tracking-wide">
+              Tiêu đề
+            </label>
+            <input
+              type="text"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="Nhập tiêu đề task..."
+              className="w-full text-2xl font-semibold text-gray-900 dark:text-white bg-white/70 dark:bg-gray-800/70 border-0 border-b-2 border-blue-200 dark:border-blue-700 focus:border-blue-500 dark:focus:border-blue-400 focus:outline-none placeholder-gray-400 dark:placeholder-gray-500 rounded-t-md transition"
+            />
+          </div>
 
           {/* Description */}
-          <textarea
-            rows={4}
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            placeholder="Thêm mô tả..."
-            className="w-full p-3 mb-6 rounded-md bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-700 focus:outline-none resize-none"
-          />
+          <div className="mb-8">
+            <label className="block text-base font-bold text-blue-600 dark:text-blue-400 mb-3 tracking-wide">
+              Mô tả
+            </label>
+            <textarea
+              rows={4}
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="Thêm mô tả..."
+              className="w-full p-4 rounded-xl bg-gray-100/80 dark:bg-gray-800/80 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-700 focus:outline-none focus:border-blue-500 dark:focus:border-blue-400 resize-none transition"
+            />
+          </div>
 
           {/* Time pickers */}
-          <div className="flex gap-4 mb-6">
-            <div className="relative" ref={startPickerRef}>
-              <button
-                onClick={() => setShowStartPicker(!showStartPicker)}
-                className="flex items-center gap-2 px-3 py-2 rounded bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 border border-gray-300 dark:border-gray-600 hover:bg-gray-200 dark:hover:bg-gray-700"
-              >
-                <FiCalendar />
-                <span>{formatShortDate(startDate)}</span>
-              </button>
-              {showStartPicker && (
-                <div className="absolute z-20 mt-2">
-                  <DatePicker
-                    selected={startDate}
-                    onChange={(date) => setStartDate(date)}
-                    inline
-                    showTimeSelect
-                    timeFormat="HH:mm"
-                    timeIntervals={15}
-                    dateFormat="dd/MM/yyyy HH:mm"
-                    calendarClassName="rounded-md shadow-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800"
-                  />
-                </div>
-              )}
-            </div>
-
-            <div className="relative" ref={endPickerRef}>
-              <button
-                onClick={() => setShowEndPicker(!showEndPicker)}
-                className="flex items-center gap-2 px-3 py-2 rounded bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 border border-gray-300 dark:border-gray-600 hover:bg-gray-200 dark:hover:bg-gray-700"
-              >
-                <FiCalendar />
-                <span>{formatShortDate(endDate)}</span>
-              </button>
-              {showEndPicker && (
-                <div className="absolute z-20 mt-2">
-                  <DatePicker
-                    selected={endDate}
-                    onChange={(date) => setEndDate(date)}
-                    inline
-                    showTimeSelect
-                    timeFormat="HH:mm"
-                    timeIntervals={15}
-                    dateFormat="dd/MM/yyyy HH:mm"
-                    calendarClassName="rounded-md shadow-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800"
-                  />
-                </div>
-              )}
+          <div className="mb-10">
+            <div className="flex flex-col md:flex-row gap-6">
+              {/* Start Date */}
+              <div className="flex-1 bg-white/60 dark:bg-gray-800/60 rounded-xl border border-gray-200 dark:border-gray-700 shadow-md p-4 flex flex-col gap-2 relative">
+                <span className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
+                  <FiCalendar className="text-base text-blue-400 dark:text-blue-300" />
+                  Bắt đầu
+                </span>
+                <button
+                  onClick={() => setShowStartPicker(!showStartPicker)}
+                  className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-100/70 dark:bg-gray-900/70 text-gray-800 dark:text-gray-100 border border-gray-200 dark:border-gray-700 hover:bg-gray-200/80 dark:hover:bg-gray-800/80 transition font-medium"
+                >
+                  <span>{formatShortDate(startDate)}</span>
+                </button>
+                {showStartPicker && (
+                  <div className="absolute z-40 mt-2">
+                    <DatePicker
+                      selected={startDate}
+                      onChange={(date) => setStartDate(date)}
+                      inline
+                      showTimeSelect
+                      timeFormat="HH:mm"
+                      timeIntervals={15}
+                      dateFormat="dd/MM/yyyy HH:mm"
+                      calendarClassName="rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900"
+                    />
+                  </div>
+                )}
+              </div>
+              {/* End Date */}
+              <div className="flex-1 bg-white/60 dark:bg-gray-800/60 rounded-xl border border-gray-200 dark:border-gray-700 shadow-md p-4 flex flex-col gap-2 relative">
+                <span className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
+                  <FiCalendar className="text-base text-pink-400 dark:text-pink-300" />
+                  Kết thúc
+                </span>
+                <button
+                  onClick={() => setShowEndPicker(!showEndPicker)}
+                  className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-100/70 dark:bg-gray-900/70 text-gray-800 dark:text-gray-100 border border-gray-200 dark:border-gray-700 hover:bg-gray-200/80 dark:hover:bg-gray-800/80 transition font-medium"
+                >
+                  <span>{formatShortDate(endDate)}</span>
+                </button>
+                {showEndPicker && (
+                  <div className="absolute z-40 mt-2">
+                    <DatePicker
+                      selected={endDate}
+                      onChange={(date) => setEndDate(date)}
+                      inline
+                      showTimeSelect
+                      timeFormat="HH:mm"
+                      timeIntervals={15}
+                      dateFormat="dd/MM/yyyy HH:mm"
+                      calendarClassName="rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900"
+                    />
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 
           {/* Action buttons */}
-          <div className="flex justify-between items-center">
+          <div className="flex justify-end gap-3 items-center mt-8">
             <button
               onClick={handleDelete}
-              className="flex items-center gap-2 px-4 py-2 rounded bg-red-600 hover:bg-red-700 text-white"
+              className="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white shadow-lg transition font-semibold"
             >
               <FiTrash2 />
               Xoá
@@ -175,7 +194,7 @@ const TaskEditModal: FC<Props> = ({ task, onClose, onUpdate, onDelete }) => {
             <button
               onClick={handleSave}
               disabled={!title.trim()}
-              className="flex items-center gap-2 px-6 py-2 rounded bg-blue-600 hover:bg-blue-700 text-white disabled:opacity-50"
+              className="flex items-center gap-2 px-7 py-2.5 rounded-lg bg-gradient-to-r from-blue-600 to-blue-400 hover:from-blue-700 hover:to-blue-500 text-white disabled:opacity-50 shadow-lg transition font-semibold"
             >
               <FiSave />
               Lưu
