@@ -70,11 +70,10 @@ export default function PomodoroTimer({
 
   return (
     <div
-      className={`flex flex-col items-center justify-center select-none rounded-xl shadow-md p-6
-      ${
+      className={`flex flex-col items-center justify-center select-none transition-all duration-500 ${
         focusMode
           ? "w-full h-full text-white"
-          : "max-w-sm w-full bg-white dark:bg-gray-900 text-black dark:text-white mx-auto"
+          : "max-w-lg w-full mx-auto"
       }`}
     >
       {!focusMode && (
@@ -86,146 +85,224 @@ export default function PomodoroTimer({
         />
       )}
 
-      <h2
-        className={`text-3xl font-semibold mb-5 select-none ${
-          mode === "work"
-            ? focusMode
-              ? "text-green-400"
-              : "text-green-700"
-            : focusMode
-            ? "text-yellow-400"
-            : "text-yellow-500"
-        }`}
-      >
-        {mode === "work" ? "🧠 Tập trung làm việc" : "☕ Nghỉ ngơi"}
-      </h2>
+      {/* Mode Title */}
+      <div className={`text-center mb-8 ${focusMode ? 'mb-12' : ''}`}>
+        <div className={`inline-flex items-center gap-3 px-6 py-3 rounded-2xl mb-4 transition-all duration-500 ${
+          focusMode 
+            ? 'bg-white/10 backdrop-blur-xl border border-white/20' 
+            : 'bg-white/80 dark:bg-gray-700/80 backdrop-blur-xl border border-white/20 dark:border-gray-600/50 shadow-lg'
+        }`}>
+          <div className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all duration-500 ${
+            mode === "work"
+              ? 'bg-gradient-to-r from-green-500 to-emerald-500'
+              : 'bg-gradient-to-r from-yellow-500 to-orange-500'
+          }`}>
+            <span className="text-white text-lg">
+              {mode === "work" ? "🧠" : "☕"}
+            </span>
+          </div>
+          <h2 className={`font-bold transition-colors duration-500 ${
+            focusMode ? 'text-2xl sm:text-3xl' : 'text-xl'
+          } ${
+            mode === "work"
+              ? focusMode
+                ? "text-green-300"
+                : "text-green-700 dark:text-green-400"
+              : focusMode
+              ? "text-yellow-300"
+              : "text-yellow-600 dark:text-yellow-400"
+          }`}>
+            {mode === "work" ? "Tập trung làm việc" : "Nghỉ ngơi"}
+          </h2>
+        </div>
+        
+        {focusMode && (
+          <p className="text-gray-300 text-sm opacity-80">
+            {mode === "work" 
+              ? "Hãy tập trung hoàn toàn vào nhiệm vụ hiện tại" 
+              : "Thời gian nghỉ ngơi và nạp lại năng lượng"
+            }
+          </p>
+        )}
+      </div>
 
+      {/* Timer Display */}
       {focusMode ? (
-        <>
-          <div
-            className="font-mono select-none text-[12rem] leading-none tracking-wide"
-            aria-live="polite"
-            aria-atomic="true"
-          >
-            {formatTime(secondsLeft)}
+        <div className="flex flex-col items-center">
+          {/* Large Timer Display */}
+          <div className="relative mb-8">
+            <div
+              className="font-mono select-none text-[8rem] sm:text-[10rem] lg:text-[12rem] leading-none tracking-wider font-bold text-center drop-shadow-2xl transition-all duration-500"
+              aria-live="polite"
+              aria-atomic="true"
+              style={{
+                textShadow: '0 0 50px rgba(255, 255, 255, 0.3)',
+              }}
+            >
+              {formatTime(secondsLeft)}
+            </div>
+            
+            {/* Subtle glow effect */}
+            <div className="absolute inset-0 font-mono text-[8rem] sm:text-[10rem] lg:text-[12rem] leading-none tracking-wider font-bold text-center opacity-20 blur-sm -z-10">
+              {formatTime(secondsLeft)}
+            </div>
           </div>
 
-          <svg
-            className="w-64 h-64 mt-6"
-            viewBox="0 0 120 120"
-            role="progressbar"
-            aria-valuemin={0}
-            aria-valuemax={100}
-            aria-valuenow={Math.floor(progressPercent)}
-            aria-label="Progress timer"
-          >
-            <circle
-              cx="60"
-              cy="60"
-              r="54"
-              stroke="#374151"
-              strokeWidth="12"
-              fill="none"
-            />
-            <circle
-              cx="60"
-              cy="60"
-              r="54"
-              stroke={mode === "work" ? "#10B981" : "#FBBF24"}
-              strokeWidth="12"
-              fill="none"
-              strokeDasharray={2 * Math.PI * 54}
-              strokeDashoffset={
-                ((100 - progressPercent) / 100) * 2 * Math.PI * 54
-              }
-              strokeLinecap="round"
-              style={{ transition: "stroke-dashoffset 1s linear" }}
-            />
-          </svg>
-        </>
+          {/* Progress Ring */}
+          <div className="relative">
+            <svg
+              className="w-72 h-72 transform -rotate-90 drop-shadow-2xl"
+              viewBox="0 0 120 120"
+              role="progressbar"
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-valuenow={Math.floor(progressPercent)}
+              aria-label="Progress timer"
+            >
+              {/* Background ring */}
+              <circle
+                cx="60"
+                cy="60"
+                r="54"
+                stroke="rgba(255, 255, 255, 0.1)"
+                strokeWidth="8"
+                fill="none"
+              />
+              {/* Progress ring */}
+              <circle
+                cx="60"
+                cy="60"
+                r="54"
+                stroke={mode === "work" ? "#10B981" : "#F59E0B"}
+                strokeWidth="8"
+                fill="none"
+                strokeDasharray={2 * Math.PI * 54}
+                strokeDashoffset={
+                  ((100 - progressPercent) / 100) * 2 * Math.PI * 54
+                }
+                strokeLinecap="round"
+                style={{ 
+                  transition: "stroke-dashoffset 1s ease-out",
+                  filter: `drop-shadow(0 0 10px ${mode === "work" ? "#10B981" : "#F59E0B"}40)`
+                }}
+              />
+            </svg>
+            
+            {/* Progress percentage */}
+            <div className="absolute inset-0 flex items-center justify-center">
+              <span className="text-lg font-semibold text-white/80">
+                {Math.floor(progressPercent)}%
+              </span>
+            </div>
+          </div>
+        </div>
       ) : (
-        <div className="relative w-48 h-48 my-6 mx-auto">
-          <svg
-            className="w-full h-full"
-            viewBox="0 0 120 120"
-            role="progressbar"
-            aria-valuemin={0}
-            aria-valuemax={100}
-            aria-valuenow={Math.floor(progressPercent)}
-            aria-label="Progress timer"
-          >
-            <circle
-              cx="60"
-              cy="60"
-              r="54"
-              stroke="#e0e7ff"
-              strokeWidth="10"
-              fill="none"
-            />
-            <circle
-              cx="60"
-              cy="60"
-              r="54"
-              stroke={mode === "work" ? "#2563eb" : "#fbbf24"}
-              strokeWidth="10"
-              fill="none"
-              strokeDasharray={2 * Math.PI * 54}
-              strokeDashoffset={
-                ((100 - progressPercent) / 100) * 2 * Math.PI * 54
-              }
-              strokeLinecap="round"
-              style={{ transition: "stroke-dashoffset 0.8s ease" }}
-            />
-          </svg>
+        <div className="relative">
+          {/* Compact Timer Display */}
+          <div className="relative w-56 h-56 mx-auto mb-8">
+            <svg
+              className="w-full h-full transform -rotate-90"
+              viewBox="0 0 120 120"
+              role="progressbar"
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-valuenow={Math.floor(progressPercent)}
+              aria-label="Progress timer"
+            >
+              {/* Background ring */}
+              <circle
+                cx="60"
+                cy="60"
+                r="54"
+                stroke="rgb(226 232 240)"
+                className="dark:stroke-gray-600"
+                strokeWidth="8"
+                fill="none"
+              />
+              {/* Progress ring */}
+              <circle
+                cx="60"
+                cy="60"
+                r="54"
+                stroke={mode === "work" ? "#3B82F6" : "#F59E0B"}
+                strokeWidth="8"
+                fill="none"
+                strokeDasharray={2 * Math.PI * 54}
+                strokeDashoffset={
+                  ((100 - progressPercent) / 100) * 2 * Math.PI * 54
+                }
+                strokeLinecap="round"
+                style={{ 
+                  transition: "stroke-dashoffset 0.8s ease-out",
+                  filter: `drop-shadow(0 2px 8px ${mode === "work" ? "#3B82F6" : "#F59E0B"}30)`
+                }}
+              />
+            </svg>
 
-          <div className="absolute inset-0 flex items-center justify-center font-mono text-5xl font-bold text-gray-900 dark:text-white drop-shadow-lg">
-            {formatTime(secondsLeft)}
+            {/* Timer text overlay */}
+            <div className="absolute inset-0 flex flex-col items-center justify-center">
+              <div className="font-mono text-4xl font-bold text-gray-900 dark:text-white drop-shadow-lg mb-1">
+                {formatTime(secondsLeft)}
+              </div>
+              <div className="text-xs text-gray-500 dark:text-gray-400 font-medium">
+                {Math.floor(progressPercent)}% complete
+              </div>
+            </div>
           </div>
         </div>
       )}
 
-      <div className={`flex gap-6 mt-8 justify-center w-full max-w-xs mx-auto`}>
+      {/* Control Buttons */}
+      <div className={`flex gap-4 justify-center w-full ${focusMode ? 'max-w-md' : 'max-w-sm'} mx-auto`}>
         <button
           onClick={isRunning ? pause : start}
-          className={`px-6 py-3 rounded-full font-semibold shadow-md transition
-            ${
-              focusMode
-                ? "bg-green-500 hover:bg-green-600 text-white shadow-green-700/50"
-                : "bg-blue-600 hover:bg-blue-700 text-white"
-            }
-            inline-flex items-center justify-center
-            w-[140px] text-center
-            whitespace-nowrap
-          `}
+          className={`group relative overflow-hidden px-8 py-4 rounded-2xl font-semibold transition-all duration-300 transform hover:scale-105 active:scale-95 ${
+            focusMode
+              ? "bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white shadow-2xl shadow-green-500/30"
+              : "bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white shadow-lg"
+          } flex-1 flex items-center justify-center gap-3 min-h-[56px]`}
           aria-label={isRunning ? "Tạm dừng hẹn giờ" : "Bắt đầu hẹn giờ"}
         >
-          {isRunning ? (
-            <>
-              <span className="mr-2 text-lg">⏸</span> Tạm dừng
-            </>
-          ) : (
-            <>
-              <span className="mr-2 text-lg">▶</span> Bắt đầu
-            </>
-          )}
+          {/* Button background effect */}
+          <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+          
+          <span className="relative z-10 text-xl">
+            {isRunning ? "⏸" : "▶"}
+          </span>
+          <span className="relative z-10 font-bold">
+            {isRunning ? "Tạm dừng" : "Bắt đầu"}
+          </span>
         </button>
 
         <button
           onClick={reset}
-          className={`px-12 py-3 rounded-full font-semibold shadow-md transition
-            ${
-              focusMode
-                ? "bg-gray-700 hover:bg-gray-600 text-gray-200 shadow-gray-900/50"
-                : "bg-gray-300 dark:bg-gray-700 text-gray-900 dark:text-white"
-            }
-            min-w-[140px]
-            flex items-center justify-center
-          `}
+          className={`group relative overflow-hidden px-8 py-4 rounded-2xl font-semibold transition-all duration-300 transform hover:scale-105 active:scale-95 ${
+            focusMode
+              ? "bg-white/10 hover:bg-white/20 text-white/90 hover:text-white backdrop-blur-xl border border-white/30 shadow-2xl"
+              : "bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 shadow-lg"
+          } flex-1 flex items-center justify-center gap-3 min-h-[56px]`}
           aria-label="Đặt lại hẹn giờ"
         >
-          ⟲ Reset
+          {/* Button background effect */}
+          <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+          
+          <span className="relative z-10 text-xl">⟲</span>
+          <span className="relative z-10 font-bold">Reset</span>
         </button>
       </div>
+
+      {/* Session Info */}
+      {!focusMode && (
+        <div className="mt-6 text-center">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100/50 dark:bg-gray-700/50 rounded-xl text-sm text-gray-600 dark:text-gray-400">
+            <div className={`w-2 h-2 rounded-full ${isRunning ? 'bg-green-400 animate-pulse' : 'bg-gray-400'}`}></div>
+            <span>
+              {isRunning ? 'Đang chạy' : 'Đã dừng'} • 
+              {mode === 'work' ? ` ${workMinutes} phút làm việc` : ` ${breakMinutes} phút nghỉ`}
+            </span>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
