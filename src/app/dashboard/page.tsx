@@ -9,6 +9,7 @@ import { getDaypartGreeting, formatRelativeDate } from "@/utils/date";
 import { getTaskUrgency, summarizeTasks, TaskUrgency } from "@/utils/tasks";
 import { getFocusTimeProgress, getPomodoroProgress } from "@/utils/pomodoro";
 import { clamp, formatDuration, pluralize } from "@/utils/format";
+import { useDailyStreak } from "@/hooks/useDailyStreak";
 
 type Task = {
   id: string;
@@ -51,6 +52,7 @@ export default function DashboardPage() {
   const [pomodoroCount, setPomodoroCount] = useState(0);
   const [focusTimeMinutes, setFocusTimeMinutes] = useState(0);
   const [completedTodayCount, setCompletedTodayCount] = useState(0);
+  const { streak } = useDailyStreak();
 
   useEffect(() => {
     if (status === "loading") return;
@@ -119,9 +121,9 @@ export default function DashboardPage() {
   if (loading || status === "loading") {
     return (
       <div className="grid min-h-screen place-items-center bg-white dark:bg-gray-950">
-        <div className="rounded-2xl border border-black/5 bg-white/80 p-6 text-gray-700 shadow backdrop-blur-sm dark:border-white/10 dark:bg-white/5 dark:text-gray-300">
-          <div className="h-1 w-56 overflow-hidden rounded-full bg-gray-200 dark:bg-white/10">
-            <div className="h-1 w-1/3 animate-[load_1.2s_ease_infinite] rounded-full bg-gradient-to-r from-blue-500 via-fuchsia-500 to-emerald-500" />
+        <div className="rounded-xl border border-gray-200 bg-white p-6 text-gray-700 shadow-sm dark:border-gray-800 dark:bg-gray-900 dark:text-gray-300">
+          <div className="h-1 w-56 overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
+            <div className="h-1 w-1/3 animate-[load_1.2s_ease_infinite] rounded-full bg-blue-500 dark:bg-blue-400" />
           </div>
           <p className="mt-3 text-sm">Dang tai dashboard...</p>
         </div>
@@ -140,7 +142,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-purple-50/30 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
+    <div className="min-h-screen bg-gray-100 dark:bg-gray-950">
       <div className="mx-auto max-w-7xl space-y-8 px-4 py-8 sm:px-6 lg:px-8">
         <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="text-center">
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
@@ -151,49 +153,56 @@ export default function DashboardPage() {
           </p>
         </motion.div>
 
-        <motion.section initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.05 }} className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-4">
+        <motion.section initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.05 }} className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-5">
           {[
+            {
+              label: "Chuoi tap trung",
+              value: pluralize(streak, "day", "days"),
+              progress: clamp((streak / 14) * 100, 0, 100),
+              barColor: "bg-slate-900",
+              helper: streak >= 3 ? "B?n dang duy tr� phong d?" : "Ho�n th�nh m?t phi�n h�m nay d? b?t d?u chu?i",
+            },
             {
               label: "Task hoan thanh hom nay",
               value: completedTodayCount,
               progress: clamp((completedTodayCount / Math.max(taskSummary.total, 1)) * 100, 0, 100),
-              gradient: "from-emerald-500 to-green-500",
-              helper: pluralize(taskSummary.total, "task to track", "tasks to track"),
+              barColor: "bg-emerald-600",
+              helper: pluralize(taskSummary.total, "task c?n theo d�i", "tasks c?n theo d�i"),
             },
             {
               label: "Task sap den han",
               value: taskSummary.dueSoon,
               progress: clamp((taskSummary.dueSoon / Math.max(taskSummary.incomplete, 1)) * 100, 0, 100),
-              gradient: "from-orange-500 to-amber-500",
-              helper: pluralize(taskSummary.overdue, "task overdue", "tasks overdue"),
+              barColor: "bg-amber-500",
+              helper: pluralize(taskSummary.overdue, "task qu� h?n", "tasks qu� h?n"),
             },
             {
               label: "So luong Pomodoro",
               value: pomodoroCount,
               progress: pomodoroProgress,
-              gradient: "from-blue-500 to-indigo-500",
+              barColor: "bg-blue-600",
               helper:
                 pomodoroRemaining > 0
-                  ? pluralize(pomodoroRemaining, "session left to reach goal", "sessions left to reach goal")
-                  : "Goal completed for this week",
+                  ? pluralize(pomodoroRemaining, "phi�n d? ch?m m?c ti�u", "phi�n d? ch?m m?c ti�u")
+                  : "Ho�n th�nh m?c ti�u tu?n",
             },
             {
               label: "Thoi gian tap trung",
               value: formatDuration(focusTimeMinutes),
               progress: focusProgress,
-              gradient: "from-fuchsia-500 to-pink-500",
+              barColor: "bg-purple-600",
               helper:
                 focusRemaining > 0
-                  ? pluralize(Math.ceil(focusRemaining), "minute left to reach goal", "minutes left to reach goal")
-                  : "Focus goal achieved for the week",
+                  ? pluralize(Math.ceil(focusRemaining), "ph�t d? d?t m?c ti�u", "ph�t d? d?t m?c ti�u")
+                  : "�?t m?c ti�u t?p trung tu?n",
             },
           ].map((card) => (
-            <div key={card.label} className="group rounded-3xl border border-black/5 bg-white/80 p-6 shadow-lg backdrop-blur-xl transition hover:-translate-y-0.5 hover:shadow-2xl dark:border-white/10 dark:bg-white/5">
-              <div className="mb-1 text-3xl font-bold text-gray-900 dark:text-white">{card.value}</div>
+            <div key={card.label} className="group rounded-xl border border-gray-200 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md dark:border-gray-800 dark:bg-gray-900">
+              <div className="mb-1 text-3xl font-semibold text-gray-900 dark:text-white">{card.value}</div>
               <p className="text-sm text-gray-500 dark:text-gray-400">{card.helper}</p>
-              <h3 className="mt-4 text-sm font-semibold text-gray-700 dark:text-gray-300">{card.label}</h3>
-              <div className="mt-3 h-2 w-full overflow-hidden rounded-full bg-gray-200 dark:bg-white/10">
-                <div className={`h-2 rounded-full bg-gradient-to-r ${card.gradient}`} style={{ width: `${card.progress}%` }} />
+              <h3 className="mt-4 text-sm font-semibold text-gray-700 dark:text-gray-200">{card.label}</h3>
+              <div className="mt-3 h-2 w-full overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
+                <div className={`h-2 rounded-full ${card.barColor}`} style={{ width: `${card.progress}%` }} />
               </div>
             </div>
           ))}
@@ -201,8 +210,8 @@ export default function DashboardPage() {
 
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
           <motion.section initial={{ opacity: 0, x: -18 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.08 }} className="lg:col-span-2">
-            <div className="overflow-hidden rounded-3xl border border-black/5 bg-white/80 shadow-lg backdrop-blur-xl dark:border-white/10 dark:bg-white/5">
-              <div className="border-b border-black/5 p-6 dark:border-white/10">
+            <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm dark:border-gray-800 dark:bg-gray-900">
+              <div className="border-b border-gray-200 p-6 dark:border-gray-800">
                 <div className="flex items-center justify-between gap-3">
                   <h3 className="text-xl font-bold text-gray-900 dark:text-white">Task chua hoan thanh</h3>
                   <span className="rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-sm font-medium text-amber-700 dark:border-amber-900/40 dark:bg-amber-900/20 dark:text-amber-300">
@@ -227,7 +236,7 @@ export default function DashboardPage() {
                           initial={{ opacity: 0, y: 14 }}
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ delay: index * 0.05 }}
-                          className="group rounded-2xl border border-gray-200/40 bg-gray-50/60 p-4 transition hover:bg-gray-100/60 dark:border-gray-700/30 dark:bg-gray-700/20 dark:hover:bg-gray-600/20"
+                          className="group rounded-lg border border-gray-200 bg-white p-4 transition hover:border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:hover:border-gray-600"
                         >
                           <div className="flex items-center justify-between gap-4">
                             <div className="flex-1">
@@ -264,8 +273,8 @@ export default function DashboardPage() {
           </motion.section>
 
           <motion.section initial={{ opacity: 0, x: 18 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.12 }}>
-            <div className="overflow-hidden rounded-3xl border border-black/5 bg-white/80 shadow-lg backdrop-blur-xl dark:border-white/10 dark:bg-white/5">
-              <div className="border-b border-black/5 p-6 dark:border-white/10">
+            <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm dark:border-gray-800 dark:bg-gray-900">
+              <div className="border-b border-gray-200 p-6 dark:border-gray-800">
                 <h3 className="text-xl font-bold text-gray-900 dark:text-white">Dong ho Pomodoro</h3>
                 <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Tap trung 25 phut, nghi 5 phut</p>
               </div>
@@ -279,3 +288,4 @@ export default function DashboardPage() {
     </div>
   );
 }
+

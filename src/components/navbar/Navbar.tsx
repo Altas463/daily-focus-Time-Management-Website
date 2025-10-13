@@ -33,26 +33,24 @@ export default function Navbar() {
   return (
     <nav
       className={[
-        'fixed inset-x-0 top-0 z-50 transition-all duration-300',
+        'fixed inset-x-0 top-0 z-50 border-b transition-colors duration-300',
         scrolled
-          ? 'bg-white/80 dark:bg-gray-950/70 backdrop-blur-md border-b border-black/5 dark:border-white/10 shadow-sm'
-          : 'bg-transparent',
+          ? 'bg-white dark:bg-gray-950 border-gray-200 dark:border-gray-800 shadow-sm'
+          : 'bg-white dark:bg-gray-950 border-transparent',
       ].join(' ')}
     >
       <div className="mx-auto max-w-7xl px-6">
         <div className="flex h-16 items-center justify-between">
           {/* Brand (no icon) */}
-          <Link href="/" className="select-none text-lg font-semibold tracking-tight text-gray-900 transition hover:opacity-90 dark:text-white">
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-gray-900 via-gray-900 to-gray-900 dark:from-white dark:via-white dark:to-white">
-              Daily Focus
-            </span>
+          <Link href="/" className="select-none text-lg font-semibold tracking-tight text-gray-900 transition hover:text-gray-600 dark:text-white dark:hover:text-gray-300">
+            Daily Focus
           </Link>
 
           {/* Links */}
           <div className="hidden items-center gap-6 text-sm font-medium sm:flex">
             {links.map((l) => (
-              <Link key={l.href} href={l.href} className="group relative px-1 py-1 text-gray-700 transition dark:text-gray-300">
-                <span className={isActive(l.href) ? 'text-gray-900 dark:text-white' : 'group-hover:text-gray-900 dark:group-hover:text-white'}>
+              <Link key={l.href} href={l.href} className="group relative px-1 py-1 text-gray-600 transition hover:text-gray-900 dark:text-gray-300 dark:hover:text-white">
+                <span className={isActive(l.href) ? 'text-gray-900 dark:text-white' : ''}>
                   {l.label}
                 </span>
                 <span className={`nav-underline ${isActive(l.href) ? 'w-full' : ''}`} />
@@ -65,9 +63,9 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Scroll progress bar (subtle, adds a modern touch) */}
+      {/* Scroll progress */}
       <div
-        className="pointer-events-none absolute bottom-0 left-0 h-[2px] w-0 bg-gradient-to-r from-blue-500 via-fuchsia-500 to-emerald-500 transition-[width] duration-150"
+        className="pointer-events-none absolute bottom-0 left-0 h-[2px] w-0 bg-blue-500 transition-[width] duration-150 dark:bg-blue-400"
         style={{ width: `${progress}%` }}
         aria-hidden
       />
@@ -79,7 +77,7 @@ export default function Navbar() {
           bottom: -3px;
           height: 2px;
           width: 0;
-          background: linear-gradient(90deg, #3b82f6, #a855f7, #10b981);
+          background: currentColor;
           border-radius: 9999px;
           transition: width 0.25s ease;
         }

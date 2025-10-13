@@ -50,6 +50,12 @@ const columnConfig: Record<
   },
 };
 
+const quickTemplates = [
+  { title: "Lap ke hoach ngay", description: "Danh sach 3 uu tien quan trong" },
+  { title: "Buoi daily standup", description: "Thong tin tien do + tro ngai" },
+  { title: "Tong ket cuoi ngay", description: "Nhan xet + len ke hoach ngay mai" },
+] as const;
+
 const toneBadge: Record<TaskUrgency["tone"], string> = {
   danger: "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300",
   warning: "bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300",
@@ -221,6 +227,22 @@ export default function TasksPage() {
     });
   }, [tasks, searchTerm]);
 
+  const applyTemplate = (template: (typeof quickTemplates)[number]) => {
+    setFormVisible((prev) => ({ ...prev, incomplete: true }));
+    setFormErrors((prev) => ({ ...prev, incomplete: null }));
+    setNewTaskMap((prev) => ({
+      ...prev,
+      incomplete: {
+        ...prev.incomplete,
+        title: template.title,
+        description: template.description,
+        startDate: "",
+        endDate: "",
+      },
+    }));
+  };
+
+
   const columns = useMemo(() => {
     const base = {
       incomplete: filteredTasks.filter((task) => !task.completed),
@@ -247,7 +269,7 @@ export default function TasksPage() {
   ] as const;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-purple-50/30 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
+    <div className="min-h-screen bg-gray-100 dark:bg-gray-950">
       <div className="mx-auto max-w-7xl px-4 py-8">
         <div className="space-y-8">
           <BackToDashboardLink />
@@ -268,7 +290,7 @@ export default function TasksPage() {
             ].map((item) => (
               <div
                 key={item.label}
-                className="rounded-2xl border border-black/5 bg-white/80 p-5 text-center shadow-sm backdrop-blur-xl dark:border-white/10 dark:bg-white/5"
+                className="rounded-lg border border-gray-200 bg-white p-5 text-center shadow-sm dark:border-gray-800 dark:bg-gray-900"
               >
                 <span className="text-2xl font-bold text-gray-900 dark:text-white">{item.value}</span>
                 <p className="mt-1 text-sm font-medium text-gray-600 dark:text-gray-300">
@@ -278,7 +300,7 @@ export default function TasksPage() {
             ))}
           </div>
 
-          <div className="flex flex-col gap-3 rounded-2xl border border-black/5 bg-white/80 p-5 shadow-sm backdrop-blur-xl dark:border-white/10 dark:bg-white/5 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-col gap-3 rounded-lg border border-gray-200 bg-white p-5 shadow-sm dark:border-gray-800 dark:bg-gray-900 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex flex-wrap gap-2">
               {filterOptions.map((option) => {
                 const active = filter === option.key;
@@ -290,7 +312,7 @@ export default function TasksPage() {
                       "rounded-full border px-3 py-1 text-sm font-medium transition",
                       active
                         ? "border-gray-900 bg-gray-900 text-white dark:border-white/90 dark:bg-white/90 dark:text-gray-900"
-                        : "border-gray-200 bg-white text-gray-600 hover:border-gray-300 hover:text-gray-900 dark:border-white/10 dark:bg-white/10 dark:text-gray-300 dark:hover:border-white/20",
+                        : "border-gray-200 bg-white text-gray-600 hover:border-gray-300 hover:text-gray-900 dark:border-gray-800 dark:bg-white/10 dark:text-gray-300 dark:hover:border-white/20",
                     ].join(" ")}
                   >
                     {option.label}
@@ -305,8 +327,25 @@ export default function TasksPage() {
                 value={searchTerm}
                 onChange={(event) => setSearchTerm(event.target.value)}
                 placeholder="Tim task..."
-                className="w-full rounded-full border border-gray-200 bg-white py-2 px-4 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-gray-900/10 dark:border-white/10 dark:bg-white/5 dark:text-white"
+                className="w-full rounded-full border border-gray-200 bg-white py-2 px-4 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-gray-900/10 dark:border-gray-800 dark:bg-gray-900 dark:text-white"
               />
+            </div>
+          </div>
+
+          <div className="rounded-lg border border-gray-200 bg-white p-5 shadow-sm dark:border-gray-800 dark:bg-gray-900">
+            <p className="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
+              Mau nhanh
+            </p>
+            <div className="mt-2 flex flex-wrap gap-2">
+              {quickTemplates.map((template) => (
+                <button
+                  key={template.title}
+                  onClick={() => applyTemplate(template)}
+                  className="rounded-full border border-gray-200 bg-white px-3 py-1 text-xs font-medium text-gray-600 transition hover:-translate-y-0.5 hover:border-gray-300 hover:text-gray-900 dark:border-gray-800 dark:bg-white/10 dark:text-gray-300 dark:hover:border-white/20"
+                >
+                  {template.title}
+                </button>
+              ))}
             </div>
           </div>
 
@@ -319,8 +358,8 @@ export default function TasksPage() {
                   <Droppable droppableId={columnKey} key={columnKey}>
                     {(provided) => (
                       <div ref={provided.innerRef} {...provided.droppableProps}>
-                        <div className="h-full rounded-3xl border border-black/5 bg-white/80 shadow-lg backdrop-blur-xl dark:border-white/10 dark:bg-white/5">
-                          <div className="flex items-center justify-between gap-3 border-b border-black/5 p-6 dark:border-white/10">
+                        <div className="h-full rounded-xl border border-gray-200 bg-white shadow-sm dark:border-gray-800 dark:bg-gray-900">
+                          <div className="flex items-center justify-between gap-3 border-b border-gray-200 p-6 dark:border-gray-800">
                             <div>
                               <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
                                 {config.title}
@@ -338,7 +377,7 @@ export default function TasksPage() {
 
                           <div className="space-y-4 p-6">
                             {columnTasks.length === 0 ? (
-                              <div className="rounded-2xl border-2 border-dashed border-gray-200 p-6 text-center text-sm text-gray-500 dark:border-white/10 dark:text-gray-400">
+                              <div className="rounded-2xl border-2 border-dashed border-gray-200 p-6 text-center text-sm text-gray-500 dark:border-gray-800 dark:text-gray-400">
                                 {config.emptyText}
                               </div>
                             ) : (
@@ -377,14 +416,14 @@ export default function TasksPage() {
                             {provided.placeholder}
 
                             {formVisible[columnKey] ? (
-                              <div className="space-y-3 rounded-xl border border-black/5 bg-white/80 p-4 shadow-sm dark:border-white/10 dark:bg-white/5">
+                              <div className="space-y-3 rounded-xl border border-gray-200 bg-white/80 p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900">
                                 <div>
                                   <label className="text-xs font-semibold text-gray-500 dark:text-gray-300">
                                     Tieu de
                                   </label>
                                   <input
                                     type="text"
-                                    className="mt-1 w-full rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-sm text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-4 focus:ring-gray-900/10 dark:border-white/10 dark:bg-white/5 dark:text-white"
+                                    className="mt-1 w-full rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-sm text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-4 focus:ring-gray-900/10 dark:border-gray-800 dark:bg-gray-900 dark:text-white"
                                     value={newTaskMap[columnKey].title}
                                     onChange={(event) =>
                                       handleInputChange(columnKey, "title", event.target.value)
@@ -404,7 +443,7 @@ export default function TasksPage() {
                                     Mo ta (tuy chon)
                                   </label>
                                   <textarea
-                                    className="mt-1 w-full rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-sm text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-4 focus:ring-gray-900/10 dark:border-white/10 dark:bg-white/5 dark:text-white"
+                                    className="mt-1 w-full rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-sm text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-4 focus:ring-gray-900/10 dark:border-gray-800 dark:bg-gray-900 dark:text-white"
                                     rows={3}
                                     value={newTaskMap[columnKey].description}
                                     onChange={(event) =>
@@ -419,7 +458,7 @@ export default function TasksPage() {
                                     </label>
                                     <input
                                       type="datetime-local"
-                                      className="mt-1 w-full rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-900/10 dark:border-white/10 dark:bg-white/5 dark:text-white"
+                                      className="mt-1 w-full rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-900/10 dark:border-gray-800 dark:bg-gray-900 dark:text-white"
                                       value={newTaskMap[columnKey].startDate}
                                       onChange={(event) =>
                                         handleInputChange(columnKey, "startDate", event.target.value)
@@ -432,7 +471,7 @@ export default function TasksPage() {
                                     </label>
                                     <input
                                       type="datetime-local"
-                                      className="mt-1 w-full rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-900/10 dark:border-white/10 dark:bg-white/5 dark:text-white"
+                                      className="mt-1 w-full rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-900/10 dark:border-gray-800 dark:bg-gray-900 dark:text-white"
                                       value={newTaskMap[columnKey].endDate}
                                       onChange={(event) =>
                                         handleInputChange(columnKey, "endDate", event.target.value)
@@ -476,10 +515,10 @@ export default function TasksPage() {
                                     [columnKey]: true,
                                   }))
                                 }
-                                className="group flex w-full items-center justify-between rounded-xl border-2 border-dashed border-gray-300 bg-white/70 px-4 py-4 text-left text-gray-700 transition hover:border-gray-400 hover:bg-white/90 dark:border-white/10 dark:bg-white/5 dark:text-gray-200 dark:hover:bg-white/10"
+                                className="group flex w-full items-center justify-between rounded-xl border-2 border-dashed border-gray-300 bg-white/70 px-4 py-4 text-left text-gray-700 transition hover:border-gray-400 hover:bg-white/90 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-200 dark:hover:bg-white/10"
                               >
                                 <span className="text-sm font-medium">Them task moi</span>
-                                <span className="rounded-full border border-gray-300 px-2 py-0.5 text-xs text-gray-500 group-hover:border-gray-400 dark:border-white/10 dark:text-gray-400">
+                                <span className="rounded-full border border-gray-300 px-2 py-0.5 text-xs text-gray-500 group-hover:border-gray-400 dark:border-gray-800 dark:text-gray-400">
                                   Enter
                                 </span>
                               </button>
@@ -498,3 +537,4 @@ export default function TasksPage() {
     </div>
   );
 }
+

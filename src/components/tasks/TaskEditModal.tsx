@@ -75,7 +75,7 @@ const TaskEditModal: FC<Props> = ({ task, onClose, onUpdate, onDelete }) => {
   };
 
   return (
-    <div className="fixed inset-0 backdrop-blur-sm bg-white/30 flex justify-center items-start z-50 overflow-y-auto p-6">
+    <div className="fixed inset-0 bg-black/40 flex justify-center items-start z-50 overflow-y-auto p-6">
       <div className="relative w-full max-w-2xl">
         <button
           onClick={onClose}
@@ -85,7 +85,7 @@ const TaskEditModal: FC<Props> = ({ task, onClose, onUpdate, onDelete }) => {
           <FiX />
         </button>
         {/* Modal content */}
-        <div className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl rounded-2xl shadow-2xl p-8 pt-10 min-w-[350px] border border-gray-200 dark:border-gray-800">
+        <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 p-8 pt-10 shadow-lg dark:border-gray-800">
           {/* Title */}
           <div className="mb-8">
             <label className="block text-base font-bold text-blue-600 dark:text-blue-400 mb-3 tracking-wide">
@@ -96,7 +96,7 @@ const TaskEditModal: FC<Props> = ({ task, onClose, onUpdate, onDelete }) => {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Nhập tiêu đề task..."
-              className="w-full text-2xl font-semibold text-gray-900 dark:text-white bg-white/70 dark:bg-gray-800/70 border-0 border-b-2 border-blue-200 dark:border-blue-700 focus:border-blue-500 dark:focus:border-blue-400 focus:outline-none placeholder-gray-400 dark:placeholder-gray-500 rounded-t-md transition"
+              className="w-full text-2xl font-semibold text-gray-900 dark:text-white bg-white dark:bg-gray-900 border-0 border-b-2 border-blue-200 dark:border-blue-700 focus:border-blue-500 dark:focus:border-blue-400 focus:outline-none placeholder-gray-400 dark:placeholder-gray-500 rounded-t-md transition"
             />
           </div>
 
@@ -118,7 +118,7 @@ const TaskEditModal: FC<Props> = ({ task, onClose, onUpdate, onDelete }) => {
           <div className="mb-10">
             <div className="flex flex-col md:flex-row gap-6">
               {/* Start Date */}
-              <div className="flex-1 bg-white/60 dark:bg-gray-800/60 rounded-xl border border-gray-200 dark:border-gray-700 shadow-md p-4 flex flex-col gap-2 relative">
+              <div className="flex-1 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 shadow-md p-4 flex flex-col gap-2 relative">
                 <span className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
                   <FiCalendar className="text-base text-blue-400 dark:text-blue-300" />
                   Bắt đầu
@@ -145,7 +145,7 @@ const TaskEditModal: FC<Props> = ({ task, onClose, onUpdate, onDelete }) => {
                 )}
               </div>
               {/* End Date */}
-              <div className="flex-1 bg-white/60 dark:bg-gray-800/60 rounded-xl border border-gray-200 dark:border-gray-700 shadow-md p-4 flex flex-col gap-2 relative">
+              <div className="flex-1 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 shadow-md p-4 flex flex-col gap-2 relative">
                 <span className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
                   <FiCalendar className="text-base text-pink-400 dark:text-pink-300" />
                   Kết thúc
@@ -178,7 +178,7 @@ const TaskEditModal: FC<Props> = ({ task, onClose, onUpdate, onDelete }) => {
           <div className="flex justify-end gap-3 items-center mt-8">
             <button
               onClick={handleDelete}
-              className="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white shadow-lg transition font-semibold"
+              className="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-red-600 hover:bg-red-700 text-white shadow-sm transition font-semibold"
             >
               <FiTrash2 />
               Xoá
@@ -186,7 +186,7 @@ const TaskEditModal: FC<Props> = ({ task, onClose, onUpdate, onDelete }) => {
             <button
               onClick={handleSave}
               disabled={!title.trim()}
-              className="flex items-center gap-2 px-7 py-2.5 rounded-lg bg-gradient-to-r from-blue-600 to-blue-400 hover:from-blue-700 hover:to-blue-500 text-white disabled:opacity-50 shadow-lg transition font-semibold"
+              className="flex items-center gap-2 px-7 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white disabled:opacity-60 shadow-sm transition font-semibold"
             >
               <FiSave />
               Lưu

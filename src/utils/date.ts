@@ -48,3 +48,13 @@ export function formatDayMonth(
     month: "short",
   }).format(date);
 }
+
+/**
+ * Calculates the whole number of calendar days between two dates (ignoring time zone offsets).
+ */
+export function differenceInCalendarDays(a: Date, b: Date): number {
+  const startOfA = new Date(a.getFullYear(), a.getMonth(), a.getDate());
+  const startOfB = new Date(b.getFullYear(), b.getMonth(), b.getDate());
+  const diffInMs = startOfA.getTime() - startOfB.getTime();
+  return Math.round(diffInMs / (1000 * 60 * 60 * 24));
+}

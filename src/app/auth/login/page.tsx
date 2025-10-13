@@ -74,14 +74,14 @@ export default function LoginPage() {
     <AuthPageShell
       stageRef={stageRef}
       onMouseMove={handleMouseMove}
-      variant="blue"
+      variant="slate"
       hero={
         <>
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="text-5xl font-extrabold tracking-tight bg-gradient-to-r from-gray-900 via-blue-700 to-indigo-700 bg-clip-text text-transparent dark:from-white dark:via-blue-300 dark:to-indigo-300"
+            className="text-4xl font-semibold tracking-tight text-gray-900 dark:text-white"
           >
             Daily Focus
           </motion.h2>
@@ -89,7 +89,7 @@ export default function LoginPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1, duration: 0.6 }}
-            className="mt-4 max-w-md text-lg text-gray-700/80 dark:text-gray-300"
+            className="mt-4 max-w-md text-base text-gray-600 dark:text-gray-300"
           >
             Bot nhieu hon. Tap trung hon. Mot khong gian gon gang de ban hoan thanh dieu quan
             trong moi ngay.
@@ -101,7 +101,7 @@ export default function LoginPage() {
         initial={{ opacity: 0, y: 24, scale: 0.98 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
-        className="w-full max-w-md rounded-2xl border border-black/5 dark:border-white/10 bg-white/80 dark:bg-white/5 backdrop-blur-xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.25)] p-6 sm:p-8"
+        className="w-full max-w-md rounded-xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900 sm:p-8"
       >
         <div className="mb-6 text-center">
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
@@ -122,7 +122,7 @@ export default function LoginPage() {
               value={email}
               onChange={(event) => setEmail(event.target.value)}
               placeholder="you@example.com"
-              className="w-full rounded-xl border border-gray-200 dark:border-white/10 bg-white/70 dark:bg-white/5 px-3 py-3 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition"
+              className="w-full rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 px-3 py-3 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition"
             />
           </div>
           <div className="space-y-2">
@@ -144,7 +144,7 @@ export default function LoginPage() {
                 onChange={(event) => setPassword(event.target.value)}
                 onKeyUp={onPasswordKeyUp}
                 placeholder="Nhap mat khau"
-                className="w-full rounded-xl border border-gray-200 dark:border-white/10 bg-white/70 dark:bg-white/5 px-3 py-3 pr-16 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition"
+                className="w-full rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 px-3 py-3 pr-16 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition"
               />
               <button
                 type="button"
@@ -160,7 +160,7 @@ export default function LoginPage() {
                 <span>Do manh:</span>
                 <span className="font-medium text-gray-700 dark:text-gray-300">{strengthLabel}</span>
               </div>
-              <div className="h-2 w-full rounded-full bg-gray-200 dark:bg-white/10 overflow-hidden">
+              <div className="h-2 w-full rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden">
                 <div
                   className={`h-2 ${strengthClass} rounded-full transition-all duration-300`}
                   style={{ width: pwMax ? `${(pwScore / pwMax) * 100}%` : "0%" }}
@@ -204,32 +204,32 @@ export default function LoginPage() {
               </motion.div>
             )}
           </AnimatePresence>
-          <button
-            type="submit"
-            disabled={isLoading}
-            className="group relative w-full inline-flex items-center justify-center rounded-xl bg-gray-900 text-white px-6 py-3 font-semibold shadow-lg transition hover:translate-y-[-1px] hover:bg-black/90 focus:outline-none focus:ring-4 focus:ring-gray-900/20 disabled:opacity-60 dark:bg-white dark:text-gray-900 dark:hover:bg-white/90"
-          >
-            {isLoading ? "Dang dang nhap..." : "Dang nhap"}
-          </button>
-        </form>
-        <div className="relative my-6">
-          <div className="absolute inset-0 flex items-center" aria-hidden>
-            <div className="w-full border-t border-gray-200 dark:border-white/10" />
-          </div>
-          <div className="relative flex justify-center">
-            <span className="bg-white/80 dark:bg-white/5 px-3 text-xs font-medium text-gray-500 dark:text-gray-400 backdrop-blur-sm">
-              hoac tiep tuc voi
-            </span>
-          </div>
-        </div>
         <button
-          onClick={handleGoogleSignIn}
+          type="submit"
           disabled={isLoading}
-          type="button"
-          className="w-full inline-flex items-center justify-center rounded-xl border-2 border-gray-200 dark:border-white/10 bg-white dark:bg-white/5 px-6 py-3 font-semibold text-gray-800 dark:text-gray-100 transition hover:bg-gray-50 dark:hover:bg-white/10 focus:outline-none focus:ring-4 focus:ring-gray-300/40 disabled:opacity-60"
+          className="inline-flex w-full items-center justify-center rounded-lg bg-gray-900 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-gray-800 focus:outline-none focus:ring-4 focus:ring-gray-900/20 disabled:opacity-60 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-gray-200"
         >
-          Dang nhap voi Google
+          {isLoading ? "Dang dang nhap..." : "Dang nhap"}
         </button>
+      </form>
+      <div className="relative my-6">
+        <div className="absolute inset-0 flex items-center" aria-hidden>
+          <div className="w-full border-t border-gray-200 dark:border-gray-800" />
+        </div>
+        <div className="relative flex justify-center">
+          <span className="bg-white px-3 text-xs font-medium text-gray-500 dark:bg-gray-900 dark:text-gray-400">
+            hoac tiep tuc voi
+          </span>
+        </div>
+      </div>
+      <button
+        onClick={handleGoogleSignIn}
+        disabled={isLoading}
+        type="button"
+        className="inline-flex w-full items-center justify-center rounded-lg border border-gray-200 bg-white px-6 py-3 text-sm font-medium text-gray-700 transition hover:bg-gray-100 focus:outline-none focus:ring-4 focus:ring-gray-300/20 disabled:opacity-60 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100 dark:hover:bg-gray-800"
+      >
+        Dang nhap voi Google
+      </button>
         <p className="mt-6 text-center text-xs italic text-gray-500 dark:text-gray-400">
           Meo nho: {motivationTip}
         </p>
@@ -243,3 +243,4 @@ export default function LoginPage() {
     </AuthPageShell>
   );
 }
+

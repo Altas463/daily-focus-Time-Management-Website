@@ -52,7 +52,7 @@ export default function Header() {
   }, [showUserMenu]);
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-black/5 bg-white/80 backdrop-blur-xl transition-all duration-300 dark:border-white/10 dark:bg-gray-950/70">
+    <header className="sticky top-0 z-40 w-full border-b border-gray-200 bg-white transition-colors duration-300 dark:border-gray-800 dark:bg-gray-950">
       <div className="px-4 py-4 sm:px-6">
         <div className="flex items-center justify-between">
           {/* Left: Title */}
@@ -103,7 +103,7 @@ export default function Header() {
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: -6, scale: 0.98 }}
                       transition={{ duration: 0.16 }}
-                      className="absolute right-4 top-[64px] w-72 overflow-hidden rounded-2xl border border-black/5 bg-white/90 shadow-2xl backdrop-blur-xl dark:border-white/10 dark:bg-white/5"
+                      className="absolute right-4 top-[64px] w-72 overflow-hidden rounded-xl border border-gray-200 bg-white shadow-lg dark:border-gray-800 dark:bg-gray-900"
                     >
                       {/* Top user row for mobile */}
                       <div className="flex items-center gap-3 border-b border-black/5 px-4 py-3 dark:border-white/10 sm:hidden">
