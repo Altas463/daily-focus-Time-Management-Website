@@ -8,6 +8,7 @@ import PomodoroTimer from "@/components/pomodoro/PomodoroTimer";
 import { getDaypartGreeting, formatRelativeDate } from "@/utils/date";
 import { getTaskUrgency, summarizeTasks, TaskUrgency } from "@/utils/tasks";
 import { getFocusTimeProgress, getPomodoroProgress } from "@/utils/pomodoro";
+import { clamp, formatDuration, pluralize } from "@/utils/format";
 
 type Task = {
   id: string;
@@ -155,30 +156,36 @@ export default function DashboardPage() {
             {
               label: "Task hoan thanh hom nay",
               value: completedTodayCount,
-              progress: Math.min((completedTodayCount / Math.max(taskSummary.total, 1)) * 100, 100),
+              progress: clamp((completedTodayCount / Math.max(taskSummary.total, 1)) * 100, 0, 100),
               gradient: "from-emerald-500 to-green-500",
-              helper: `${taskSummary.total} task dang co`,
+              helper: pluralize(taskSummary.total, "task to track", "tasks to track"),
             },
             {
               label: "Task sap den han",
               value: taskSummary.dueSoon,
-              progress: Math.min((taskSummary.dueSoon / Math.max(taskSummary.incomplete, 1)) * 100, 100),
+              progress: clamp((taskSummary.dueSoon / Math.max(taskSummary.incomplete, 1)) * 100, 0, 100),
               gradient: "from-orange-500 to-amber-500",
-              helper: `${taskSummary.overdue} task da qua han`,
+              helper: pluralize(taskSummary.overdue, "task overdue", "tasks overdue"),
             },
             {
               label: "So luong Pomodoro",
               value: pomodoroCount,
               progress: pomodoroProgress,
               gradient: "from-blue-500 to-indigo-500",
-              helper: pomodoroRemaining > 0 ? `${pomodoroRemaining} phien nua se dat muc tieu` : "Da vuot muc tieu tuan",
+              helper:
+                pomodoroRemaining > 0
+                  ? pluralize(pomodoroRemaining, "session left to reach goal", "sessions left to reach goal")
+                  : "Goal completed for this week",
             },
             {
               label: "Thoi gian tap trung",
-              value: `${Math.floor(focusTimeMinutes / 60)}h ${focusTimeMinutes % 60}m`,
+              value: formatDuration(focusTimeMinutes),
               progress: focusProgress,
               gradient: "from-fuchsia-500 to-pink-500",
-              helper: focusRemaining > 0 ? `${focusRemaining} phut nua se dat muc tieu` : "Da hoan thanh muc tieu tuan",
+              helper:
+                focusRemaining > 0
+                  ? pluralize(Math.ceil(focusRemaining), "minute left to reach goal", "minutes left to reach goal")
+                  : "Focus goal achieved for the week",
             },
           ].map((card) => (
             <div key={card.label} className="group rounded-3xl border border-black/5 bg-white/80 p-6 shadow-lg backdrop-blur-xl transition hover:-translate-y-0.5 hover:shadow-2xl dark:border-white/10 dark:bg-white/5">

@@ -1,13 +1,14 @@
-"use client";
+'use client';
 
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { jwtDecode } from "jwt-decode";
 import AuthPageShell from "@/components/auth/AuthPageShell";
 import { useSpotlightStage } from "@/hooks/useSpotlightStage";
 import { calculatePasswordStrength } from "@/utils/password";
+import { getMotivationTip } from "@/utils/motivation";
 
 interface JwtPayload {
   name: string;
@@ -29,6 +30,7 @@ export default function RegisterPage() {
   const [capsOnConfirm, setCapsOnConfirm] = useState(false);
   const router = useRouter();
   const { stageRef, handleMouseMove } = useSpotlightStage();
+  const motivationTip = useMemo(() => getMotivationTip(new Date().setHours(0, 0, 0, 0) + 1), []);
 
   useEffect(() => {
     const { score, maxScore } = calculatePasswordStrength(password, { includeLowercase: true });
@@ -288,7 +290,10 @@ export default function RegisterPage() {
           </button>
         </form>
 
-        <p className="mt-6 text-center text-sm text-gray-600 dark:text-gray-400">
+        <p className="mt-6 text-center text-xs italic text-gray-500 dark:text-gray-400">
+          Meo nho: {motivationTip}
+        </p>
+        <p className="mt-4 text-center text-sm text-gray-600 dark:text-gray-400">
           Da co tai khoan?{" "}
           <Link href="/auth/login" className="font-semibold text-emerald-600 hover:underline dark:text-emerald-400">
             Dang nhap ngay

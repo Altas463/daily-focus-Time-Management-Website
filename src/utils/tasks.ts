@@ -23,6 +23,8 @@ export type TaskUrgency = {
   label: string;
 };
 
+const MS_IN_DAY = 1000 * 60 * 60 * 24;
+
 /**
  * Returns a blank task template for quickly initialising new task state objects.
  */
@@ -83,10 +85,30 @@ export function getTaskUrgency(endDate?: string | null, now: Date = new Date()):
   if (Number.isNaN(due.getTime())) return { tone: "default", label: "Khong ro han" };
 
   const diffInMs = due.getTime() - now.getTime();
-  const diffInDays = Math.ceil(diffInMs / (1000 * 60 * 60 * 24));
+  const diffInDays = Math.ceil(diffInMs / MS_IN_DAY);
 
   if (diffInDays < 0) return { tone: "danger", label: "Qua han" };
   if (diffInDays <= 1) return { tone: "warning", label: "Can gap" };
   if (diffInDays <= 3) return { tone: "notice", label: "Dang gan" };
   return { tone: "success", label: "Binh thuong" };
+}
+
+export function isTaskOverdue(endDate?: string | null, now: Date = new Date()): boolean {
+  if (!endDate) return false;
+  const due = new Date(endDate);
+  if (Number.isNaN(due.getTime())) return false;
+  return due.getTime() < now.getTime();
+}
+
+export function isTaskDueSoon(
+  endDate?: string | null,
+  now: Date = new Date(),
+  windowInDays = 3
+): boolean {
+  if (!endDate) return false;
+  const due = new Date(endDate);
+  if (Number.isNaN(due.getTime())) return false;
+
+  const diffInDays = Math.ceil((due.getTime() - now.getTime()) / MS_IN_DAY);
+  return diffInDays >= 0 && diffInDays <= windowInDays;
 }

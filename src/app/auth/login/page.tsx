@@ -1,14 +1,13 @@
-"use client";
-
+'use client';
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 import AuthPageShell from "@/components/auth/AuthPageShell";
 import { useSpotlightStage } from "@/hooks/useSpotlightStage";
 import { calculatePasswordStrength } from "@/utils/password";
-
+import { getMotivationTip } from "@/utils/motivation";
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -21,63 +20,56 @@ export default function LoginPage() {
   const [pwMax, setPwMax] = useState(4);
   const router = useRouter();
   const { stageRef, handleMouseMove } = useSpotlightStage();
-
+  const motivationTip = useMemo(
+    () => getMotivationTip(new Date().setHours(0, 0, 0, 0)),
+    []
+  );
   const validateInput = () => {
     if (!email || !password) {
       setErrorMessage("Vui long dien day du cac truong");
       return false;
     }
-  const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     if (!emailPattern.test(email)) {
       setErrorMessage("Email khong hop le");
       return false;
     }
     return true;
   };
-
   useEffect(() => {
     const { score, maxScore } = calculatePasswordStrength(password);
     setPwScore(score);
     setPwMax(maxScore);
   }, [password]);
-
   const strengthLabel = ["Yeu", "Trung binh", "Kha", "Manh", "Rat manh"][pwScore] || "";
   const strengthClass =
     ["bg-red-500", "bg-orange-500", "bg-yellow-500", "bg-lime-500", "bg-emerald-600"][pwScore] ||
     "bg-gray-300";
-
   const handleLogin = async (event: React.FormEvent) => {
     event.preventDefault();
     setErrorMessage(null);
     if (!validateInput()) return;
-
     setIsLoading(true);
     const res = await signIn("credentials", { redirect: false, email, password });
     setIsLoading(false);
-
     if (res?.error) setErrorMessage("Email hoac mat khau khong dung");
     else router.push("/dashboard");
   };
-
   const handleGoogleSignIn = async () => {
     setIsLoading(true);
     await signIn("google", { callbackUrl: "/dashboard" });
     setIsLoading(false);
   };
-
   const onPasswordKeyUp = (event: React.KeyboardEvent<HTMLInputElement>) => {
     setCapsOn(event.getModifierState && event.getModifierState("CapsLock"));
   };
-
   useEffect(() => {
     const saved = localStorage.getItem("lf_email");
     if (saved) setEmail(saved);
   }, []);
-
   useEffect(() => {
     if (remember) localStorage.setItem("lf_email", email);
   }, [email, remember]);
-
   return (
     <AuthPageShell
       stageRef={stageRef}
@@ -117,7 +109,6 @@ export default function LoginPage() {
           </h1>
           <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">Dang nhap de tiep tuc</p>
         </div>
-
         <form onSubmit={handleLogin} className="space-y-5" noValidate>
           <div className="space-y-2">
             <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
@@ -134,7 +125,6 @@ export default function LoginPage() {
               className="w-full rounded-xl border border-gray-200 dark:border-white/10 bg-white/70 dark:bg-white/5 px-3 py-3 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition"
             />
           </div>
-
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
@@ -146,7 +136,6 @@ export default function LoginPage() {
                 </span>
               )}
             </div>
-
             <div className="relative">
               <input
                 id="password"
@@ -166,7 +155,6 @@ export default function LoginPage() {
                 {showPassword ? "An" : "Hien"}
               </button>
             </div>
-
             <div className="space-y-1">
               <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
                 <span>Do manh:</span>
@@ -183,7 +171,6 @@ export default function LoginPage() {
               </div>
             </div>
           </div>
-
           <div className="flex items-center justify-between">
             <label className="inline-flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300 select-none">
               <input
@@ -205,7 +192,6 @@ export default function LoginPage() {
               </Link>
             </span>
           </div>
-
           <AnimatePresence>
             {errorMessage && (
               <motion.div
@@ -218,7 +204,6 @@ export default function LoginPage() {
               </motion.div>
             )}
           </AnimatePresence>
-
           <button
             type="submit"
             disabled={isLoading}
@@ -227,7 +212,6 @@ export default function LoginPage() {
             {isLoading ? "Dang dang nhap..." : "Dang nhap"}
           </button>
         </form>
-
         <div className="relative my-6">
           <div className="absolute inset-0 flex items-center" aria-hidden>
             <div className="w-full border-t border-gray-200 dark:border-white/10" />
@@ -238,7 +222,6 @@ export default function LoginPage() {
             </span>
           </div>
         </div>
-
         <button
           onClick={handleGoogleSignIn}
           disabled={isLoading}
@@ -247,8 +230,10 @@ export default function LoginPage() {
         >
           Dang nhap voi Google
         </button>
-
-        <p className="mt-6 text-center text-sm text-gray-600 dark:text-gray-400">
+        <p className="mt-6 text-center text-xs italic text-gray-500 dark:text-gray-400">
+          Meo nho: {motivationTip}
+        </p>
+        <p className="mt-4 text-center text-sm text-gray-600 dark:text-gray-400">
           Chua co tai khoan?{" "}
           <Link href="/auth/register" className="font-semibold text-blue-600 hover:underline dark:text-blue-400">
             Dang ky ngay

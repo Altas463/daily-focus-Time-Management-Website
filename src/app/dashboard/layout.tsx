@@ -1,17 +1,17 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import { useRef } from 'react';
+import { useRef, type MouseEvent as ReactMouseEvent, type ReactNode } from 'react';
 import Sidebar from '@/components/Sidebar';
 import Header from '@/components/header/Header';
 
-export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+export default function DashboardLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const hideNav = pathname === '/dashboard/pomodoro';
 
   // Subtle spotlight that follows mouse (keeps the same vibe)
   const stageRef = useRef<HTMLDivElement>(null);
-  const handleMouseMove = (e: React.MouseEvent) => {
+  const handleMouseMove = (e: ReactMouseEvent<HTMLDivElement>) => {
     const el = stageRef.current;
     if (!el) return;
     const r = el.getBoundingClientRect();

@@ -9,7 +9,14 @@ import {
 } from "@hello-pangea/dnd";
 import TaskCard from "@/components/tasks/TaskCard";
 import BackToDashboardLink from "@/components/BackToDashboardLink";
-import { createEmptyTask, getTaskUrgency, summarizeTasks, TaskUrgency } from "@/utils/tasks";
+import {
+  createEmptyTask,
+  getTaskUrgency,
+  summarizeTasks,
+  TaskUrgency,
+  isTaskDueSoon,
+  isTaskOverdue,
+} from "@/utils/tasks";
 import { formatRelativeDate } from "@/utils/date";
 
 type Task = {
@@ -69,6 +76,8 @@ export default function TasksPage() {
     incomplete: false,
     completed: false,
   });
+  const [filter, setFilter] = useState<"all" | "dueSoon" | "overdue">("all");
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     void fetchTasks();
@@ -201,13 +210,41 @@ export default function TasksPage() {
     }));
   };
 
-  const columns = useMemo(
-    () => ({
-      incomplete: tasks.filter((task) => !task.completed),
-      completed: tasks.filter((task) => task.completed),
-    }),
-    [tasks]
-  );
+  const filteredTasks = useMemo(() => {
+    const term = searchTerm.trim().toLowerCase();
+    if (!term) return tasks;
+    return tasks.filter((task) => {
+      const haystacks = [task.title, task.description ?? ""]
+        .join(" ")
+        .toLowerCase();
+      return haystacks.includes(term);
+    });
+  }, [tasks, searchTerm]);
+
+  const columns = useMemo(() => {
+    const base = {
+      incomplete: filteredTasks.filter((task) => !task.completed),
+      completed: filteredTasks.filter((task) => task.completed),
+    };
+
+    if (filter === "dueSoon") {
+      base.incomplete = base.incomplete.filter((task) =>
+        isTaskDueSoon(task.endDate)
+      );
+    } else if (filter === "overdue") {
+      base.incomplete = base.incomplete.filter((task) =>
+        isTaskOverdue(task.endDate)
+      );
+    }
+
+    return base;
+  }, [filteredTasks, filter]);
+
+  const filterOptions = [
+    { key: "all", label: "Tat ca" },
+    { key: "dueSoon", label: "Sap den han" },
+    { key: "overdue", label: "Qua han" },
+  ] as const;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-purple-50/30 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
@@ -239,6 +276,38 @@ export default function TasksPage() {
                 </p>
               </div>
             ))}
+          </div>
+
+          <div className="flex flex-col gap-3 rounded-2xl border border-black/5 bg-white/80 p-5 shadow-sm backdrop-blur-xl dark:border-white/10 dark:bg-white/5 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-wrap gap-2">
+              {filterOptions.map((option) => {
+                const active = filter === option.key;
+                return (
+                  <button
+                    key={option.key}
+                    onClick={() => setFilter(option.key)}
+                    className={[
+                      "rounded-full border px-3 py-1 text-sm font-medium transition",
+                      active
+                        ? "border-gray-900 bg-gray-900 text-white dark:border-white/90 dark:bg-white/90 dark:text-gray-900"
+                        : "border-gray-200 bg-white text-gray-600 hover:border-gray-300 hover:text-gray-900 dark:border-white/10 dark:bg-white/10 dark:text-gray-300 dark:hover:border-white/20",
+                    ].join(" ")}
+                  >
+                    {option.label}
+                  </button>
+                );
+              })}
+            </div>
+
+            <div className="w-full sm:w-72">
+              <input
+                type="search"
+                value={searchTerm}
+                onChange={(event) => setSearchTerm(event.target.value)}
+                placeholder="Tim task..."
+                className="w-full rounded-full border border-gray-200 bg-white py-2 px-4 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-gray-900/10 dark:border-white/10 dark:bg-white/5 dark:text-white"
+              />
+            </div>
           </div>
 
           <DragDropContext onDragEnd={onDragEnd}>
