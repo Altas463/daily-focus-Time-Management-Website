@@ -1,67 +1,89 @@
 'use client';
 
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
+import { usePathname } from 'next/navigation';
 
 export default function Navbar() {
+  const pathname = usePathname();
+  const [scrolled, setScrolled] = useState(false);
+  const [progress, setProgress] = useState(0);
+
+  useEffect(() => {
+    const onScroll = () => {
+      const y = window.scrollY || document.documentElement.scrollTop;
+      setScrolled(y > 8);
+      const doc = document.documentElement;
+      const h = doc.scrollHeight - doc.clientHeight;
+      setProgress(h > 0 ? (doc.scrollTop / h) * 100 : 0);
+    };
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  const links = [
+    { href: '/auth/login', label: 'Đăng nhập' },
+    { href: '/auth/register', label: 'Đăng ký' },
+    { href: '/dashboard', label: 'Dashboard' },
+  ];
+
+  const isActive = (href: string) => (href === '/' ? pathname === '/' : pathname.startsWith(href));
+
   return (
-    <nav className="w-full fixed top-0 left-0 z-50 bg-white/80 dark:bg-gray-900/90 backdrop-blur-md shadow-md transition-all duration-300">
-      <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
-        {/* Logo */}
-        <Link href="/" className="text-2xl font-extrabold tracking-tight text-blue-600 dark:text-white hover:scale-105 transition-transform duration-300 flex items-center gap-2">
-          <span className="text-3xl animate-pulse">🎯</span>
-          <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-500 bg-clip-text text-transparent">
-            Daily Focus
-          </span>
-        </Link>
-
-        <div className="space-x-6 text-base font-medium">
-          <Link
-            href="/auth/login"
-            className="text-gray-700 dark:text-gray-300 relative group transition-colors duration-300"
-          >
-            <span className="group-hover:text-blue-600 dark:group-hover:text-blue-400 transition">
-              Đăng nhập
+    <nav
+      className={[
+        'fixed inset-x-0 top-0 z-50 transition-all duration-300',
+        scrolled
+          ? 'bg-white/80 dark:bg-gray-950/70 backdrop-blur-md border-b border-black/5 dark:border-white/10 shadow-sm'
+          : 'bg-transparent',
+      ].join(' ')}
+    >
+      <div className="mx-auto max-w-7xl px-6">
+        <div className="flex h-16 items-center justify-between">
+          {/* Brand (no icon) */}
+          <Link href="/" className="select-none text-lg font-semibold tracking-tight text-gray-900 transition hover:opacity-90 dark:text-white">
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-gray-900 via-gray-900 to-gray-900 dark:from-white dark:via-white dark:to-white">
+              Daily Focus
             </span>
-            <span className="nav-underline" />
           </Link>
 
-          <Link
-            href="/auth/register"
-            className="text-gray-700 dark:text-gray-300 relative group transition-colors duration-300"
-          >
-            <span className="group-hover:text-blue-600 dark:group-hover:text-blue-400 transition">
-              Đăng ký
-            </span>
-            <span className="nav-underline" />
-          </Link>
+          {/* Links */}
+          <div className="hidden items-center gap-6 text-sm font-medium sm:flex">
+            {links.map((l) => (
+              <Link key={l.href} href={l.href} className="group relative px-1 py-1 text-gray-700 transition dark:text-gray-300">
+                <span className={isActive(l.href) ? 'text-gray-900 dark:text-white' : 'group-hover:text-gray-900 dark:group-hover:text-white'}>
+                  {l.label}
+                </span>
+                <span className={`nav-underline ${isActive(l.href) ? 'w-full' : ''}`} />
+              </Link>
+            ))}
+          </div>
 
-          <Link
-            href="/dashboard"
-            className="text-gray-700 dark:text-gray-300 relative group transition-colors duration-300"
-          >
-            <span className="group-hover:text-blue-600 dark:group-hover:text-blue-400 transition">
-              Dashboard
-            </span>
-            <span className="nav-underline" />
-          </Link>
+          {/* (Optional) Mobile minimal menu placeholder - hidden for now to keep ultra-clean */}
+          <div className="sm:hidden" />
         </div>
       </div>
+
+      {/* Scroll progress bar (subtle, adds a modern touch) */}
+      <div
+        className="pointer-events-none absolute bottom-0 left-0 h-[2px] w-0 bg-gradient-to-r from-blue-500 via-fuchsia-500 to-emerald-500 transition-[width] duration-150"
+        style={{ width: `${progress}%` }}
+        aria-hidden
+      />
 
       <style jsx>{`
         .nav-underline {
           position: absolute;
-          bottom: -3px;
           left: 0;
+          bottom: -3px;
           height: 2px;
-          width: 0%;
-          background: linear-gradient(to right, #3b82f6, #9333ea); /* from blue to purple */
+          width: 0;
+          background: linear-gradient(90deg, #3b82f6, #a855f7, #10b981);
           border-radius: 9999px;
-          transition: width 0.3s ease;
+          transition: width 0.25s ease;
         }
-
-        .group:hover .nav-underline {
-          width: 100%;
-        }
+        .group:hover .nav-underline { width: 100%; }
       `}</style>
     </nav>
   );

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   DragDropContext,
   Droppable,
@@ -102,93 +102,85 @@ export default function TasksPage() {
     await updateTask(draggableId, { completed: movedToCompleted });
   };
 
+  const counts = useMemo(
+    () => ({
+      incomplete: tasks.filter((t) => !t.completed).length,
+      completed: tasks.filter((t) => t.completed).length,
+    }),
+    [tasks]
+  );
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-slate-900 dark:to-gray-800">
-      <div className="container mx-auto px-4 py-8 max-w-7xl">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-purple-50/30 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
+      <div className="container mx-auto max-w-7xl px-4 py-8">
         <div className="space-y-8">
           <BackToDashboardLink />
 
-          {/* Header Section */}
-          <div className="text-center space-y-4">
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white">
+          {/* Header */}
+          <div className="space-y-3 text-center">
+            <h1 className="text-4xl font-bold text-gray-900 dark:text-white">
               Quản lý công việc
             </h1>
-            <p className="text-gray-600 dark:text-gray-400 text-lg">
+            <p className="text-lg text-gray-600 dark:text-gray-300">
               Tổ chức và theo dõi tiến độ công việc của bạn
             </p>
           </div>
 
-          {/* Task Columns */}
+          {/* Columns */}
           <DragDropContext onDragEnd={onDragEnd}>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
               {(["incomplete", "completed"] as const).map((columnKey) => {
-                const columnConfig = {
-                  incomplete: {
-                    title: "Đang thực hiện",
-                    count: tasks.filter((t) => !t.completed).length,
-                  },
-                  completed: {
-                    title: "Hoàn thành",
-                    count: tasks.filter((t) => t.completed).length,
-                  },
-                };
-
-                const config = columnConfig[columnKey];
+                const title =
+                  columnKey === "incomplete" ? "Đang thực hiện" : "Hoàn thành";
                 const columnTasks = tasks.filter(
                   (t) => t.completed === (columnKey === "completed")
                 );
+                const isDone = columnKey === "completed";
 
                 return (
                   <Droppable droppableId={columnKey} key={columnKey}>
                     {(provided, snapshot) => (
                       <div
-                        ref={provided.innerRef}
-                        {...provided.droppableProps}
-                        className={`
-                          bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 
-                          shadow-sm hover:shadow-md transition-all duration-200
-                          ${
-                            snapshot.isDraggingOver
-                              ? "bg-gray-50 dark:bg-gray-750 border-gray-300 dark:border-gray-600"
-                              : ""
-                          }
-                        `}
+                        className={[
+                          "relative rounded-2xl border bg-white/80 backdrop-blur-xl shadow-lg transition dark:border-white/10 dark:bg-white/5",
+                          snapshot.isDraggingOver
+                            ? "ring-2 ring-inset ring-blue-400/40 dark:ring-blue-400/30"
+                            : "border-black/5",
+                        ].join(" ")}
                       >
-                        {/* Column Header */}
-                        <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                        {/* Column header */}
+                        <div className="border-b border-black/5 p-5 dark:border-white/10">
                           <div className="flex items-center justify-between">
-                            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                              {config.title}
-                            </h3>
-                            <span className="text-sm font-medium text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-full">
-                              {config.count}
+                            <div>
+                              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                                {title}
+                              </h3>
+                              <div
+                                className="mt-1 h-0.5 w-24 rounded bg-gradient-to-r from-blue-500 via-fuchsia-500 to-emerald-500 opacity-60"
+                                aria-hidden
+                              />
+                            </div>
+                            <span className="rounded-full border border-gray-200 bg-white/80 px-3 py-1 text-sm font-medium text-gray-700 backdrop-blur-sm dark:border-white/10 dark:bg-white/5 dark:text-gray-300">
+                              {counts[columnKey]} task
                             </span>
                           </div>
                         </div>
 
-                        {/* Tasks Container */}
-                        <div className="p-6 space-y-3 min-h-[400px]">
+                        {/* IMPORTANT: droppable ref/props phải gắn vào container chứa trực tiếp Draggable */}
+                        <div
+                          ref={provided.innerRef}
+                          {...provided.droppableProps}
+                          className="min-h-[420px] space-y-3 p-5"
+                        >
                           {columnTasks.length === 0 ? (
-                            <div className="flex flex-col items-center justify-center py-16 text-gray-400 dark:text-gray-500">
-                              <div className="w-12 h-12 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg flex items-center justify-center mb-3">
-                                <svg
-                                  className="w-6 h-6"
-                                  fill="none"
-                                  stroke="currentColor"
-                                  viewBox="0 0 24 24"
-                                >
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={1.5}
-                                    d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                                  />
-                                </svg>
-                              </div>
-                              <p className="text-sm font-medium">
-                                {columnKey === "incomplete"
-                                  ? "Không có task đang thực hiện"
-                                  : "Chưa hoàn thành task nào"}
+                            <div className="grid place-items-center rounded-xl border border-dashed border-gray-300/80 p-10 text-center dark:border-white/15">
+                              <p className="text-sm font-medium text-gray-600 dark:text-gray-300">
+                                {isDone
+                                  ? "Chưa có task hoàn thành"
+                                  : "Không có task đang thực hiện"}
+                              </p>
+                              <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                                Thêm task mới để bắt đầu.
                               </p>
                             </div>
                           ) : (
@@ -202,18 +194,16 @@ export default function TasksPage() {
                                   <div
                                     ref={provided.innerRef}
                                     {...provided.draggableProps}
-                                    className={`
-                                      transition-all duration-200
-                                      ${
-                                        snapshot.isDragging
-                                          ? "rotate-3 scale-105 shadow-2xl z-50"
-                                          : ""
-                                      }
-                                    `}
+                                    style={provided.draggableProps.style} // giữ style của lib để định vị đúng
+                                    className={
+                                      snapshot.isDragging
+                                        ? "z-50 drop-shadow-2xl"
+                                        : ""
+                                    } // KHÔNG dùng transform (rotate/scale) ở đây
                                   >
                                     <div
                                       {...provided.dragHandleProps}
-                                      className="cursor-move"
+                                      className="cursor-grab active:cursor-grabbing"
                                     >
                                       <TaskCard
                                         task={task}
@@ -228,13 +218,13 @@ export default function TasksPage() {
                           )}
                           {provided.placeholder}
 
-                          {/* Add Task Form/Button */}
+                          {/* Add task */}
                           {formVisible[columnKey] ? (
-                            <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
+                            <div className="rounded-xl border border-black/5 bg-white/80 p-4 shadow-sm dark:border-white/10 dark:bg-white/5">
                               <input
                                 type="text"
                                 placeholder="Nhập tiêu đề task..."
-                                className="w-full px-3 py-2 rounded-md border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
+                                className="w-full rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-4 focus:ring-gray-900/10 dark:border-white/10 dark:bg-white/5 dark:text-white"
                                 value={newTaskMap[columnKey].title}
                                 onChange={(e) =>
                                   setNewTaskMap((prev) => ({
@@ -247,10 +237,10 @@ export default function TasksPage() {
                                 }
                                 autoFocus
                               />
-                              <div className="flex items-center gap-2 mt-3">
+                              <div className="mt-3 flex items-center gap-2">
                                 <button
                                   onClick={() => handleCreateTask(columnKey)}
-                                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors shadow hover:shadow-md"
+                                  className="inline-flex items-center justify-center rounded-md bg-gray-900 px-4 py-2 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-black/90 focus:outline-none focus:ring-4 focus:ring-gray-900/20 dark:bg-white dark:text-gray-900 dark:hover:bg-white/90"
                                 >
                                   Thêm task
                                 </button>
@@ -261,22 +251,10 @@ export default function TasksPage() {
                                       [columnKey]: false,
                                     }))
                                   }
-                                  className="text-gray-500 hover:text-red-500 p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition"
+                                  className="rounded-md px-3 py-2 text-sm text-gray-600 transition hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-white/10"
                                   aria-label="Huỷ"
                                 >
-                                  <svg
-                                    className="w-4 h-4"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
-                                  >
-                                    <path
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                      strokeWidth={2}
-                                      d="M6 18L18 6M6 6l12 12"
-                                    />
-                                  </svg>
+                                  Huỷ
                                 </button>
                               </div>
                             </div>
@@ -288,31 +266,14 @@ export default function TasksPage() {
                                   [columnKey]: true,
                                 }))
                               }
-                              className="group w-full flex items-center justify-center gap-3 px-6 py-4 rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-600 hover:border-blue-400 dark:hover:border-blue-500 bg-white dark:bg-gray-800 hover:bg-blue-50 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300 hover:text-blue-700 dark:hover:text-blue-400 transition-all duration-300 hover:shadow-md"
+                              className="group flex w-full items-center justify-between rounded-xl border-2 border-dashed border-gray-300 bg-white/70 px-4 py-4 text-left text-gray-700 transition hover:border-gray-400 hover:bg-white/90 dark:border-white/10 dark:bg-white/5 dark:text-gray-200 dark:hover:bg白/10"
                             >
-                              <div className="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 group-hover:border-blue-300 dark:group-hover:border-blue-500 flex items-center justify-center transition">
-                                <svg
-                                  className="h-5 w-5 transition group-hover:scale-110"
-                                  fill="none"
-                                  viewBox="0 0 24 24"
-                                  stroke="currentColor"
-                                  strokeWidth={2.5}
-                                >
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    d="M12 4v16m8-8H4"
-                                  />
-                                </svg>
-                              </div>
-                              <div className="flex flex-col items-start">
-                                <span className="font-semibold text-base">
-                                  Thêm task mới
-                                </span>
-                                <span className="text-sm opacity-70">
-                                  Click để tạo task
-                                </span>
-                              </div>
+                              <span className="text-sm font-medium">
+                                Thêm task mới
+                              </span>
+                              <span className="rounded-full border border-gray-300 px-2 py-0.5 text-xs text-gray-500 group-hover:border-gray-400 dark:border-white/10 dark:text-gray-400">
+                                Enter
+                              </span>
                             </button>
                           )}
                         </div>

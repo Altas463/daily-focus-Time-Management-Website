@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import PomodoroTimer from "@/components/pomodoro/PomodoroTimer";
+import { getDaypartGreeting, formatRelativeDate } from "@/utils/date";
 
 type Task = {
   id: string;
@@ -22,19 +23,18 @@ export default function DashboardPage() {
   const [tasks, setTasks] = useState<Task[]>([]);
 
   const [pomodoroCount, setPomodoroCount] = useState(0);
-  const [focusTime, setFocusTime] = useState(0); // in minutes
+  const [focusTime, setFocusTime] = useState(0); // minutes
   const [completedTodayCount, setCompletedTodayCount] = useState(0);
 
   useEffect(() => {
     if (status === "loading") return;
-
     if (status === "unauthenticated") {
       router.replace("/auth/login");
-    } else {
-      setLoading(false);
-      fetchTasks();
-      fetchStats();
+      return;
     }
+    setLoading(false);
+    fetchTasks();
+    fetchStats();
   }, [status, router]);
 
   const fetchTasks = async () => {
@@ -53,10 +53,8 @@ export default function DashboardPage() {
         fetch("/api/pomodoro-sessions/stats"),
         fetch("/api/tasks/stats"),
       ]);
-
       const pomodoroData = await pomodoroRes.json();
       const taskData = await taskRes.json();
-
       setPomodoroCount(pomodoroData.totalPomodoros || 0);
       setFocusTime(Math.floor((pomodoroData.totalFocusSeconds || 0) / 60));
       setCompletedTodayCount(taskData.completedTodayCount || 0);
@@ -72,271 +70,147 @@ export default function DashboardPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ completed: true }),
       });
-
-      setTasks((prev) =>
-        prev.map((task) =>
-          task.id === id ? { ...task, completed: true } : task
-        )
-      );
-
-      fetchStats(); // Cập nhật lại thống kê sau khi hoàn thành task
+      setTasks((prev) => prev.map((t) => (t.id === id ? { ...t, completed: true } : t)));
+      fetchStats();
     } catch (error) {
       console.error("Failed to mark completed:", error);
     }
   };
 
-  const getTimeOfDayGreeting = () => {
-    const hour = new Date().getHours();
-    if (hour < 12) return { emoji: "🌅", text: "Chào buổi sáng" };
-    if (hour < 18) return { emoji: "☀️", text: "Chào buổi chiều" };
-    return { emoji: "🌙", text: "Chào buổi tối" };
-  };
-
-  const formatTimeAgo = (dateString: string) => {
-    const date = new Date(dateString);
-    const now = new Date();
-    const diffInMs = date.getTime() - now.getTime();
-    const diffInDays = Math.ceil(diffInMs / (1000 * 60 * 60 * 24));
-    
-    if (diffInDays === 0) return "Hôm nay";
-    if (diffInDays === 1) return "Ngày mai";
-    if (diffInDays === -1) return "Hôm qua";
-    if (diffInDays > 0) return `${diffInDays} ngày nữa`;
-    return `${Math.abs(diffInDays)} ngày trước`;
-  };
+  const greetingText = getDaypartGreeting();
 
   const getTaskPriority = (endDate?: string) => {
-    if (!endDate) return { color: "gray", label: "Không ưu tiên" };
-    
+    if (!endDate) return { tone: "default", label: "Không ưu tiên" } as const;
     const date = new Date(endDate);
     const now = new Date();
-    const diffInMs = date.getTime() - now.getTime();
-    const diffInDays = Math.ceil(diffInMs / (1000 * 60 * 60 * 24));
-    
-    if (diffInDays < 0) return { color: "red", label: "Quá hạn" };
-    if (diffInDays <= 1) return { color: "orange", label: "Khẩn cấp" };
-    if (diffInDays <= 3) return { color: "yellow", label: "Quan trọng" };
-    return { color: "green", label: "Bình thường" };
+    const diffInDays = Math.ceil((date.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+    if (diffInDays < 0) return { tone: "danger", label: "Quá hạn" } as const;
+    if (diffInDays <= 1) return { tone: "warning", label: "Khẩn cấp" } as const;
+    if (diffInDays <= 3) return { tone: "notice", label: "Quan trọng" } as const;
+    return { tone: "success", label: "Bình thường" } as const;
   };
 
   if (loading || status === "loading") {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="inline-flex items-center gap-3 px-6 py-4 bg-white dark:bg-gray-800 rounded-2xl shadow-lg">
-            <svg className="animate-spin h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24">
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-            </svg>
-            <span className="text-gray-700 dark:text-gray-300 font-medium">Đang tải dashboard...</span>
+      <div className="grid min-h-screen place-items-center bg-white dark:bg-gray-950">
+        <div className="rounded-2xl border border-black/5 bg-white/80 p-6 text-gray-700 shadow backdrop-blur-sm dark:border-white/10 dark:bg-white/5 dark:text-gray-300">
+          <div className="h-1 w-56 overflow-hidden rounded-full bg-gray-200 dark:bg-white/10">
+            <div className="h-1 w-1/3 animate-[load_1.2s_ease_infinite] rounded-full bg-gradient-to-r from-blue-500 via-fuchsia-500 to-emerald-500" />
           </div>
+          <p className="mt-3 text-sm">Đang tải dashboard…</p>
         </div>
+        <style jsx>{`
+          @keyframes load { 0% { transform: translateX(-100%); } 100% { transform: translateX(300%); } }
+        `}</style>
       </div>
     );
   }
 
-  const incompleteTasks = tasks.filter((task) => !task.completed);
-  const greeting = getTimeOfDayGreeting();
+  const incompleteTasks = tasks.filter((t) => !t.completed);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-purple-50/30 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-        {/* Welcome Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="text-center"
-        >
-          <div className="mb-4">
-            <span className="text-4xl mb-2 block">{greeting.emoji}</span>
-            <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-2">
-              {greeting.text}, {session?.user?.name || "bạn"}!
-            </h1>
-            <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-              Hôm nay bạn sẽ tập trung vào điều gì? Hãy bắt đầu hành trình năng suất của mình.
-            </p>
-          </div>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-purple-50/30 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
+      <div className="mx-auto max-w-7xl space-y-8 px-4 py-8 sm:px-6 lg:px-8">
+        {/* Welcome */}
+        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="text-center">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">{greetingText}, {session?.user?.name || "bạn"}!</h1>
+          <p className="mx-auto mt-2 max-w-2xl text-lg text-gray-600 dark:text-gray-300">Hôm nay bạn sẽ tập trung vào điều gì? Bắt đầu hành trình năng suất của mình.</p>
         </motion.div>
 
-        {/* Stats Overview */}
-        <motion.section
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.1 }}
-          className="grid grid-cols-1 md:grid-cols-3 gap-6"
-        >
-          <div className="group bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl p-6 rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-white/20 dark:border-gray-700/50 hover:scale-105">
-            <div className="flex items-center justify-between mb-4">
-              <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-emerald-500 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-              <div className="text-right">
-                <p className="text-3xl font-bold text-green-600 dark:text-green-400">
-                  {completedTodayCount}
-                </p>
-                <p className="text-sm text-gray-500 dark:text-gray-400">+{Math.floor(completedTodayCount * 0.3)} hôm qua</p>
-              </div>
-            </div>
-            <h3 className="text-sm font-semibold text-gray-600 dark:text-gray-300 mb-1">
-              Task hoàn thành hôm nay
-            </h3>
-            <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-              <div 
-                className="bg-gradient-to-r from-green-500 to-emerald-500 h-2 rounded-full transition-all duration-500"
-                style={{ width: `${Math.min((completedTodayCount / 10) * 100, 100)}%` }}
-              ></div>
-            </div>
-          </div>
-
-          <div className="group bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl p-6 rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-white/20 dark:border-gray-700/50 hover:scale-105">
-            <div className="flex items-center justify-between mb-4">
-              <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-              <div className="text-right">
-                <p className="text-3xl font-bold text-blue-600 dark:text-blue-400">
-                  {pomodoroCount}
-                </p>
-                <p className="text-sm text-gray-500 dark:text-gray-400">+{Math.floor(pomodoroCount * 0.2)} hôm qua</p>
+        {/* Stats */}
+        <motion.section initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.05 }} className="grid grid-cols-1 gap-6 md:grid-cols-3">
+          {[
+            {
+              label: "Task hoàn thành hôm nay",
+              value: String(completedTodayCount),
+              progress: Math.min((completedTodayCount / 10) * 100, 100),
+              gradient: "from-emerald-500 to-teal-500",
+              sub: `+${Math.floor(completedTodayCount * 0.3)} hôm qua`,
+            },
+            {
+              label: "Pomodoro hoàn tất",
+              value: String(pomodoroCount),
+              progress: Math.min((pomodoroCount / 20) * 100, 100),
+              gradient: "from-blue-500 to-indigo-500",
+              sub: `+${Math.floor(pomodoroCount * 0.2)} hôm qua`,
+            },
+            {
+              label: "Tổng thời gian tập trung",
+              value: `${Math.floor(focusTime / 60)}h ${focusTime % 60}m`,
+              progress: Math.min((focusTime / 480) * 100, 100),
+              gradient: "from-fuchsia-500 to-pink-500",
+              sub: `+${Math.floor(focusTime * 0.15)}m hôm qua`,
+            },
+          ].map((c) => (
+            <div key={c.label} className="group rounded-3xl border border-black/5 bg-white/80 p-6 shadow-lg backdrop-blur-xl transition hover:-translate-y-0.5 hover:shadow-2xl dark:border-white/10 dark:bg-white/5">
+              <div aria-hidden className="mb-4 h-0.5 w-full bg-gradient-to-r from-blue-500 via-fuchsia-500 to-emerald-500 opacity-70" />
+              <div className="mb-1 text-3xl font-bold text-gray-900 dark:text-white">{c.value}</div>
+              <p className="text-sm text-gray-500 dark:text-gray-400">{c.sub}</p>
+              <h3 className="mt-4 text-sm font-semibold text-gray-700 dark:text-gray-300">{c.label}</h3>
+              <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-gray-200 dark:bg-white/10">
+                <div className={`h-2 rounded-full bg-gradient-to-r ${c.gradient}`} style={{ width: `${c.progress}%` }} />
               </div>
             </div>
-            <h3 className="text-sm font-semibold text-gray-600 dark:text-gray-300 mb-1">
-              Pomodoro hoàn tất
-            </h3>
-            <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-              <div 
-                className="bg-gradient-to-r from-blue-500 to-indigo-500 h-2 rounded-full transition-all duration-500"
-                style={{ width: `${Math.min((pomodoroCount / 20) * 100, 100)}%` }}
-              ></div>
-            </div>
-          </div>
-
-          <div className="group bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl p-6 rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-white/20 dark:border-gray-700/50 hover:scale-105">
-            <div className="flex items-center justify-between mb-4">
-              <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
-              </div>
-              <div className="text-right">
-                <p className="text-3xl font-bold text-purple-600 dark:text-purple-400">
-                  {Math.floor(focusTime / 60)}h {focusTime % 60}m
-                </p>
-                <p className="text-sm text-gray-500 dark:text-gray-400">+{Math.floor(focusTime * 0.15)}m hôm qua</p>
-              </div>
-            </div>
-            <h3 className="text-sm font-semibold text-gray-600 dark:text-gray-300 mb-1">
-              Tổng thời gian tập trung
-            </h3>
-            <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-              <div 
-                className="bg-gradient-to-r from-purple-500 to-pink-500 h-2 rounded-full transition-all duration-500"
-                style={{ width: `${Math.min((focusTime / 480) * 100, 100)}%` }}
-              ></div>
-            </div>
-          </div>
+          ))}
         </motion.section>
 
-        {/* Main Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Tasks Section */}
-          <motion.section
-            initial={{ opacity: 0, x: -30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="lg:col-span-2"
-          >
-            <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-3xl shadow-lg border border-white/20 dark:border-gray-700/50 overflow-hidden">
-              <div className="p-6 border-b border-gray-200/50 dark:border-gray-700/50">
+        {/* Main grid */}
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
+          {/* Tasks */}
+          <motion.section initial={{ opacity: 0, x: -18 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.08 }} className="lg:col-span-2">
+            <div className="overflow-hidden rounded-3xl border border-black/5 bg-white/80 shadow-lg backdrop-blur-xl dark:border-white/10 dark:bg-white/5">
+              <div className="border-b border-black/5 p-6 dark:border-white/10">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 bg-gradient-to-r from-orange-500 to-red-500 rounded-xl flex items-center justify-center">
-                      <span className="text-white text-sm">📋</span>
-                    </div>
-                    <h3 className="text-xl font-bold text-gray-800 dark:text-white">
-                      Công việc chưa hoàn thành
-                    </h3>
-                  </div>
-                  <span className="px-3 py-1 bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 rounded-full text-sm font-medium">
-                    {incompleteTasks.length} task
-                  </span>
+                  <h3 className="text-xl font-bold text-gray-900 dark:text-white">Công việc chưa hoàn thành</h3>
+                  <span className="rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-sm font-medium text-amber-700 dark:border-amber-900/40 dark:bg-amber-900/20 dark:text-amber-300">{incompleteTasks.length} task</span>
                 </div>
               </div>
-
               <div className="p-6">
                 {incompleteTasks.length === 0 ? (
-                  <div className="text-center py-12">
-                    <div className="w-20 h-20 bg-gradient-to-r from-green-100 to-emerald-100 dark:from-green-900/30 dark:to-emerald-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <span className="text-3xl">🎉</span>
-                    </div>
-                    <h4 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">
-                      Tuyệt vời! Bạn đã hoàn thành hết công việc
-                    </h4>
-                    <p className="text-gray-500 dark:text-gray-400">
-                      Không có công việc nào chưa hoàn thành. Thời gian để thư giãn!
-                    </p>
+                  <div className="grid place-items-center py-12 text-center">
+                    <div className="mb-3 h-14 w-14 rounded-full bg-emerald-100 dark:bg-emerald-900/30" />
+                    <h4 className="mb-1 text-lg font-semibold text-gray-900 dark:text-white">Tuyệt vời! Bạn đã hoàn thành hết công việc</h4>
+                    <p className="text-gray-500 dark:text-gray-400">Không có công việc nào chưa hoàn thành. Thời gian để thư giãn!</p>
                   </div>
                 ) : (
                   <div className="space-y-4">
                     {incompleteTasks.map((task, index) => {
-                      const priority = getTaskPriority(task.endDate);
+                      const p = getTaskPriority(task.endDate);
+                      const toneMap: Record<string, string> = {
+                        danger: "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300",
+                        warning: "bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300",
+                        notice: "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300",
+                        success: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300",
+                        default: "bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300",
+                      };
+                      const dotMap: Record<string, string> = {
+                        danger: "bg-red-500",
+                        warning: "bg-orange-500",
+                        notice: "bg-yellow-500",
+                        success: "bg-green-500",
+                        default: "bg-gray-400",
+                      };
                       return (
-                        <motion.div
-                          key={task.id}
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: index * 0.1 }}
-                          className="group p-4 bg-gray-50/50 dark:bg-gray-700/30 rounded-2xl hover:bg-gray-100/50 dark:hover:bg-gray-600/30 transition-all duration-300 border border-gray-200/30 dark:border-gray-600/30"
-                        >
-                          <div className="flex items-center justify-between">
+                        <motion.div key={task.id} initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.06 }} className="group rounded-2xl border border-gray-200/40 bg-gray-50/60 p-4 transition hover:bg-gray-100/60 dark:border-gray-700/30 dark:bg-gray-700/20 dark:hover:bg-gray-600/20">
+                          <div className="flex items-center justify-between gap-4">
                             <div className="flex-1">
-                              <div className="flex items-center gap-3 mb-2">
-                                <div className={`w-3 h-3 rounded-full ${
-                                  priority.color === 'red' ? 'bg-red-500' :
-                                  priority.color === 'orange' ? 'bg-orange-500' :
-                                  priority.color === 'yellow' ? 'bg-yellow-500' :
-                                  priority.color === 'green' ? 'bg-green-500' : 'bg-gray-400'
-                                }`}></div>
-                                <span className="text-gray-800 dark:text-white font-medium group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                                  {task.title}
-                                </span>
+                              <div className="mb-2 flex items-center gap-3">
+                                <span className={`inline-block h-2.5 w-2.5 rounded-full ${dotMap[p.tone]}`} />
+                                <span className="font-medium text-gray-900 transition group-hover:text-blue-600 dark:text-white dark:group-hover:text-blue-400">{task.title}</span>
                               </div>
-                              
-                              <div className="flex items-center gap-4 text-sm">
-                                <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${
-                                  priority.color === 'red' ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300' :
-                                  priority.color === 'orange' ? 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300' :
-                                  priority.color === 'yellow' ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300' :
-                                  priority.color === 'green' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300' :
-                                  'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300'
-                                }`}>
-                                  {priority.label}
-                                </span>
-                                
+                              <div className="flex flex-wrap items-center gap-3 text-sm">
+                                <span className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${toneMap[p.tone]}`}>{p.label}</span>
                                 {task.endDate && (
-                                  <span className="text-gray-500 dark:text-gray-400 flex items-center gap-1">
-                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                    </svg>
-                                    {formatTimeAgo(task.endDate)}
-                                  </span>
+                                  <span className="text-gray-500 dark:text-gray-400">{formatRelativeDate(task.endDate)}</span>
                                 )}
                               </div>
                             </div>
-                            
                             <button
                               onClick={() => markCompleted(task.id)}
-                              className="ml-4 px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white text-sm font-medium rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-300"
+                              className="rounded-xl bg-gray-900 px-4 py-2 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-black/90 focus:outline-none focus:ring-2 focus:ring-gray-900/20 dark:bg-white dark:text-gray-900 dark:hover:bg-white/90"
                               aria-label={`Đánh dấu hoàn thành công việc ${task.title}`}
                             >
-                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                              </svg>
+                              Hoàn thành
                             </button>
                           </div>
                         </motion.div>
@@ -348,27 +222,13 @@ export default function DashboardPage() {
             </div>
           </motion.section>
 
-          {/* Pomodoro Timer Section */}
-          <motion.section
-            initial={{ opacity: 0, x: 30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-          >
-            <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-3xl shadow-lg border border-white/20 dark:border-gray-700/50 overflow-hidden">
-              <div className="p-6 border-b border-gray-200/50 dark:border-gray-700/50">
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-xl flex items-center justify-center">
-                    <span className="text-white text-sm">⏳</span>
-                  </div>
-                  <h3 className="text-xl font-bold text-gray-800 dark:text-white">
-                    Đồng hồ Pomodoro
-                  </h3>
-                </div>
-                <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
-                  Tập trung 25 phút, nghỉ 5 phút
-                </p>
+          {/* Pomodoro */}
+          <motion.section initial={{ opacity: 0, x: 18 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.12 }}>
+            <div className="overflow-hidden rounded-3xl border border-black/5 bg-white/80 shadow-lg backdrop-blur-xl dark:border-white/10 dark:bg-white/5">
+              <div className="border-b border-black/5 p-6 dark:border-white/10">
+                <h3 className="text-xl font-bold text-gray-900 dark:text-white">Đồng hồ Pomodoro</h3>
+                <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Tập trung 25 phút, nghỉ 5 phút</p>
               </div>
-              
               <div className="p-6">
                 <PomodoroTimer />
               </div>

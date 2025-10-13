@@ -6,123 +6,110 @@ import { usePathname } from 'next/navigation';
 const Sidebar = () => {
   const pathname = usePathname();
 
-  const navItems = [
+  const groups = [
     {
-      href: '/dashboard',
-      label: 'Dashboard',
-      icon: '🏠',
-      gradient: 'from-blue-500 to-indigo-500'
+      title: 'TỔNG QUAN',
+      tone: 'primary',
+      items: [{ href: '/dashboard', label: 'Dashboard' }],
     },
     {
-      href: '/dashboard/tasks',
-      label: 'Quản lý Task',
-      icon: '📋',
-      gradient: 'from-green-500 to-emerald-500'
+      title: 'LÀM VIỆC',
+      tone: 'work',
+      items: [
+        { href: '/dashboard/tasks', label: 'Quản lý Task' },
+        { href: '/dashboard/pomodoro', label: 'Pomodoro Timer' },
+      ],
     },
     {
-      href: '/dashboard/pomodoro',
-      label: 'Pomodoro Timer',
-      icon: '⏱️',
-      gradient: 'from-orange-500 to-red-500'
+      title: 'BÁO CÁO',
+      tone: 'report',
+      items: [{ href: '/dashboard/stats', label: 'Thống kê' }],
     },
-    {
-      href: '/dashboard/stats',
-      label: 'Thống kê',
-      icon: '📊',
-      gradient: 'from-purple-500 to-pink-500'
-    }
-  ];
+  ] as const;
 
-  const isActive = (href: string) => {
-    if (href === '/dashboard') {
-      return pathname === '/dashboard';
-    }
-    return pathname.startsWith(href);
-  };
+  const isActive = (href: string) => (href === '/dashboard' ? pathname === '/dashboard' : pathname.startsWith(href));
+
+  const tones = {
+    primary: 'from-blue-500 via-fuchsia-500 to-emerald-500',
+    work: 'from-emerald-500 via-teal-500 to-green-500',
+    report: 'from-fuchsia-500 via-purple-500 to-blue-500',
+  } as const;
 
   return (
-    <aside className="w-72 bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl border-r border-white/20 dark:border-gray-700/50 p-6 hidden md:block shadow-xl">
-      {/* Header */}
-      <div className="mb-8">
-        <div className="flex items-center gap-3 mb-2">
-          <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-2xl flex items-center justify-center shadow-lg">
-            <span className="text-white text-xl">🎯</span>
-          </div>
-          <div>
-            <h2 className="text-xl font-bold text-gray-800 dark:text-white">
-              Daily Focus
-            </h2>
-            <p className="text-xs text-gray-500 dark:text-gray-400">
-              Productivity Dashboard
-            </p>
-          </div>
+    <aside className="hidden w-72 shrink-0 md:block">
+      <div className="sticky top-0 h-screen overflow-y-auto border-r border-black/5 bg-white/70 px-5 py-6 backdrop-blur-xl shadow-sm dark:border-white/10 dark:bg-white/5">
+        {/* Brand */}
+        <div className="mb-8">
+          <h2 className="text-xl font-bold tracking-tight text-gray-900 dark:text-white">Daily Focus</h2>
+          <p className="text-xs text-gray-500 dark:text-gray-400">Productivity Dashboard</p>
         </div>
-      </div>
 
-      {/* Navigation */}
-      <nav className="space-y-3">
-        {navItems.map((item) => {
-          const active = isActive(item.href);
-          
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`group relative flex items-center gap-4 px-4 py-4 rounded-2xl transition-all duration-300 transform hover:scale-105 ${
-                active
-                  ? 'bg-gradient-to-r ' + item.gradient + ' text-white shadow-lg'
-                  : 'text-gray-700 dark:text-gray-200 hover:bg-gray-100/50 dark:hover:bg-gray-700/50'
-              }`}
-            >
-              {/* Icon container */}
-              <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-300 ${
-                active
-                  ? 'bg-white/20 backdrop-blur-sm'
-                  : 'bg-gray-100 dark:bg-gray-700 group-hover:bg-gray-200 dark:group-hover:bg-gray-600'
-              }`}>
-                <span className={`text-lg ${active ? 'text-white' : 'text-gray-600 dark:text-gray-300'}`}>
-                  {item.icon}
-                </span>
+        {/* Groups */}
+        <nav className="space-y-8">
+          {groups.map((g) => (
+            <div key={g.title} className="relative">
+              {/* Section header */}
+              <div className="mb-3 flex items-center justify-between">
+                <h3 className="text-[11px] font-semibold tracking-[0.12em] text-gray-500 dark:text-gray-400">
+                  {g.title}
+                </h3>
+                {/* neutral hairline to reduce color noise */}
+                <div aria-hidden className="ml-3 h-[2px] flex-1 rounded bg-gradient-to-r from-transparent via-black/10 to-transparent dark:via-white/10" />
               </div>
 
-              {/* Label */}
-              <div className="flex-1">
-                <span className={`font-semibold transition-colors duration-300 ${
-                  active 
-                    ? 'text-white' 
-                    : 'text-gray-800 dark:text-white group-hover:text-gray-900 dark:group-hover:text-white'
-                }`}>
-                  {item.label}
-                </span>
+              <div className="space-y-2">
+                {g.items.map((item) => {
+                  const active = isActive(item.href);
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      aria-current={active ? 'page' : undefined}
+                      className={[
+                        'group relative grid grid-cols-[4px,1fr] items-center rounded-2xl border px-0 py-0 transition',
+                        active
+                          ? 'border-black/5 bg-gray-900 text-white shadow-lg dark:border-white/10 dark:bg-white dark:text-gray-900'
+                          : 'border-transparent text-gray-700 hover:bg-gray-100/70 dark:text-gray-200 dark:hover:bg-white/10',
+                      ].join(' ')}
+                    >
+                      {/* left bar: colored only when active, neutral on rest */}
+                      <div
+                        className={[
+                          'h-full rounded-l-2xl transition-opacity',
+                          active
+                            ? `bg-gradient-to-b ${tones[g.tone]} opacity-90`
+                            : 'bg-gray-200/60 dark:bg-gray-700/50 opacity-70 group-hover:opacity-90',
+                        ].join(' ')}
+                        aria-hidden
+                      />
+
+                      {/* content */}
+                      <div className="relative flex items-center justify-between px-4 py-3">
+                        <span className={`text-sm ${active ? 'font-semibold' : 'font-medium'}`}>{item.label}</span>
+                        {/* active indicator: thin gradient pill (only on active) */}
+                        {active && (
+                          <span aria-hidden className={`h-1.5 w-10 rounded-full bg-gradient-to-r ${tones[g.tone]} opacity-90`} />
+                        )}
+                      </div>
+                    </Link>
+                  );
+                })}
               </div>
-
-              {/* Active indicator */}
-              {active && (
-                <div className="w-2 h-2 bg-white rounded-full opacity-80"></div>
-              )}
-
-              {/* Hover effect */}
-              {!active && (
-                <div className="absolute inset-0 bg-gradient-to-r from-gray-100/50 to-gray-200/50 dark:from-gray-700/30 dark:to-gray-600/30 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10"></div>
-              )}
-            </Link>
-          );
-        })}
-      </nav>
-
-      {/* Bottom section */}
-      <div className="mt-12 pt-6 border-t border-gray-200/50 dark:border-gray-700/50">
-        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-700/30 dark:to-gray-600/30 rounded-2xl p-4 border border-blue-100 dark:border-gray-600/50">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-xl flex items-center justify-center">
-              <span className="text-white text-sm">💡</span>
             </div>
-            <span className="text-sm font-semibold text-gray-800 dark:text-white">
-              Mẹo hôm nay
-            </span>
+          ))}
+        </nav>
+
+        {/* Divider */}
+        <div className="my-8 h-px w-full bg-gradient-to-r from-transparent via-black/10 to-transparent dark:via-white/10" />
+
+        {/* Tip card (text-only) */}
+        <div className="rounded-2xl border border-black/5 bg-white/70 p-4 backdrop-blur-sm dark:border-white/10 dark:bg-white/5">
+          <div className="mb-2 flex items-center justify-between">
+            <span className="text-xs font-semibold tracking-[0.12em] text-gray-500 dark:text-gray-400">MẸO HÔM NAY</span>
+            <span className="h-1 w-10 rounded-full bg-gray-300 dark:bg-white/20" aria-hidden />
           </div>
-          <p className="text-xs text-gray-600 dark:text-gray-300 leading-relaxed">
-            Sử dụng kỹ thuật Pomodoro để tăng hiệu quả làm việc: 25 phút tập trung, 5 phút nghỉ.
+          <p className="text-xs leading-relaxed text-gray-600 dark:text-gray-300">
+            Thử chu kỳ Pomodoro: 25 phút tập trung và 5 phút nghỉ. Bắt đầu bằng một task nhỏ để tạo đà.
           </p>
         </div>
       </div>

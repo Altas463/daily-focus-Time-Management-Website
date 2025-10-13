@@ -5,6 +5,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { FiSave, FiTrash2, FiX, FiCalendar } from "react-icons/fi";
 import { Task } from "@/types";
+import { formatDayMonth } from "@/utils/date";
 
 type Props = {
   task: Task;
@@ -12,15 +13,6 @@ type Props = {
   onUpdate?: (id: string, data: Partial<Task>) => void;
   onDelete?: (id: string) => void;
 };
-
-function formatShortDate(date: Date | null) {
-  if (!date) return "Chọn ngày";
-  const options: Intl.DateTimeFormatOptions = {
-    day: "2-digit",
-    month: "short",
-  };
-  return date.toLocaleDateString("vi-VN", options);
-}
 
 const TaskEditModal: FC<Props> = ({ task, onClose, onUpdate, onDelete }) => {
   const [title, setTitle] = useState(task.title);
@@ -135,7 +127,7 @@ const TaskEditModal: FC<Props> = ({ task, onClose, onUpdate, onDelete }) => {
                   onClick={() => setShowStartPicker(!showStartPicker)}
                   className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-100/70 dark:bg-gray-900/70 text-gray-800 dark:text-gray-100 border border-gray-200 dark:border-gray-700 hover:bg-gray-200/80 dark:hover:bg-gray-800/80 transition font-medium"
                 >
-                  <span>{formatShortDate(startDate)}</span>
+                  <span>{formatDayMonth(startDate) || 'Chon ngay'}</span>
                 </button>
                 {showStartPicker && (
                   <div className="absolute z-40 mt-2">
@@ -162,7 +154,7 @@ const TaskEditModal: FC<Props> = ({ task, onClose, onUpdate, onDelete }) => {
                   onClick={() => setShowEndPicker(!showEndPicker)}
                   className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-100/70 dark:bg-gray-900/70 text-gray-800 dark:text-gray-100 border border-gray-200 dark:border-gray-700 hover:bg-gray-200/80 dark:hover:bg-gray-800/80 transition font-medium"
                 >
-                  <span>{formatShortDate(endDate)}</span>
+                  <span>{formatDayMonth(endDate) || 'Chon ngay'}</span>
                 </button>
                 {showEndPicker && (
                   <div className="absolute z-40 mt-2">

@@ -4,6 +4,7 @@ import { FC, useState } from "react";
 import { Task } from "@/types";
 import TaskEditModal from "./TaskEditModal";
 import { FiMoreHorizontal, FiClock } from "react-icons/fi";
+import { formatDayMonth } from "@/utils/date";
 
 type TaskCardProps = {
   task: Task;
@@ -13,12 +14,7 @@ type TaskCardProps = {
 
 const TaskCard: FC<TaskCardProps> = ({ task, onUpdate, onDelete }) => {
   const [showModal, setShowModal] = useState(false);
-
-  const formatShortDate = (dateStr?: string) => {
-    if (!dateStr) return null;
-    const date = new Date(dateStr);
-    return `${date.getDate()} thg ${date.getMonth() + 1}`;
-  };
+  const dueText = formatDayMonth(task.endDate);
 
   return (
     <>
@@ -51,7 +47,7 @@ const TaskCard: FC<TaskCardProps> = ({ task, onUpdate, onDelete }) => {
         </div>
 
         {/* Hiển thị thời gian ở góc dưới, đổi màu theo trạng thái hoàn thành */}
-        {task.endDate && (
+        {dueText && (
           <div className="mt-3">
             <span
               className={`text-xs px-2 py-0.5 rounded inline-flex items-center gap-1
@@ -63,7 +59,7 @@ const TaskCard: FC<TaskCardProps> = ({ task, onUpdate, onDelete }) => {
               `}
             >
               <FiClock />
-              {formatShortDate(task.endDate)}
+              {dueText}
             </span>
           </div>
         )}
