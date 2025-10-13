@@ -5,7 +5,7 @@ import { ReactNode } from 'react';
 type AuthPageShellProps = {
   hero: ReactNode;
   children: ReactNode;
-  stageRef: React.RefObject<HTMLDivElement>;
+  stageRef: React.RefObject<HTMLDivElement | null>;
   onMouseMove: (event: React.MouseEvent<HTMLDivElement>) => void;
   /**
    * Visual flavour for the background gradients.
