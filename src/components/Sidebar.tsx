@@ -14,6 +14,7 @@ const groups = [
     tone: 'work',
     items: [
       { href: '/dashboard/tasks', label: 'Qu???n lA? Task' },
+      { href: '/dashboard/projects', label: 'Project Hub' },
       { href: '/dashboard/pomodoro', label: 'Pomodoro Timer' },
     ],
   },
