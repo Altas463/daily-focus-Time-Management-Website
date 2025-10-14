@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState } from "react";
 import { usePomodoro } from "@/hooks/usePomodoro";
@@ -96,11 +96,11 @@ export default function PomodoroTimer({
             {mode === "work" ? "W" : "B"}
           </div>
           <div className="text-left">
-            <p className={headerTextClasses}>{mode === "work" ? "Tap trung" : "Nghi ngoi"}</p>
+            <p className={headerTextClasses}>{mode === "work" ? "Focus" : "Break"}</p>
             <p className="text-xs text-gray-500 dark:text-gray-400">
               {mode === "work"
-                ? "Hoan thanh tung muc tieu nho trong 25 phut."
-                : "Thu gian 5 phut de nap lai nang luong."}
+                ? "Work through one clear objective during this block."
+                : "Step away for a short reset to prepare for the next session."}
             </p>
           </div>
         </div>
@@ -133,7 +133,7 @@ export default function PomodoroTimer({
           </svg>
           <div className="absolute inset-0 flex flex-col items-center justify-center">
             <span className="font-mono text-4xl font-bold text-gray-900 dark:text-white">{formatTime(secondsLeft)}</span>
-            <span className="text-xs text-gray-500 dark:text-gray-400">{Math.floor(progressPercent)}% hoan thanh</span>
+            <span className="text-xs text-gray-500 dark:text-gray-400">{Math.floor(progressPercent)}% complete</span>
           </div>
         </div>
       </div>
@@ -144,10 +144,10 @@ export default function PomodoroTimer({
           className={`inline-flex flex-1 items-center justify-center gap-3 rounded-lg px-6 py-4 text-sm font-semibold transition focus:outline-none focus:ring-2 focus:ring-blue-300 ${
             focusMode ? "bg-gray-900 text-white hover:bg-gray-800" : "bg-blue-600 text-white hover:bg-blue-700"
           }`}
-          aria-label={isRunning ? "Tam dung hen gio" : "Bat dau hen gio"}
+          aria-label={isRunning ? "Pause timer" : "Start timer"}
         >
           <span className="text-xl">{isRunning ? "||" : ">"}</span>
-          <span>{isRunning ? "Tam dung" : "Bat dau"}</span>
+          <span>{isRunning ? "Pause" : "Start"}</span>
         </button>
 
         <button
@@ -157,9 +157,9 @@ export default function PomodoroTimer({
               ? "border-gray-700 bg-gray-800 text-white hover:bg-gray-700"
               : "border-gray-300 bg-white text-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
           }`}
-          aria-label="Dat lai hen gio"
+          aria-label="Reset timer"
         >
-          <span className="text-xl">R</span>
+          <span className="text-xl">↺</span>
           <span>Reset</span>
         </button>
       </div>
@@ -167,11 +167,9 @@ export default function PomodoroTimer({
       {!focusMode && (
         <div className="text-center text-sm text-gray-600 dark:text-gray-400">
           <div className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-gray-100 px-4 py-2 dark:border-gray-700 dark:bg-gray-800">
-            <span
-              className={`h-2 w-2 rounded-full ${isRunning ? "bg-green-500 animate-pulse" : "bg-gray-400"}`}
-            />
+            <span className={`h-2 w-2 rounded-full ${isRunning ? "bg-green-500 animate-pulse" : "bg-gray-400"}`} />
             <span>
-              {isRunning ? "Dang chay" : "Da dung"} � {mode === "work" ? `${workMinutes} phut lam viec` : `${breakMinutes} phut nghi`}
+              {isRunning ? "Running" : "Stopped"} • {mode === "work" ? `${workMinutes} minute focus` : `${breakMinutes} minute break`}
             </span>
           </div>
         </div>
