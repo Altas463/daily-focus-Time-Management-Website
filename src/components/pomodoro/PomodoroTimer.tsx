@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useEffect, useState } from "react";
 import { usePomodoro } from "@/hooks/usePomodoro";
@@ -66,14 +66,27 @@ export default function PomodoroTimer({
   const progressPercent = totalSeconds === 0 ? 0 : ((totalSeconds - secondsLeft) / totalSeconds) * 100;
 
   const containerClasses = focusMode
-    ? "flex w-full max-w-xl flex-col items-center gap-8"
+    ? "flex w-full max-w-xl flex-col items-center gap-10"
     : "mx-auto flex w-full max-w-lg flex-col items-center gap-8";
 
   const modeCardClasses = focusMode
-    ? "inline-flex items-center gap-3 rounded-lg border border-gray-800 bg-gray-900 px-6 py-3 text-white"
+    ? "inline-flex items-center gap-3 rounded-2xl border border-white/10 bg-white/10 px-6 py-4 text-white shadow-lg shadow-blue-500/10 backdrop-blur"
     : "inline-flex items-center gap-3 rounded-lg border border-gray-200 bg-gray-100 px-6 py-3 text-gray-900 dark:border-gray-700 dark:bg-gray-800 dark:text-white";
 
-  const headerTextClasses = focusMode ? "text-2xl font-semibold" : "text-lg font-semibold";
+  const headerTextClasses = focusMode ? "text-3xl font-semibold" : "text-lg font-semibold";
+  const descriptionTextClasses = focusMode ? "text-xs text-slate-200/70" : "text-xs text-gray-500 dark:text-gray-400";
+  const timerShellClasses = focusMode
+    ? "relative mx-auto mb-6 h-64 w-64 sm:h-72 sm:w-72"
+    : "relative mx-auto mb-6 h-56 w-56 sm:h-64 sm:w-64";
+
+  const baseStrokeColor = focusMode ? "rgba(255,255,255,0.18)" : "#E2E8F0";
+  const progressStrokeColor = focusMode
+    ? mode === "work"
+      ? "rgba(56,189,248,0.9)"
+      : "rgba(251,191,36,0.9)"
+    : mode === "work"
+      ? "#2563EB"
+      : "#F59E0B";
 
   return (
     <div className={containerClasses}>
@@ -89,15 +102,15 @@ export default function PomodoroTimer({
       <div className="text-center">
         <div className={modeCardClasses}>
           <div
-            className={`flex h-8 w-8 items-center justify-center rounded-lg text-sm font-semibold text-white ${
-              mode === "work" ? "bg-green-500" : "bg-yellow-500"
+            className={`flex h-9 w-9 items-center justify-center rounded-xl text-sm font-semibold text-white ${
+              mode === "work" ? "bg-emerald-500" : "bg-amber-500"
             }`}
           >
             {mode === "work" ? "W" : "B"}
           </div>
           <div className="text-left">
             <p className={headerTextClasses}>{mode === "work" ? "Focus" : "Break"}</p>
-            <p className="text-xs text-gray-500 dark:text-gray-400">
+            <p className={descriptionTextClasses}>
               {mode === "work"
                 ? "Work through one clear objective during this block."
                 : "Step away for a short reset to prepare for the next session."}
@@ -107,7 +120,7 @@ export default function PomodoroTimer({
       </div>
 
       <div className={`w-full ${focusMode ? "max-w-xl" : "max-w-sm"}`}>
-        <div className="relative mx-auto mb-6 h-56 w-56 sm:h-64 sm:w-64">
+        <div className={timerShellClasses}>
           <svg
             className="h-full w-full -rotate-90"
             viewBox="0 0 120 120"
@@ -117,12 +130,12 @@ export default function PomodoroTimer({
             aria-valuenow={Math.floor(progressPercent)}
             aria-label="Progress timer"
           >
-            <circle cx="60" cy="60" r="54" stroke="#E2E8F0" strokeWidth="8" fill="none" className="dark:stroke-gray-600" />
+            <circle cx="60" cy="60" r="54" stroke={baseStrokeColor} strokeWidth="8" fill="none" />
             <circle
               cx="60"
               cy="60"
               r="54"
-              stroke={mode === "work" ? "#2563EB" : "#F59E0B"}
+              stroke={progressStrokeColor}
               strokeWidth="8"
               fill="none"
               strokeDasharray={2 * Math.PI * 54}
@@ -132,8 +145,12 @@ export default function PomodoroTimer({
             />
           </svg>
           <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <span className="font-mono text-4xl font-bold text-gray-900 dark:text-white">{formatTime(secondsLeft)}</span>
-            <span className="text-xs text-gray-500 dark:text-gray-400">{Math.floor(progressPercent)}% complete</span>
+            <span className={`font-mono text-4xl font-bold ${focusMode ? "text-white" : "text-gray-900 dark:text-white"}`}>
+              {formatTime(secondsLeft)}
+            </span>
+            <span className={`text-xs ${focusMode ? "text-slate-200/70" : "text-gray-500 dark:text-gray-400"}`}>
+              {Math.floor(progressPercent)}% complete
+            </span>
           </div>
         </div>
       </div>
@@ -141,26 +158,28 @@ export default function PomodoroTimer({
       <div className={`flex w-full gap-4 ${focusMode ? "max-w-md" : "max-w-sm"}`}>
         <button
           onClick={isRunning ? pause : start}
-          className={`inline-flex flex-1 items-center justify-center gap-3 rounded-lg px-6 py-4 text-sm font-semibold transition focus:outline-none focus:ring-2 focus:ring-blue-300 ${
-            focusMode ? "bg-gray-900 text-white hover:bg-gray-800" : "bg-blue-600 text-white hover:bg-blue-700"
-          }`}
+          className={[
+            "inline-flex flex-1 items-center justify-center rounded-lg px-6 py-4 text-base font-semibold transition focus:outline-none focus:ring-2",
+            focusMode
+              ? "bg-white/90 text-slate-900 hover:bg-white focus:ring-blue-200/40"
+              : "bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-300",
+          ].join(" ")}
           aria-label={isRunning ? "Pause timer" : "Start timer"}
         >
-          <span className="text-xl">{isRunning ? "||" : ">"}</span>
-          <span>{isRunning ? "Pause" : "Start"}</span>
+          {isRunning ? "Pause" : "Start"}
         </button>
 
         <button
           onClick={reset}
-          className={`inline-flex flex-1 items-center justify-center gap-3 rounded-lg border px-6 py-4 text-sm font-semibold transition focus:outline-none focus:ring-2 focus:ring-gray-300 ${
+          className={[
+            "inline-flex flex-1 items-center justify-center rounded-lg border px-6 py-4 text-base font-semibold transition focus:outline-none focus:ring-2 focus:ring-gray-300",
             focusMode
-              ? "border-gray-700 bg-gray-800 text-white hover:bg-gray-700"
-              : "border-gray-300 bg-white text-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
-          }`}
+              ? "border-white/20 bg-white/5 text-white hover:bg-white/10 focus:ring-blue-200/40"
+              : "border-gray-300 bg-white text-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700",
+          ].join(" ")}
           aria-label="Reset timer"
         >
-          <span className="text-xl">↺</span>
-          <span>Reset</span>
+          Reset
         </button>
       </div>
 
@@ -169,7 +188,7 @@ export default function PomodoroTimer({
           <div className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-gray-100 px-4 py-2 dark:border-gray-700 dark:bg-gray-800">
             <span className={`h-2 w-2 rounded-full ${isRunning ? "bg-green-500 animate-pulse" : "bg-gray-400"}`} />
             <span>
-              {isRunning ? "Running" : "Stopped"} • {mode === "work" ? `${workMinutes} minute focus` : `${breakMinutes} minute break`}
+              {isRunning ? "Running" : "Stopped"} - {mode === "work" ? `${workMinutes} minute focus` : `${breakMinutes} minute break`}
             </span>
           </div>
         </div>
