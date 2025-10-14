@@ -1,4 +1,4 @@
-import Link from 'next/link';
+ï»¿import Link from 'next/link';
 
 const sections = [
   {
@@ -66,7 +66,7 @@ export default function PrivacyPage() {
         </main>
 
         <footer className="text-xs text-gray-500 dark:text-gray-400">
-          Last updated {new Date().getFullYear()} · Daily Focus commits to reviewing this policy at least once per year.
+          Last updated {new Date().getFullYear()} - Daily Focus commits to reviewing this policy at least once per year.
         </footer>
       </div>
     </div>

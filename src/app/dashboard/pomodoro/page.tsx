@@ -1,3 +1,5 @@
+'use client';
+
 import BackToDashboardLink from '@/components/BackToDashboardLink';
 import FocusSoundscape from '@/components/pomodoro/FocusSoundscape';
 import PomodoroTimer from '@/components/pomodoro/PomodoroTimer';
