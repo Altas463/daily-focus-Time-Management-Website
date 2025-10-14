@@ -41,6 +41,17 @@ type ProjectTemplate = {
   highlights: string[];
 };
 
+type FocusSuggestion = {
+  projectId: string;
+  title: string;
+  summary: string;
+  accent: ProjectCard['accent'];
+  score: number;
+  stage: string;
+  priority: 'Critical focus' | 'High focus' | 'Worth a look' | 'On track';
+  dueLabel: string;
+};
+
 const accentPalette: Record<ProjectCard['accent'], string> = {
   emerald: '#10b981',
   blue: '#3b82f6',
@@ -411,6 +422,90 @@ const templates: ProjectTemplate[] = [
   },
 ];
 
+const DAY_IN_MS = 1000 * 60 * 60 * 24;
+
+function buildFocusSuggestions(projects: ProjectCard[], limit = 3): FocusSuggestion[] {
+  const today = new Date();
+  return projects
+    .map((project) => {
+      const due = new Date(project.dueDate);
+      const hasValidDue = !Number.isNaN(due.getTime());
+      const daysUntilDue = hasValidDue
+        ? Math.round((due.getTime() - today.getTime()) / DAY_IN_MS)
+        : null;
+
+      let dueScore = 30;
+      if (hasValidDue && daysUntilDue !== null) {
+        if (daysUntilDue < 0) dueScore = 95;
+        else if (daysUntilDue === 0) dueScore = 85;
+        else if (daysUntilDue <= 2) dueScore = 75;
+        else if (daysUntilDue <= 7) dueScore = 55;
+        else if (daysUntilDue <= 14) dueScore = 40;
+        else dueScore = 25;
+      }
+
+      const progressScore = Math.max(0, 100 - project.progress);
+      const reviewBoost = project.tasks.some((task) => task.status === 'review') ? 12 : 0;
+      const todoCount = project.tasks.filter((task) => task.status === 'todo').length;
+      const todoBoost = Math.min(todoCount * 4, 16);
+
+      const score = Math.round(dueScore * 0.5 + progressScore * 0.4 + reviewBoost + todoBoost);
+
+      const duePhrase = (() => {
+        if (!hasValidDue || daysUntilDue === null) return 'No due date yet';
+        if (daysUntilDue < 0) {
+          const overdueDays = Math.abs(daysUntilDue);
+          return `Overdue by ${overdueDays} day${overdueDays === 1 ? '' : 's'}`;
+        }
+        if (daysUntilDue === 0) return 'Due today';
+        if (daysUntilDue === 1) return 'Due tomorrow';
+        return `Due in ${daysUntilDue} days`;
+      })();
+
+      const progressPhrase =
+        project.progress < 40
+          ? `Only ${project.progress}% complete`
+          : project.progress < 70
+            ? `${project.progress}% complete`
+            : `Tracking at ${project.progress}%`;
+
+      const reviewPhrase = project.tasks.some((task) => task.status === 'review')
+        ? 'Review requested'
+        : todoCount > 0
+          ? `${todoCount} task${todoCount === 1 ? '' : 's'} still todo`
+          : 'Tasks on track';
+
+      const summary = `${duePhrase}. ${progressPhrase}. ${reviewPhrase}.`;
+
+      const priority: FocusSuggestion['priority'] =
+        score >= 85
+          ? 'Critical focus'
+          : score >= 65
+            ? 'High focus'
+            : score >= 45
+              ? 'Worth a look'
+              : 'On track';
+
+      const dueLabel =
+        hasValidDue && daysUntilDue !== null
+          ? formatShortDate(due)
+          : 'No due date';
+
+      return {
+        projectId: project.id,
+        title: project.name,
+        summary,
+        accent: project.accent,
+        score,
+        stage: project.stage,
+        priority,
+        dueLabel,
+      };
+    })
+    .sort((a, b) => b.score - a.score)
+    .slice(0, limit);
+}
+
 function ProjectProgressRing({ value, accent }: { value: number; accent: ProjectCard['accent'] }) {
   const safeValue = Number.isFinite(value) ? Math.min(Math.max(value, 0), 100) : 0;
   const radius = 26;
@@ -475,6 +570,11 @@ export default function ProjectsPage() {
     return { totalProjects, averageProgress, dueSoonCount, reviewCount };
   }, [projectList]);
 
+  const focusSuggestions = useMemo(
+    () => buildFocusSuggestions(projectList),
+    [projectList],
+  );
+
   return (
     <div className="mx-auto flex max-w-7xl flex-col gap-8">
       <BackToDashboardLink />
@@ -525,6 +625,61 @@ export default function ProjectsPage() {
           <StatCard label="Reviews pending" value={stats.reviewCount} />
         </section>
       </header>
+
+      <section className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900">
+        <header className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+          <div>
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+              Focus suggestions
+            </h2>
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              Prioritised projects based on due dates, progress, and review load.
+            </p>
+          </div>
+          <span className="text-xs uppercase tracking-[0.24em] text-gray-400 dark:text-gray-500">
+            Dynamic insights per persona board
+          </span>
+        </header>
+
+        {focusSuggestions.length > 0 ? (
+          <div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+            {focusSuggestions.map((suggestion) => (
+              <article
+                key={suggestion.projectId}
+                className="relative overflow-hidden rounded-3xl border border-gray-200 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-lg dark:border-gray-800 dark:bg-gray-900"
+              >
+                <span
+                  aria-hidden
+                  className="absolute inset-x-0 top-0 h-1"
+                  style={{ background: accentPalette[suggestion.accent] }}
+                />
+                <div className="flex items-center justify-between gap-3">
+                  <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                    {suggestion.title}
+                  </h3>
+                  <span className="rounded-full border border-gray-200 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-gray-500 dark:border-gray-700 dark:text-gray-300">
+                    {suggestion.priority}
+                  </span>
+                </div>
+                <p className="mt-3 text-xs leading-relaxed text-gray-600 dark:text-gray-300">
+                  {suggestion.summary}
+                </p>
+                <div className="mt-4 flex flex-wrap items-center justify-between gap-3 text-xs text-gray-500 dark:text-gray-400">
+                  <span className="font-medium text-gray-600 dark:text-gray-300">{suggestion.stage}</span>
+                  <span>{suggestion.dueLabel}</span>
+                  <span className="rounded-full bg-gray-100 px-2 py-0.5 font-semibold text-gray-600 dark:bg-gray-800 dark:text-gray-300">
+                    Score {suggestion.score}
+                  </span>
+                </div>
+              </article>
+            ))}
+          </div>
+        ) : (
+          <p className="mt-4 text-sm text-gray-500 dark:text-gray-400">
+            All projects are tracking smoothly.
+          </p>
+        )}
+      </section>
 
       <section aria-label="Project Kanban board" className="flex flex-col gap-4">
         <div className="flex items-center justify-between">
