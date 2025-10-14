@@ -112,3 +112,13 @@ export function isTaskDueSoon(
   const diffInDays = Math.ceil((due.getTime() - now.getTime()) / MS_IN_DAY);
   return diffInDays >= 0 && diffInDays <= windowInDays;
 }
+
+export function findNextDueTask<T extends TaskLike>(tasks: T[], now: Date = new Date()): T | undefined {
+  return tasks
+    .filter((task) => !task.completed && task.endDate)
+    .map((task) => ({ task, dueTime: new Date(task.endDate as string).getTime() }))
+    .filter(({ dueTime }) => Number.isFinite(dueTime))
+    .sort((a, b) => a.dueTime - b.dueTime)
+    .find(({ dueTime }) => dueTime >= now.getTime())
+    ?.task;
+}

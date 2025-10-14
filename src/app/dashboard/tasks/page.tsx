@@ -16,8 +16,9 @@ import {
   TaskUrgency,
   isTaskDueSoon,
   isTaskOverdue,
+  findNextDueTask,
 } from "@/utils/tasks";
-import { formatRelativeDate } from "@/utils/date";
+import { formatRelativeDate, formatShortDate } from "@/utils/date";
 
 type Task = {
   id: string;
@@ -262,6 +263,8 @@ export default function TasksPage() {
     return base;
   }, [filteredTasks, filter]);
 
+  const nextDueTask = useMemo(() => findNextDueTask(columns.incomplete), [columns.incomplete]);
+
   const filterOptions = [
     { key: "all", label: "Tat ca" },
     { key: "dueSoon", label: "Sap den han" },
@@ -334,7 +337,10 @@ export default function TasksPage() {
 
           <div className="rounded-lg border border-gray-200 bg-white p-5 shadow-sm dark:border-gray-800 dark:bg-gray-900">
             <p className="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
-              Mau nhanh
+              Quick templates
+            </p>
+            <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+              Press Alt + N to open the form instantly.
             </p>
             <div className="mt-2 flex flex-wrap gap-2">
               {quickTemplates.map((template) => (
@@ -348,6 +354,20 @@ export default function TasksPage() {
               ))}
             </div>
           </div>
+
+          {nextDueTask && (
+            <div className="rounded-lg border border-gray-200 bg-white p-5 shadow-sm dark:border-gray-800 dark:bg-gray-900">
+              <p className="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
+                Upcoming deadline
+              </p>
+              <p className="mt-1 text-sm font-medium text-gray-900 dark:text-white">{nextDueTask.title}</p>
+              {nextDueTask.endDate && (
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  Due {formatRelativeDate(nextDueTask.endDate)} • {formatShortDate(new Date(nextDueTask.endDate))}
+                </p>
+              )}
+            </div>
+          )}
 
           <DragDropContext onDragEnd={onDragEnd}>
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
@@ -537,4 +557,11 @@ export default function TasksPage() {
     </div>
   );
 }
+
+
+
+
+
+
+
 

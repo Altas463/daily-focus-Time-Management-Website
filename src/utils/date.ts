@@ -58,3 +58,11 @@ export function differenceInCalendarDays(a: Date, b: Date): number {
   const diffInMs = startOfA.getTime() - startOfB.getTime();
   return Math.round(diffInMs / (1000 * 60 * 60 * 24));
 }
+
+export function formatShortDay(date: Date, locale: string = 'en-US'): string {
+  return new Intl.DateTimeFormat(locale, { weekday: 'short' }).format(date);
+}
+
+export function formatShortDate(date: Date, locale: string = 'en-US'): string {
+  return new Intl.DateTimeFormat(locale, { month: 'short', day: 'numeric' }).format(date);
+}

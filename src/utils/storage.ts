@@ -16,7 +16,7 @@ export function readFromStorage<T>(key: string, fallback: T, converter?: Convert
   }
 }
 
-export function writeToStorage<T>(key: string, value: T) {
+export function writeToStorageInternal<T>(key: string, value: T) {
   if (!isBrowser) return;
   try {
     const payload = typeof value === "string" ? value : JSON.stringify(value);
@@ -26,11 +26,19 @@ export function writeToStorage<T>(key: string, value: T) {
   }
 }
 
-export function removeFromStorage(key: string) {
+export function removeFromStorageInternal(key: string) {
   if (!isBrowser) return;
   try {
     window.localStorage.removeItem(key);
   } catch {
     // ignore
   }
+}
+
+export function writeToStorage<T>(key: string, value: T) {
+  writeToStorageInternal(key, value);
+}
+
+export function removeFromStorage(key: string) {
+  removeFromStorageInternal(key);
 }

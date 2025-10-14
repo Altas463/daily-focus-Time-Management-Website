@@ -1,181 +1,201 @@
-'use client';
+﻿'use client';
 
 import Navbar from '@/components/navbar/Navbar';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
+
+const featureHighlights = [
+  {
+    title: 'Simple by default',
+    description: 'Plan your day with a lightweight board and let Daily Focus handle the structure.',
+  },
+  {
+    title: 'Keep streaks visible',
+    description: 'See how many days in a row you stayed on track to maintain momentum.',
+  },
+  {
+    title: 'Focus without friction',
+    description: 'Use the Pomodoro timer, quick task templates, and keyboard shortcuts to stay in flow.',
+  },
+];
+
+const whatYouGet = [
+  {
+    title: 'Task management',
+    description: 'Organise work by status, due date, and urgency. Drag and drop across columns with confidence.',
+  },
+  {
+    title: 'Pomodoro timer',
+    description: 'Switch between focus and break intervals, track progress, and log completed sessions automatically.',
+  },
+  {
+    title: 'Daily insights',
+    description: 'Review streaks, upcoming deadlines, and balanced focus time from a single dashboard.',
+  },
+];
+
+const quickLinks = [
+  { href: '/dashboard', label: 'Explore the dashboard' },
+  { href: '/privacy', label: 'Read our privacy commitments' },
+  { href: '/terms', label: 'Review terms of service' },
+  { href: '/contact', label: 'Get in touch' },
+];
 
 export default function HomePage() {
   return (
     <div className="relative min-h-screen bg-white text-gray-900 dark:bg-gray-950 dark:text-white">
       <Navbar />
 
-      {/* HERO */}
-      <section className="relative px-6 pt-24">
+      <section className="px-6 pt-24">
         <div className="mx-auto grid max-w-7xl gap-10 md:grid-cols-2 md:items-center">
           <div>
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="inline-flex items-center rounded-full border border-gray-200 bg-white px-3 py-1 text-xs font-medium text-gray-700  dark:border-white/10 dark:bg-white/5 dark:text-gray-200"
-            >
-              Tối giản — Tập trung — Hiệu quả
-            </motion.div>
-
-            <motion.h1
+            <motion.span
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.05 }}
-              className="mt-4 text-balance text-5xl font-extrabold leading-tight tracking-tight md:text-6xl"
+              transition={{ duration: 0.6 }}
+              className="inline-flex items-center rounded-full border border-gray-200 bg-white px-3 py-1 text-xs font-medium text-gray-700 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-300"
             >
-              Daily Focus
-              <span className="block text-3xl font-medium text-gray-600 dark:text-gray-300 md:text-4xl">
-                Quản lý thời gian theo cách hiện đại
-              </span>
+              Focus better. Finish smarter.
+            </motion.span>
+
+            <motion.h1
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.05 }}
+              className="mt-4 text-5xl font-bold leading-tight md:text-6xl"
+            >
+              Structure your day without the noise.
             </motion.h1>
 
             <motion.p
-              initial={{ opacity: 0, y: 12 }}
+              initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-              className="mt-6 max-w-xl text-pretty text-lg leading-relaxed text-gray-600 dark:text-gray-300"
+              transition={{ duration: 0.6, delay: 0.12 }}
+              className="mt-6 max-w-xl text-lg leading-relaxed text-gray-600 dark:text-gray-300"
             >
-              Giao diện tinh gọn giúp bạn tập trung vào công việc quan trọng và theo dõi tiến độ một cách rõ ràng.
+              Daily Focus helps you plan, execute, and review what matters. Reduce clutter, maintain healthy workflows,
+              and keep your goals visible at a glance.
             </motion.p>
 
             <motion.div
-              initial={{ opacity: 0, y: 10 }}
+              initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.15 }}
+              transition={{ duration: 0.6, delay: 0.18 }}
               className="mt-8 flex flex-col gap-3 sm:flex-row"
             >
               <Link
                 href="/auth/register"
-                className="inline-flex items-center justify-center rounded-xl bg-gray-900 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-black dark:bg-white dark:text-gray-900"
+                className="inline-flex items-center justify-center rounded-lg bg-gray-900 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-gray-800 dark:bg-white dark:text-gray-900"
               >
-                Bắt đầu ngay
+                Start for free
               </Link>
               <Link
                 href="/dashboard"
-                className="inline-flex items-center justify-center rounded-xl border border-gray-200 bg-white px-6 py-3 text-sm font-semibold text-gray-900 transition hover:-translate-y-0.5 hover:bg-gray-50 dark:border-white/10 dark:bg-white/5 dark:text-white"
+                className="inline-flex items-center justify-center rounded-lg border border-gray-200 bg-white px-6 py-3 text-sm font-semibold text-gray-900 transition hover:-translate-y-0.5 hover:bg-gray-50 dark:border-gray-800 dark:bg-gray-900 dark:text-white"
               >
-                Xem thử Dashboard
+                View the demo dashboard
               </Link>
             </motion.div>
-
-            {/* quick tags (an toàn, không yêu cầu feature mới) */}
-            <motion.ul
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              className="mt-8 flex flex-wrap gap-2 text-xs text-gray-600 dark:text-gray-400"
-            >
-              {['Tập trung', 'Nhịp làm việc rõ ràng', 'Giao diện sạch', 'Dark/Light Mode'].map((i) => (
-                <li key={i} className="rounded-full border border-gray-200 px-3 py-1 dark:border-white/10">
-                  {i}
-                </li>
-              ))}
-            </motion.ul>
           </div>
 
-          {/* visual preview only */}
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.1 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
             className="order-first md:order-none"
           >
-            <div className="mx-auto w-full max-w-md rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-white/5">
-              <div className="mb-3 flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
-                <span>Bản xem trước</span>
-                <span>Giao diện</span>
-              </div>
-              <div className="grid grid-cols-4 gap-3">
-                {Array.from({ length: 8 }).map((_, i) => (
-                  <div key={i} className="h-20 rounded-lg border border-gray-200/80 bg-gray-50 dark:border-white/10 dark:bg-white/10" />
-                ))}
-              </div>
-              <div className="mt-6 grid grid-cols-3 gap-3 text-center text-sm">
-                {['Rõ ràng', 'Tối giản', 'Nhất quán'].map((l) => (
-                  <div key={l} className="rounded-lg border border-gray-200 bg-gray-50 p-3 dark:border-white/10 dark:bg-white/10">
-                    {l}
-                  </div>
-                ))}
-              </div>
+            <div className="mx-auto w-full max-w-md rounded-xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900">
+              <div className="text-xs font-medium text-gray-500 dark:text-gray-400">Inside your workspace</div>
+              <ul className="mt-4 space-y-2 text-sm text-gray-600 dark:text-gray-300">
+                <li className="rounded-lg border border-gray-200 bg-gray-50 px-4 py-2 dark:border-gray-700 dark:bg-gray-800">
+                  Visual Kanban board with drag-and-drop
+                </li>
+                <li className="rounded-lg border border-gray-200 bg-gray-50 px-4 py-2 dark:border-gray-700 dark:bg-gray-800">
+                  Built-in Pomodoro timer with session history
+                </li>
+                <li className="rounded-lg border border-gray-200 bg-gray-50 px-4 py-2 dark:border-gray-700 dark:bg-gray-800">
+                  Daily streaks and upcoming deadline alerts
+                </li>
+              </ul>
             </div>
           </motion.div>
         </div>
       </section>
 
-      {/* PRINCIPLES — nội dung tĩnh, không đòi hỏi tính năng */}
-      <section className="relative border-t border-gray-200 bg-white px-6 py-20 dark:border-white/10 dark:bg-gray-950">
+      <section className="border-t border-gray-200 bg-white px-6 py-20 dark:border-gray-800 dark:bg-gray-950">
         <div className="mx-auto max-w-7xl">
           <div className="mx-auto mb-12 max-w-2xl text-center">
-            <h2 className="text-3xl font-bold tracking-tight md:text-4xl">Nguyên tắc thiết kế</h2>
+            <h2 className="text-3xl font-semibold md:text-4xl">Why teams rely on Daily Focus</h2>
             <p className="mt-3 text-base text-gray-600 dark:text-gray-300">
-              Những nguyên tắc cốt lõi định hình trải nghiệm — không hứa hẹn tính năng, chỉ nói về cách tiếp cận.
+              Purpose-built for solo executives, product squads, and remote teams who want clarity without complexity.
             </p>
           </div>
 
           <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
-            {[
-              {
-                t: 'Tối giản có chủ đích',
-                d: 'Chỉ giữ lại phần cần thiết để hỗ trợ sự tập trung và giảm nhiễu.',
-              },
-              {
-                t: 'Khả đọc & phân cấp',
-                d: 'Sử dụng khoảng trắng, cỡ chữ, và tương phản để dẫn dắt ánh nhìn.',
-              },
-              {
-                t: 'Nhất quán',
-                d: 'Mẫu card, lưới, và tương tác lặp lại hợp lý giúp làm quen nhanh.',
-              },
-            ].map((f) => (
-              <motion.div
-                key={f.t}
-                initial={{ opacity: 0, y: 14 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-50px' }}
-                transition={{ duration: 0.5 }}
-                className="rounded-xl border border-gray-200 bg-white p-6 transition hover:-translate-y-0.5 hover:shadow-sm dark:border-white/10 dark:bg-white/5"
+            {featureHighlights.map((feature) => (
+              <div
+                key={feature.title}
+                className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md dark:border-gray-800 dark:bg-gray-900"
               >
-                <h3 className="text-lg font-semibold">{f.t}</h3>
-                <p className="mt-2 text-sm leading-6 text-gray-600 dark:text-gray-300">{f.d}</p>
-              </motion.div>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{feature.title}</h3>
+                <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">{feature.description}</p>
+              </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* HOW TO USE — mẹo chung, không yêu cầu hệ thống thực thi */}
-      <section className="relative px-6 py-20">
-        <div className="mx-auto max-w-6xl">
-          <div className="mb-8 text-center">
-            <h2 className="text-3xl font-bold tracking-tight md:text-4xl">Mẹo sử dụng hiệu quả</h2>
+      <section className="px-6 py-20">
+        <div className="mx-auto grid max-w-7xl gap-12 md:grid-cols-2 md:items-center">
+          <div>
+            <h2 className="text-3xl font-semibold text-gray-900 dark:text-white">Everything you need to stay on track</h2>
+            <p className="mt-4 text-base text-gray-600 dark:text-gray-300">
+              Switch seamlessly between planning and doing. Daily Focus keeps context close, surfaces what is due next,
+              and highlights the progress you are making every week.
+            </p>
+            <div className="mt-6 flex flex-wrap gap-3 text-xs text-gray-600 dark:text-gray-300">
+              {['Plan smarter', 'Track consistently', 'Celebrate progress'].map((tag) => (
+                <span key={tag} className="rounded-full border border-gray-200 px-3 py-1 dark:border-gray-700">
+                  {tag}
+                </span>
+              ))}
+            </div>
           </div>
-
-          <ul className="mx-auto grid max-w-3xl gap-4 text-sm text-gray-700 dark:text-gray-300">
-            {[
-              'Chia nhỏ việc lớn thành bước có thể hoàn thành trong 20–30 phút.',
-              'Ghi chú ngắn gọn mục tiêu trước mỗi phiên làm việc.',
-              'Đặt giờ nghỉ ngắn đều đặn để duy trì sự tỉnh táo.',
-              'Tắt thông báo không cần thiết trên hệ điều hành khi cần tập trung.',
-            ].map((tip) => (
-              <li key={tip} className="rounded-xl border border-gray-200 p-4 dark:border-white/10">
-                {tip}
-              </li>
+          <div className="grid gap-4">
+            {whatYouGet.map((item) => (
+              <div
+                key={item.title}
+                className="rounded-lg border border-gray-200 bg-white p-5 shadow-sm dark:border-gray-800 dark:bg-gray-900"
+              >
+                <h3 className="text-base font-semibold text-gray-900 dark:text-white">{item.title}</h3>
+                <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">{item.description}</p>
+              </div>
             ))}
-          </ul>
+          </div>
         </div>
       </section>
 
-      {/* FOOTER */}
-      <footer className="border-t border-gray-200 py-12 text-center dark:border-white/10">
+      <section className="border-t border-gray-200 bg-white px-6 py-16 dark:border-gray-800 dark:bg-gray-950">
+        <div className="mx-auto max-w-5xl text-center">
+          <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">Curious about the details?</h2>
+          <p className="mt-3 text-sm text-gray-600 dark:text-gray-300">
+            We believe in transparency. Learn how we protect your data, how we operate, and how you can reach us.
+          </p>
+          <div className="mt-6 flex flex-col items-center justify-center gap-3 text-sm text-blue-600 dark:text-blue-400 sm:flex-row">
+            {quickLinks.map((link) => (
+              <Link key={link.href} href={link.href} className="hover:underline">
+                {link.label}
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <footer className="border-t border-gray-200 py-12 text-center dark:border-gray-800">
         <div className="mx-auto max-w-4xl px-6">
           <div className="mb-4">
-            <h4 className="text-2xl font-bold">Daily Focus</h4>
-            <p className="mt-1 text-gray-600 dark:text-gray-400">Gọn gàng, rõ ràng, dễ tập trung.</p>
+            <h4 className="text-2xl font-bold text-gray-900 dark:text-white">Daily Focus</h4>
+            <p className="mt-1 text-gray-600 dark:text-gray-400">Stay organised. Stay present.</p>
           </div>
           <div className="mb-6 flex items-center justify-center gap-4 text-sm text-gray-500 dark:text-gray-400">
             <Link href="/privacy" className="hover:underline">Privacy</Link>
@@ -184,7 +204,7 @@ export default function HomePage() {
             <span>•</span>
             <Link href="/contact" className="hover:underline">Contact</Link>
           </div>
-          <p className="text-xs text-gray-500 dark:text-gray-500">© {new Date().getFullYear()} Daily Focus</p>
+          <p className="text-xs text-gray-500 dark:text-gray-500">© {new Date().getFullYear()} Daily Focus. All rights reserved.</p>
         </div>
       </footer>
     </div>

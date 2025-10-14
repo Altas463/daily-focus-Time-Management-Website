@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import PomodoroTimer from "@/components/pomodoro/PomodoroTimer";
-import { getDaypartGreeting, formatRelativeDate } from "@/utils/date";
+import { getDaypartGreeting, formatRelativeDate, formatShortDate } from "@/utils/date";
 import { getTaskUrgency, summarizeTasks, TaskUrgency } from "@/utils/tasks";
 import { getFocusTimeProgress, getPomodoroProgress } from "@/utils/pomodoro";
 import { clamp, formatDuration, pluralize } from "@/utils/format";
@@ -52,7 +52,7 @@ export default function DashboardPage() {
   const [pomodoroCount, setPomodoroCount] = useState(0);
   const [focusTimeMinutes, setFocusTimeMinutes] = useState(0);
   const [completedTodayCount, setCompletedTodayCount] = useState(0);
-  const { streak } = useDailyStreak();
+  const { streak, bestStreak, lastVisit } = useDailyStreak();
 
   useEffect(() => {
     if (status === "loading") return;
@@ -156,45 +156,45 @@ export default function DashboardPage() {
         <motion.section initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.05 }} className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-5">
           {[
             {
-              label: "Chuoi tap trung",
+              label: "Focus streak",
               value: pluralize(streak, "day", "days"),
               progress: clamp((streak / 14) * 100, 0, 100),
               barColor: "bg-slate-900",
-              helper: streak >= 3 ? "B?n dang duy tr� phong d?" : "Ho�n th�nh m?t phi�n h�m nay d? b?t d?u chu?i",
+              helper: streak >= 3 ? `Best streak ${bestStreak} days` : `Last check-in ${formatShortDate(lastVisit)}`,
             },
             {
-              label: "Task hoan thanh hom nay",
+              label: "Tasks completed today",
               value: completedTodayCount,
               progress: clamp((completedTodayCount / Math.max(taskSummary.total, 1)) * 100, 0, 100),
               barColor: "bg-emerald-600",
-              helper: pluralize(taskSummary.total, "task c?n theo d�i", "tasks c?n theo d�i"),
+              helper: pluralize(taskSummary.total, "task tracked", "tasks tracked"),
             },
             {
-              label: "Task sap den han",
+              label: "Tasks due soon",
               value: taskSummary.dueSoon,
               progress: clamp((taskSummary.dueSoon / Math.max(taskSummary.incomplete, 1)) * 100, 0, 100),
               barColor: "bg-amber-500",
-              helper: pluralize(taskSummary.overdue, "task qu� h?n", "tasks qu� h?n"),
+              helper: pluralize(taskSummary.overdue, "task overdue", "tasks overdue"),
             },
             {
-              label: "So luong Pomodoro",
+              label: "Pomodoro sessions",
               value: pomodoroCount,
               progress: pomodoroProgress,
               barColor: "bg-blue-600",
               helper:
                 pomodoroRemaining > 0
-                  ? pluralize(pomodoroRemaining, "phi�n d? ch?m m?c ti�u", "phi�n d? ch?m m?c ti�u")
-                  : "Ho�n th�nh m?c ti�u tu?n",
+                  ? pluralize(pomodoroRemaining, "session to reach goal", "sessions to reach goal")
+                  : "Goal completed for this week",
             },
             {
-              label: "Thoi gian tap trung",
+              label: "Focus time",
               value: formatDuration(focusTimeMinutes),
               progress: focusProgress,
               barColor: "bg-purple-600",
               helper:
                 focusRemaining > 0
-                  ? pluralize(Math.ceil(focusRemaining), "ph�t d? d?t m?c ti�u", "ph�t d? d?t m?c ti�u")
-                  : "�?t m?c ti�u t?p trung tu?n",
+                  ? pluralize(Math.ceil(focusRemaining), "minute to reach goal", "minutes to reach goal")
+                  : "Focus goal achieved for the week",
             },
           ].map((card) => (
             <div key={card.label} className="group rounded-xl border border-gray-200 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md dark:border-gray-800 dark:bg-gray-900">
@@ -288,4 +288,6 @@ export default function DashboardPage() {
     </div>
   );
 }
+
+
 
