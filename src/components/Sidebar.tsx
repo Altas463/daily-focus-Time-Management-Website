@@ -5,22 +5,25 @@ import { usePathname } from 'next/navigation';
 
 const groups = [
   {
-    title: 'TỔNG QUAN',
+    title: 'T??"NG QUAN',
     tone: 'primary',
     items: [{ href: '/dashboard', label: 'Dashboard' }],
   },
   {
-    title: 'LÀM VIỆC',
+    title: 'LA?M VI??+C',
     tone: 'work',
     items: [
-      { href: '/dashboard/tasks', label: 'Quản lý Task' },
+      { href: '/dashboard/tasks', label: 'Qu???n lA? Task' },
       { href: '/dashboard/pomodoro', label: 'Pomodoro Timer' },
     ],
   },
   {
-    title: 'BÁO CÁO',
+    title: 'BA?O CA?O',
     tone: 'report',
-    items: [{ href: '/dashboard/stats', label: 'Thống kê' }],
+    items: [
+      { href: '/dashboard/stats', label: 'Reports' },
+      { href: '/dashboard/review', label: 'Review & Reflect' },
+    ],
   },
 ] as const;
 
@@ -114,3 +117,4 @@ const Sidebar = () => {
 };
 
 export default Sidebar;
+

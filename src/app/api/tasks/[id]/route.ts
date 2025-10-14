@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import type { Prisma } from "@prisma/client";
 
 // Lấy ID từ URL bằng cách parse request.url
 function extractIdFromUrl(req: NextRequest): string | null {
@@ -21,18 +22,68 @@ export async function PUT(request: NextRequest) {
   if (!id) return NextResponse.json({ error: "No ID" }, { status: 400 });
 
   const body = await request.json();
-  const { title, description, startDate, endDate, completed } = body;
+  const { title, description, startDate, endDate, completed } = body as {
+    title?: string;
+    description?: string | null;
+    startDate?: string | null;
+    endDate?: string | null;
+    completed?: boolean;
+  };
+
+  const updateData: Prisma.TaskUpdateInput = {};
+
+  if (typeof title !== "undefined") {
+    updateData.title = title;
+  }
+
+  if (typeof description !== "undefined") {
+    updateData.description = description ?? null;
+  }
+
+  if (typeof startDate !== "undefined") {
+    if (startDate === null || startDate === "") {
+      updateData.startDate = null;
+    } else if (typeof startDate === "string") {
+      const parsedStart = new Date(startDate);
+      if (Number.isNaN(parsedStart.getTime())) {
+        return NextResponse.json({ error: "Invalid startDate format" }, { status: 400 });
+      }
+      updateData.startDate = parsedStart;
+    } else {
+      return NextResponse.json({ error: "Invalid startDate value" }, { status: 400 });
+    }
+  }
+
+  if (typeof endDate !== "undefined") {
+    if (endDate === null || endDate === "") {
+      updateData.endDate = null;
+    } else if (typeof endDate === "string") {
+      const parsedEnd = new Date(endDate);
+      if (Number.isNaN(parsedEnd.getTime())) {
+        return NextResponse.json({ error: "Invalid endDate format" }, { status: 400 });
+      }
+      updateData.endDate = parsedEnd;
+    } else {
+      return NextResponse.json({ error: "Invalid endDate value" }, { status: 400 });
+    }
+  }
+
+  if (typeof completed !== "undefined") {
+    updateData.completed = completed;
+  }
+
+  if (Object.keys(updateData).length === 0) {
+    const existing = await prisma.task.findUnique({ where: { id } });
+    if (!existing) {
+      return NextResponse.json({ error: "Task not found" }, { status: 404 });
+    }
+    return NextResponse.json(existing);
+  }
 
   try {
     const task = await prisma.task.update({
       where: { id },
-      data: {
-        title,
-        description,
-        startDate: startDate ? new Date(startDate) : undefined,
-        endDate: endDate ? new Date(endDate) : undefined,
-        completed,
-      },
+      data: updateData,
     });
 
     return NextResponse.json(task);

@@ -9,6 +9,12 @@ import {
 } from "@hello-pangea/dnd";
 import TaskCard from "@/components/tasks/TaskCard";
 import BackToDashboardLink from "@/components/BackToDashboardLink";
+import TimeBlockingBoard, {
+  buildBlockAssignments,
+  findTimeBlockById,
+  type TimeBlockDefinition,
+} from "@/components/tasks/TimeBlockingBoard";
+import type { Task } from "@/types";
 import {
   createEmptyTask,
   getTaskUrgency,
@@ -19,15 +25,6 @@ import {
   findNextDueTask,
 } from "@/utils/tasks";
 import { formatRelativeDate, formatShortDate } from "@/utils/date";
-
-type Task = {
-  id: string;
-  title: string;
-  description?: string;
-  startDate?: string;
-  endDate?: string;
-  completed: boolean;
-};
 
 type ColumnKey = "incomplete" | "completed";
 
@@ -65,6 +62,23 @@ const toneBadge: Record<TaskUrgency["tone"], string> = {
   default: "bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300",
 };
 
+const MINUTE_IN_MS = 60_000;
+
+const getTodayInputValue = () => {
+  const now = new Date();
+  const offsetMinutes = now.getTimezoneOffset();
+  const local = new Date(now.getTime() - offsetMinutes * MINUTE_IN_MS);
+  return local.toISOString().slice(0, 10);
+};
+
+const createDateTimeFromInput = (date: string, hour: number, minute: number) => {
+  const [year, month, day] = date.split("-").map(Number);
+  const result = new Date();
+  result.setFullYear(year, month - 1, day);
+  result.setHours(hour, minute, 0, 0);
+  return result;
+};
+
 export default function TasksPage() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [newTaskMap, setNewTaskMap] = useState<Record<ColumnKey, NewTaskState>>({
@@ -85,6 +99,9 @@ export default function TasksPage() {
   });
   const [filter, setFilter] = useState<"all" | "dueSoon" | "overdue">("all");
   const [searchTerm, setSearchTerm] = useState("");
+  const [timeBlockDate, setTimeBlockDate] = useState<string>(() => getTodayInputValue());
+  const [timeBlockPending, setTimeBlockPending] = useState<string | null>(null);
+  const [timeBlockStatus, setTimeBlockStatus] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
   useEffect(() => {
     void fetchTasks();
@@ -101,6 +118,10 @@ export default function TasksPage() {
   };
 
   const taskSummary = useMemo(() => summarizeTasks(tasks), [tasks]);
+  const timeBlockAssignments = useMemo(
+    () => buildBlockAssignments(tasks, timeBlockDate),
+    [tasks, timeBlockDate],
+  );
 
   const handleCreateTask = async (column: ColumnKey) => {
     const formState = newTaskMap[column];
@@ -177,9 +198,90 @@ export default function TasksPage() {
     }
   };
 
+  const scheduleTaskInBlock = async (taskId: string, block: TimeBlockDefinition) => {
+    if (!timeBlockDate) {
+      setTimeBlockStatus({
+        type: "error",
+        text: "Select a planner date before scheduling blocks.",
+      });
+      return;
+    }
+
+    const occupant = timeBlockAssignments[block.id];
+    const scheduledTask = tasks.find((item) => item.id === taskId);
+
+    setTimeBlockStatus(null);
+    setTimeBlockPending(block.id);
+
+    try {
+      if (occupant && occupant.id !== taskId) {
+        await updateTask(occupant.id, { startDate: null, endDate: null });
+      }
+
+      const start = createDateTimeFromInput(timeBlockDate, block.startHour, block.startMinute);
+      const end = new Date(start.getTime() + block.duration * MINUTE_IN_MS);
+
+      await updateTask(taskId, {
+        startDate: start.toISOString(),
+        endDate: end.toISOString(),
+      });
+
+      setTimeBlockStatus({
+        type: "success",
+        text: `Scheduled "${scheduledTask?.title ?? "task"}" for ${block.windowLabel}.`,
+      });
+    } catch (error) {
+      console.error("Failed to schedule block:", error);
+      setTimeBlockStatus({
+        type: "error",
+        text: "Unable to schedule that block. Please try again.",
+      });
+    } finally {
+      setTimeBlockPending(null);
+    }
+  };
+
+  const handleClearAssignment = async (taskId: string) => {
+    const entry = Object.entries(timeBlockAssignments).find(([, task]) => task.id === taskId);
+    const blockId = entry?.[0] ?? null;
+
+    setTimeBlockStatus(null);
+    if (blockId) {
+      setTimeBlockPending(blockId);
+    }
+
+    try {
+      await updateTask(taskId, { startDate: null, endDate: null });
+      setTimeBlockStatus({
+        type: "success",
+        text: "Cleared the scheduled block.",
+      });
+    } catch (error) {
+      console.error("Failed to clear block:", error);
+      setTimeBlockStatus({
+        type: "error",
+        text: "Unable to clear that block. Please try again.",
+      });
+    } finally {
+      setTimeBlockPending(null);
+    }
+  };
+
   const onDragEnd = async (result: DropResult) => {
     const { destination, draggableId } = result;
     if (!destination) return;
+
+    if (destination.droppableId.startsWith("timeblock:")) {
+      const blockId = destination.droppableId.replace("timeblock:", "");
+      const block = findTimeBlockById(blockId);
+      if (!block) return;
+      await scheduleTaskInBlock(draggableId, block);
+      return;
+    }
+
+    if (destination.droppableId !== "incomplete" && destination.droppableId !== "completed") {
+      return;
+    }
 
     const movedToCompleted = destination.droppableId === "completed";
     const task = tasks.find((item) => item.id === draggableId);
@@ -187,8 +289,8 @@ export default function TasksPage() {
 
     setTasks((prev) =>
       prev.map((item) =>
-        item.id === draggableId ? { ...item, completed: movedToCompleted } : item
-      )
+        item.id === draggableId ? { ...item, completed: movedToCompleted } : item,
+      ),
     );
 
     try {
@@ -197,10 +299,15 @@ export default function TasksPage() {
       console.error("Failed to move task:", error);
       setTasks((prev) =>
         prev.map((item) =>
-          item.id === draggableId ? { ...item, completed: task.completed } : item
-        )
+          item.id === draggableId ? { ...item, completed: task.completed } : item,
+        ),
       );
     }
+  };
+
+  const handleTimeBlockDateChange = (value: string) => {
+    setTimeBlockDate(value);
+    setTimeBlockStatus(null);
   };
 
   const handleInputChange = (
@@ -551,6 +658,16 @@ export default function TasksPage() {
                 );
               })}
             </div>
+
+            <TimeBlockingBoard
+              selectedDate={timeBlockDate}
+              onSelectedDateChange={handleTimeBlockDateChange}
+              assignments={timeBlockAssignments}
+              onClearAssignment={handleClearAssignment}
+              pendingBlockId={timeBlockPending}
+              statusMessage={timeBlockStatus}
+              onDismissStatus={() => setTimeBlockStatus(null)}
+            />
           </DragDropContext>
         </div>
       </div>

@@ -10,12 +10,14 @@ export type TaskSubtask = {
 export type Task = {
   id: string;
   title: string;
-  description?: string;
-  startDate?: string;
-  endDate?: string;
+  description?: string | null;
+  startDate?: string | null;
+  endDate?: string | null;
   completed: boolean;
   tags?: string[];
   priority?: TaskPriority;
   recurrenceRule?: string | null;
   subtasks?: TaskSubtask[];
+  createdAt?: string;
+  updatedAt?: string;
 };
