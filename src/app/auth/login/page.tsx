@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
+import { ArrowRight, Eye, EyeOff, Loader2, Lock, Mail, ShieldCheck, Sparkles } from "lucide-react";
 import AuthPageShell from "@/components/auth/AuthPageShell";
 import { useSpotlightStage } from "@/hooks/useSpotlightStage";
 import { calculatePasswordStrength } from "@/utils/password";
@@ -43,8 +44,13 @@ export default function LoginPage() {
   }, [password]);
   const strengthLabel = ["Yeu", "Trung binh", "Kha", "Manh", "Rat manh"][pwScore] || "";
   const strengthClass =
-    ["bg-red-500", "bg-orange-500", "bg-yellow-500", "bg-lime-500", "bg-emerald-600"][pwScore] ||
-    "bg-gray-300";
+    [
+      "bg-gradient-to-r from-rose-500 to-orange-400",
+      "bg-gradient-to-r from-orange-400 to-amber-400",
+      "bg-gradient-to-r from-amber-400 to-yellow-400",
+      "bg-gradient-to-r from-lime-400 to-emerald-400",
+      "bg-gradient-to-r from-emerald-400 to-teal-500",
+    ][pwScore] || "bg-gray-300";
   const handleLogin = async (event: React.FormEvent) => {
     event.preventDefault();
     setErrorMessage(null);
@@ -77,19 +83,28 @@ export default function LoginPage() {
       variant="slate"
       hero={
         <>
+          <motion.div
+            initial={{ opacity: 0, y: 18 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="inline-flex items-center gap-2 rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-lg dark:bg-emerald-500/90"
+          >
+            <Sparkles className="h-4 w-4" aria-hidden />
+            <span>Khoi dong ngay hieu qua</span>
+          </motion.div>
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
+            transition={{ delay: 0.08, duration: 0.6 }}
             className="text-4xl font-semibold tracking-tight text-gray-900 dark:text-white"
           >
             Daily Focus
           </motion.h2>
           <motion.p
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1, duration: 0.6 }}
-            className="mt-4 max-w-md text-base text-gray-600 dark:text-gray-300"
+            transition={{ delay: 0.16, duration: 0.6 }}
+            className="mt-6 max-w-md text-base text-gray-600 dark:text-gray-300"
           >
             Bot nhieu hon. Tap trung hon. Mot khong gian gon gang de ban hoan thanh dieu quan
             trong moi ngay.
@@ -101,144 +116,197 @@ export default function LoginPage() {
         initial={{ opacity: 0, y: 24, scale: 0.98 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
-        className="w-full max-w-md rounded-xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900 sm:p-8"
+        className="relative overflow-hidden rounded-3xl border border-white/70 bg-white/80 px-6 py-8 shadow-2xl backdrop-blur-sm dark:border-white/10 dark:bg-gray-950/75 sm:px-10 sm:py-12"
       >
-        <div className="mb-6 text-center">
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
-            Chao mung tro lai
-          </h1>
-          <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">Dang nhap de tiep tuc</p>
+        <div className="pointer-events-none absolute inset-0">
+          <div className="absolute -right-24 -top-32 h-72 w-72 rounded-full bg-blue-200/60 blur-3xl dark:bg-emerald-700/30" />
+          <div className="absolute bottom-0 left-1/2 h-64 w-64 -translate-x-1/2 translate-y-1/2 rounded-full bg-white/70 blur-[120px] dark:bg-white/10" />
         </div>
-        <form onSubmit={handleLogin} className="space-y-5" noValidate>
-          <div className="space-y-2">
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
-              Email
-            </label>
-            <input
-              id="email"
-              type="email"
-              inputMode="email"
-              autoComplete="email"
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
-              placeholder="you@example.com"
-              className="w-full rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 px-3 py-3 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition"
-            />
+        <div className="relative">
+          <div className="mb-10 flex flex-col items-center gap-3 text-center">
+            <div className="inline-flex items-center gap-2 rounded-full border border-slate-200/70 bg-slate-100/70 px-3 py-1 text-xs font-semibold text-slate-700 shadow-sm dark:border-emerald-500/30 dark:bg-emerald-500/10 dark:text-emerald-200">
+              <ShieldCheck className="h-4 w-4" aria-hidden />
+              <span>Dang nhap an toan</span>
+            </div>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white sm:text-4xl">
+              Chao mung tro lai
+            </h1>
+            <p className="max-w-sm text-sm text-gray-600 dark:text-gray-300">
+              Dang nhap de tiep tuc nhung muc tieu da dat ra.
+            </p>
           </div>
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
-                Mat khau
+
+          <form onSubmit={handleLogin} className="space-y-6" noValidate>
+            <div className="space-y-2">
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
+                Email
               </label>
-              {capsOn && (
-                <span className="text-xs font-medium text-amber-600 dark:text-amber-400">
-                  Caps Lock dang bat
-                </span>
-              )}
-            </div>
-            <div className="relative">
-              <input
-                id="password"
-                type={showPassword ? "text" : "password"}
-                value={password}
-                onChange={(event) => setPassword(event.target.value)}
-                onKeyUp={onPasswordKeyUp}
-                placeholder="Nhap mat khau"
-                className="w-full rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 px-3 py-3 pr-16 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition"
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword((value) => !value)}
-                className="absolute inset-y-0 right-0 px-3 text-sm font-medium text-blue-600 hover:underline dark:text-blue-300"
-                aria-label={showPassword ? "An mat khau" : "Hien mat khau"}
-              >
-                {showPassword ? "An" : "Hien"}
-              </button>
-            </div>
-            <div className="space-y-1">
-              <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
-                <span>Do manh:</span>
-                <span className="font-medium text-gray-700 dark:text-gray-300">{strengthLabel}</span>
-              </div>
-              <div className="h-2 w-full rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden">
-                <div
-                  className={`h-2 ${strengthClass} rounded-full transition-all duration-300`}
-                  style={{ width: pwMax ? `${(pwScore / pwMax) * 100}%` : "0%" }}
+              <div className="relative">
+                <Mail
+                  className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 dark:text-gray-500"
+                  aria-hidden
+                />
+                <input
+                  id="email"
+                  type="email"
+                  inputMode="email"
+                  autoComplete="email"
+                  value={email}
+                  onChange={(event) => setEmail(event.target.value)}
+                  placeholder="you@example.com"
+                  className="w-full rounded-2xl border border-slate-200/80 bg-white/90 px-4 py-3 pl-12 text-sm font-medium text-gray-900 placeholder:text-gray-400 transition focus:border-slate-500 focus:outline-none focus:ring-4 focus:ring-slate-400/20 dark:border-white/10 dark:bg-gray-900/70 dark:text-white dark:placeholder:text-gray-500 dark:focus:border-emerald-400 dark:focus:ring-emerald-400/20"
                 />
               </div>
-              <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
-                <span>Goi y: toi thieu 8 ky tu, so, chu hoa, ky tu dac biet</span>
+            </div>
+
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
+                  Mat khau
+                </label>
+                {capsOn && (
+                  <span className="text-xs font-medium text-amber-600 dark:text-amber-400">
+                    Caps Lock dang bat
+                  </span>
+                )}
+              </div>
+              <div className="relative">
+                <Lock
+                  className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 dark:text-gray-500"
+                  aria-hidden
+                />
+                <input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(event) => setPassword(event.target.value)}
+                  onKeyUp={onPasswordKeyUp}
+                  placeholder="Nhap mat khau"
+                  className="w-full rounded-2xl border border-slate-200/80 bg-white/90 px-4 py-3 pl-12 pr-12 text-sm font-medium text-gray-900 placeholder:text-gray-400 transition focus:border-slate-500 focus:outline-none focus:ring-4 focus:ring-slate-400/20 dark:border-white/10 dark:bg-gray-900/70 dark:text-white dark:placeholder:text-gray-500 dark:focus:border-emerald-400 dark:focus:ring-emerald-400/20"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((value) => !value)}
+                  className="absolute inset-y-0 right-0 flex items-center px-4 text-gray-500 transition hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                  aria-label={showPassword ? "An mat khau" : "Hien mat khau"}
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-4 w-4" aria-hidden />
+                  ) : (
+                    <Eye className="h-4 w-4" aria-hidden />
+                  )}
+                  <span className="sr-only">{showPassword ? "An mat khau" : "Hien mat khau"}</span>
+                </button>
+              </div>
+              <div className="space-y-1">
+                <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
+                  <span>Do manh:</span>
+                  <span className="font-medium text-gray-700 dark:text-gray-300">{strengthLabel}</span>
+                </div>
+                <div className="h-2 w-full overflow-hidden rounded-full bg-slate-200/80 dark:bg-white/10">
+                  <div
+                    className={`h-2 rounded-full transition-all duration-300 ${strengthClass}`}
+                    style={{ width: pwMax ? `${(pwScore / pwMax) * 100}%` : "0%" }}
+                  />
+                </div>
+                <div className="text-xs text-gray-500 dark:text-gray-400">
+                  Goi y: toi thieu 8 ky tu, so, chu hoa, ky tu dac biet
+                </div>
               </div>
             </div>
+
+            <div className="flex flex-col gap-3 rounded-2xl border border-slate-200/70 bg-slate-50/60 px-4 py-3 text-sm text-gray-600 shadow-sm dark:border-white/10 dark:bg-white/[0.04] dark:text-gray-300 sm:flex-row sm:items-center sm:justify-between">
+              <label className="inline-flex items-center gap-2 select-none">
+                <input
+                  type="checkbox"
+                  className="h-4 w-4 rounded border-gray-300 text-slate-600 focus:ring-slate-400 dark:border-white/20 dark:bg-transparent dark:text-emerald-400 dark:focus:ring-emerald-400"
+                  checked={remember}
+                  onChange={(event) => setRemember(event.target.checked)}
+                />
+                Ghi nho dang nhap
+              </label>
+              <span className="text-xs text-gray-500 dark:text-gray-400">
+                Bang viec dang nhap ban dong y voi{" "}
+                <Link href="/terms" className="font-medium text-slate-700 underline-offset-4 hover:underline dark:text-emerald-300">
+                  Dieu khoan
+                </Link>{" "}
+                &{" "}
+                <Link href="/privacy" className="font-medium text-slate-700 underline-offset-4 hover:underline dark:text-emerald-300">
+                  Bao mat
+                </Link>
+              </span>
+            </div>
+
+            <AnimatePresence>
+              {errorMessage && (
+                <motion.div
+                  initial={{ opacity: 0, y: -6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -6 }}
+                  className="rounded-2xl border border-red-200/70 bg-red-50/80 px-4 py-3 text-sm text-red-700 shadow-sm dark:border-red-900/40 dark:bg-red-900/20 dark:text-red-200"
+                >
+                  {errorMessage}
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="group inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-slate-900 via-slate-900 to-slate-800 px-6 py-3 text-sm font-semibold text-white shadow-lg transition hover:from-slate-800 hover:to-slate-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-600 disabled:opacity-60 dark:from-emerald-400 dark:via-emerald-500 dark:to-emerald-400 dark:text-gray-900 dark:hover:from-emerald-300 dark:hover:to-emerald-400 dark:focus-visible:outline-emerald-300"
+            >
+              {isLoading ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
+                  Dang dang nhap...
+                </>
+              ) : (
+                <>
+                  Dang nhap
+                  <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" aria-hidden />
+                </>
+              )}
+            </button>
+          </form>
+
+          <div className="relative my-8 flex items-center gap-3 text-[11px] font-semibold uppercase tracking-[0.3em] text-gray-400">
+            <span
+              className="h-px flex-1 bg-gradient-to-r from-transparent via-gray-300/70 to-transparent dark:via-white/10"
+              aria-hidden
+            />
+            <span>Hoac tiep tuc</span>
+            <span
+              className="h-px flex-1 bg-gradient-to-r from-transparent via-gray-300/70 to-transparent dark:via-white/10"
+              aria-hidden
+            />
           </div>
-          <div className="flex items-center justify-between">
-            <label className="inline-flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300 select-none">
-              <input
-                type="checkbox"
-                className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                checked={remember}
-                onChange={(event) => setRemember(event.target.checked)}
-              />
-              Ghi nho dang nhap
-            </label>
-            <span className="text-xs text-gray-500 dark:text-gray-400">
-              Bang viec dang nhap ban dong y voi{" "}
-              <Link href="/terms" className="font-medium text-blue-600 hover:underline dark:text-blue-400">
-                Dieu khoan
-              </Link>{" "}
-              &{" "}
-              <Link href="/privacy" className="font-medium text-blue-600 hover:underline dark:text-blue-400">
-                Bao mat
-              </Link>
+
+          <button
+            onClick={handleGoogleSignIn}
+            disabled={isLoading}
+            type="button"
+            className="inline-flex w-full items-center justify-center gap-3 rounded-2xl border border-slate-200/80 bg-white/90 px-6 py-3 text-sm font-medium text-gray-700 shadow-sm transition hover:border-slate-300 hover:shadow-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-600 disabled:opacity-60 dark:border-white/10 dark:bg-gray-900/60 dark:text-gray-100 dark:hover:border-white/20 dark:hover:bg-gray-900"
+          >
+            <span
+              aria-hidden
+              className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-gradient-to-br from-[#4285F4] via-[#34A853] to-[#FBBC05] text-xs font-black text-white shadow-sm"
+            >
+              G
             </span>
+            Dang nhap voi Google
+          </button>
+
+          <div className="mt-8 rounded-2xl border border-dashed border-slate-200/80 bg-slate-50/70 px-4 py-3 text-xs text-gray-500 dark:border-white/10 dark:bg-white/[0.03] dark:text-gray-400">
+            Meo nho: {motivationTip}
           </div>
-          <AnimatePresence>
-            {errorMessage && (
-              <motion.div
-                initial={{ opacity: 0, y: -6 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -6 }}
-                className="rounded-xl border border-red-200/60 dark:border-red-800/50 bg-red-50/70 dark:bg-red-900/20 px-4 py-3 text-sm text-red-700 dark:text-red-300"
-              >
-                {errorMessage}
-              </motion.div>
-            )}
-          </AnimatePresence>
-        <button
-          type="submit"
-          disabled={isLoading}
-          className="inline-flex w-full items-center justify-center rounded-lg bg-gray-900 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-gray-800 focus:outline-none focus:ring-4 focus:ring-gray-900/20 disabled:opacity-60 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-gray-200"
-        >
-          {isLoading ? "Dang dang nhap..." : "Dang nhap"}
-        </button>
-      </form>
-      <div className="relative my-6">
-        <div className="absolute inset-0 flex items-center" aria-hidden>
-          <div className="w-full border-t border-gray-200 dark:border-gray-800" />
+
+          <p className="mt-6 text-center text-sm text-gray-600 dark:text-gray-400">
+            Chua co tai khoan?{" "}
+            <Link href="/auth/register" className="font-semibold text-slate-900 underline-offset-4 hover:underline dark:text-emerald-300">
+              Dang ky ngay
+            </Link>
+          </p>
         </div>
-        <div className="relative flex justify-center">
-          <span className="bg-white px-3 text-xs font-medium text-gray-500 dark:bg-gray-900 dark:text-gray-400">
-            hoac tiep tuc voi
-          </span>
-        </div>
-      </div>
-      <button
-        onClick={handleGoogleSignIn}
-        disabled={isLoading}
-        type="button"
-        className="inline-flex w-full items-center justify-center rounded-lg border border-gray-200 bg-white px-6 py-3 text-sm font-medium text-gray-700 transition hover:bg-gray-100 focus:outline-none focus:ring-4 focus:ring-gray-300/20 disabled:opacity-60 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100 dark:hover:bg-gray-800"
-      >
-        Dang nhap voi Google
-      </button>
-        <p className="mt-6 text-center text-xs italic text-gray-500 dark:text-gray-400">
-          Meo nho: {motivationTip}
-        </p>
-        <p className="mt-4 text-center text-sm text-gray-600 dark:text-gray-400">
-          Chua co tai khoan?{" "}
-          <Link href="/auth/register" className="font-semibold text-blue-600 hover:underline dark:text-blue-400">
-            Dang ky ngay
-          </Link>
-        </p>
       </motion.div>
     </AuthPageShell>
   );

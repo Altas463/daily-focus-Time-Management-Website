@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { jwtDecode } from "jwt-decode";
+import { ArrowRight, CheckCircle2, CircleAlert, Eye, EyeOff, Loader2, Lock, Mail, ShieldCheck, Sparkles, UserRound } from "lucide-react";
 import AuthPageShell from "@/components/auth/AuthPageShell";
 import { useSpotlightStage } from "@/hooks/useSpotlightStage";
 import { calculatePasswordStrength } from "@/utils/password";
@@ -37,6 +38,25 @@ export default function RegisterPage() {
     setPasswordScore(score);
     setPasswordMax(maxScore);
   }, [password]);
+
+  const passwordStrengthLabel = ["Rat yeu", "Yeu", "Trung binh", "Kha", "Manh", "Rat manh"];
+  const passwordStrengthClass =
+    [
+      "bg-gradient-to-r from-rose-500 to-orange-400",
+      "bg-gradient-to-r from-orange-400 to-amber-400",
+      "bg-gradient-to-r from-amber-400 to-yellow-400",
+      "bg-gradient-to-r from-lime-400 to-emerald-400",
+      "bg-gradient-to-r from-emerald-400 to-teal-500",
+      "bg-gradient-to-r from-teal-500 to-sky-500",
+    ][passwordScore] || "bg-gray-300";
+  const isPasswordMatching = confirmPassword.length > 0 && password === confirmPassword;
+  const ConfirmIcon = confirmPassword.length === 0 ? Lock : isPasswordMatching ? CheckCircle2 : CircleAlert;
+  const confirmIconTone =
+    confirmPassword.length === 0
+      ? "text-gray-400 dark:text-gray-500"
+      : isPasswordMatching
+        ? "text-emerald-500 dark:text-emerald-400"
+        : "text-red-500 dark:text-red-400";
 
   const validateInput = () => {
     if (!name || !email || !password || !confirmPassword) {
@@ -110,19 +130,28 @@ export default function RegisterPage() {
       variant="emerald"
       hero={
         <>
+          <motion.div
+            initial={{ opacity: 0, y: 18 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="inline-flex items-center gap-2 rounded-full bg-emerald-500/90 px-4 py-2 text-sm font-semibold text-white shadow-lg"
+          >
+            <Sparkles className="h-4 w-4" aria-hidden />
+            <span>Mo khoa tiem nang ban</span>
+          </motion.div>
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
+            transition={{ delay: 0.08, duration: 0.6 }}
             className="text-4xl font-semibold tracking-tight text-gray-900 dark:text-white"
           >
             Bat dau hanh trinh tap trung
           </motion.h2>
           <motion.p
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1, duration: 0.6 }}
-            className="mt-4 max-w-md text-base text-gray-600 dark:text-gray-300"
+            transition={{ delay: 0.16, duration: 0.6 }}
+            className="mt-6 max-w-md text-base text-gray-600 dark:text-gray-300"
           >
             Tao tai khoan Daily Focus de gom viec, dat muc tieu va tien nhanh hon moi ngay.
           </motion.p>
@@ -133,172 +162,231 @@ export default function RegisterPage() {
         initial={{ opacity: 0, y: 24, scale: 0.98 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
-        className="w-full max-w-md rounded-xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900 sm:p-8"
+        className="relative overflow-hidden rounded-3xl border border-white/70 bg-white/80 px-6 py-8 shadow-2xl backdrop-blur-sm dark:border-white/10 dark:bg-gray-950/75 sm:px-10 sm:py-12"
       >
-        <div className="mb-6 text-center">
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
-            Tao tai khoan
-          </h1>
-          <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">
-            Chi mat vai phut de bat dau nang suat hon
+        <div className="pointer-events-none absolute inset-0">
+          <div className="absolute -left-28 -top-32 h-80 w-80 rounded-full bg-emerald-200/50 blur-3xl dark:bg-emerald-800/40" />
+          <div className="absolute right-0 bottom-0 h-64 w-64 translate-x-1/3 translate-y-1/3 rounded-full bg-white/70 blur-[120px] dark:bg-white/10" />
+        </div>
+        <div className="relative">
+          <div className="mb-10 flex flex-col items-center gap-3 text-center">
+            <div className="inline-flex items-center gap-2 rounded-full border border-emerald-200/60 bg-emerald-50/80 px-3 py-1 text-xs font-semibold text-emerald-700 shadow-sm dark:border-emerald-500/30 dark:bg-emerald-500/10 dark:text-emerald-200">
+              <ShieldCheck className="h-4 w-4" aria-hidden />
+              <span>An toan & nhanh chong</span>
+            </div>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white sm:text-4xl">
+              Tao tai khoan
+            </h1>
+            <p className="max-w-sm text-sm text-gray-600 dark:text-gray-300">
+              Chi mat vai phut de bat dau nang suat hon.
+            </p>
+          </div>
+
+          <form onSubmit={handleRegister} className="space-y-6" noValidate>
+            <div className="space-y-2">
+              <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
+                Ten
+              </label>
+              <div className="relative">
+                <UserRound
+                  className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 dark:text-gray-500"
+                  aria-hidden
+                />
+                <input
+                  id="name"
+                  type="text"
+                  autoComplete="name"
+                  value={name}
+                  onChange={(event) => setName(event.target.value)}
+                  placeholder="Nguyen Van A"
+                  className="w-full rounded-2xl border border-emerald-200/60 bg-white/90 px-4 py-3 pl-12 text-sm font-medium text-gray-900 placeholder:text-gray-400 transition focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-400/20 dark:border-white/10 dark:bg-gray-900/70 dark:text-white dark:placeholder:text-gray-500 dark:focus:border-emerald-300 dark:focus:ring-emerald-500/20"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
+                Email
+              </label>
+              <div className="relative">
+                <Mail
+                  className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 dark:text-gray-500"
+                  aria-hidden
+                />
+                <input
+                  id="email"
+                  type="email"
+                  inputMode="email"
+                  autoComplete="email"
+                  value={email}
+                  onChange={(event) => setEmail(event.target.value)}
+                  placeholder="you@example.com"
+                  className="w-full rounded-2xl border border-emerald-200/60 bg-white/90 px-4 py-3 pl-12 text-sm font-medium text-gray-900 placeholder:text-gray-400 transition focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-400/20 dark:border-white/10 dark:bg-gray-900/70 dark:text-white dark:placeholder:text-gray-500 dark:focus:border-emerald-300 dark:focus:ring-emerald-500/20"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
+                  Mat khau
+                </label>
+                {capsOnPw && (
+                  <span className="text-xs font-medium text-amber-600 dark:text-amber-400">
+                    Caps Lock dang bat
+                  </span>
+                )}
+              </div>
+              <div className="relative">
+                <Lock
+                  className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 dark:text-gray-500"
+                  aria-hidden
+                />
+                <input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(event) => setPassword(event.target.value)}
+                  onKeyUp={(event) => setCapsOnPw(event.getModifierState && event.getModifierState("CapsLock"))}
+                  placeholder="Nhap mat khau"
+                  className="w-full rounded-2xl border border-emerald-200/60 bg-white/90 px-4 py-3 pl-12 pr-12 text-sm font-medium text-gray-900 placeholder:text-gray-400 transition focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-400/20 dark:border-white/10 dark:bg-gray-900/70 dark:text-white dark:placeholder:text-gray-500 dark:focus:border-emerald-300 dark:focus:ring-emerald-500/20"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((value) => !value)}
+                  className="absolute inset-y-0 right-0 flex items-center px-4 text-emerald-600 transition hover:text-emerald-700 dark:text-emerald-300 dark:hover:text-emerald-200"
+                  aria-label={showPassword ? "An mat khau" : "Hien mat khau"}
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-4 w-4" aria-hidden />
+                  ) : (
+                    <Eye className="h-4 w-4" aria-hidden />
+                  )}
+                  <span className="sr-only">{showPassword ? "An mat khau" : "Hien mat khau"}</span>
+                </button>
+              </div>
+
+              {password && (
+                <div className="space-y-2">
+                  <div className="h-2 w-full overflow-hidden rounded-full bg-emerald-100/70 dark:bg-white/10">
+                    <div
+                      className={`h-2 rounded-full transition-all duration-300 ${passwordStrengthClass}`}
+                      style={{ width: passwordMax ? `${(passwordScore / passwordMax) * 100}%` : "0%" }}
+                    />
+                  </div>
+                  <div className="flex flex-col gap-1 text-xs text-gray-500 dark:text-gray-400 sm:flex-row sm:items-center sm:justify-between">
+                    <span>
+                      Do manh:{" "}
+                      <span className="font-medium text-gray-700 dark:text-gray-300">
+                        {passwordStrengthLabel[passwordScore] || ""}
+                      </span>
+                    </span>
+                    <span>Goi y: 8 ky tu, chu hoa/thuong, so, ky tu dac biet</span>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
+                  Xac nhan mat khau
+                </label>
+                {capsOnConfirm && (
+                  <span className="text-xs font-medium text-amber-600 dark:text-amber-400">
+                    Caps Lock dang bat
+                  </span>
+                )}
+              </div>
+              <div className="relative">
+                <ConfirmIcon
+                  className={`pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 ${confirmIconTone}`}
+                  aria-hidden
+                />
+                <input
+                  id="confirmPassword"
+                  type={showConfirmPassword ? "text" : "password"}
+                  value={confirmPassword}
+                  onChange={(event) => setConfirmPassword(event.target.value)}
+                  onKeyUp={(event) => setCapsOnConfirm(event.getModifierState && event.getModifierState("CapsLock"))}
+                  placeholder="Nhap lai mat khau"
+                  className="w-full rounded-2xl border border-emerald-200/60 bg-white/90 px-4 py-3 pl-12 pr-12 text-sm font-medium text-gray-900 placeholder:text-gray-400 transition focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-400/20 dark:border-white/10 dark:bg-gray-900/70 dark:text-white dark:placeholder:text-gray-500 dark:focus:border-emerald-300 dark:focus:ring-emerald-500/20"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword((value) => !value)}
+                  className="absolute inset-y-0 right-0 flex items-center px-4 text-emerald-600 transition hover:text-emerald-700 dark:text-emerald-300 dark:hover:text-emerald-200"
+                  aria-label={showConfirmPassword ? "An mat khau xac nhan" : "Hien mat khau xac nhan"}
+                >
+                  {showConfirmPassword ? (
+                    <EyeOff className="h-4 w-4" aria-hidden />
+                  ) : (
+                    <Eye className="h-4 w-4" aria-hidden />
+                  )}
+                  <span className="sr-only">{showConfirmPassword ? "An mat khau xac nhan" : "Hien mat khau xac nhan"}</span>
+                </button>
+              </div>
+              {confirmPassword && (
+                <div
+                  className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-medium ${
+                    isPasswordMatching
+                      ? "bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-300"
+                      : "bg-red-50 text-red-600 dark:bg-red-900/30 dark:text-red-300"
+                  }`}
+                >
+                  {isPasswordMatching ? (
+                    <CheckCircle2 className="h-3.5 w-3.5" aria-hidden />
+                  ) : (
+                    <CircleAlert className="h-3.5 w-3.5" aria-hidden />
+                  )}
+                  <span>{isPasswordMatching ? "Mat khau khop" : "Mat khau khong khop"}</span>
+                </div>
+              )}
+            </div>
+
+            <AnimatePresence>
+              {errorMessage && (
+                <motion.div
+                  initial={{ opacity: 0, y: -6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -6 }}
+                  className="rounded-2xl border border-red-200/70 bg-red-50/80 px-4 py-3 text-sm text-red-700 shadow-sm dark:border-red-900/40 dark:bg-red-900/20 dark:text-red-200"
+                >
+                  {errorMessage}
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="group inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-emerald-500 via-emerald-500 to-emerald-600 px-6 py-3 text-sm font-semibold text-white shadow-lg transition hover:from-emerald-400 hover:to-emerald-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-400 disabled:opacity-60 dark:text-gray-900"
+            >
+              {isLoading ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
+                  Dang tao tai khoan...
+                </>
+              ) : (
+                <>
+                  Tao tai khoan
+                  <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" aria-hidden />
+                </>
+              )}
+            </button>
+          </form>
+
+          <div className="mt-8 rounded-2xl border border-dashed border-emerald-200/70 bg-emerald-50/80 px-4 py-3 text-xs text-emerald-700 dark:border-emerald-500/20 dark:bg-emerald-500/10 dark:text-emerald-200">
+            Meo nho: {motivationTip}
+          </div>
+
+          <p className="mt-6 text-center text-sm text-gray-600 dark:text-gray-400">
+            Da co tai khoan?{" "}
+            <Link href="/auth/login" className="font-semibold text-emerald-600 underline-offset-4 hover:underline dark:text-emerald-300">
+              Dang nhap ngay
+            </Link>
           </p>
         </div>
-
-        <form onSubmit={handleRegister} className="space-y-5" noValidate>
-          <div className="space-y-2">
-            <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
-              Ten
-            </label>
-            <input
-              id="name"
-              type="text"
-              value={name}
-              onChange={(event) => setName(event.target.value)}
-              placeholder="Nguyen Van A"
-              className="w-full rounded-xl border border-gray-200 dark:border-white/10 bg-white dark:bg-gray-900 px-3 py-3 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-emerald-500/20 focus:border-emerald-500 transition"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
-              Email
-            </label>
-            <input
-              id="email"
-              type="email"
-              inputMode="email"
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
-              placeholder="you@example.com"
-              className="w-full rounded-xl border border-gray-200 dark:border-white/10 bg-white dark:bg-gray-900 px-3 py-3 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-emerald-500/20 focus:border-emerald-500 transition"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
-                Mat khau
-              </label>
-              {capsOnPw && (
-                <span className="text-xs font-medium text-amber-600 dark:text-amber-400">
-                  Caps Lock dang bat
-                </span>
-              )}
-            </div>
-            <div className="relative">
-              <input
-                id="password"
-                type={showPassword ? "text" : "password"}
-                value={password}
-                onChange={(event) => setPassword(event.target.value)}
-                onKeyUp={(event) => setCapsOnPw(event.getModifierState && event.getModifierState("CapsLock"))}
-                placeholder="Nhap mat khau"
-                className="w-full rounded-xl border border-gray-200 dark:border-white/10 bg-white dark:bg-gray-900 px-3 py-3 pr-16 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-emerald-500/20 focus:border-emerald-500 transition"
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword((value) => !value)}
-                className="absolute inset-y-0 right-0 px-3 text-sm font-medium text-emerald-700 hover:underline dark:text-emerald-300"
-                aria-label={showPassword ? "An mat khau" : "Hien mat khau"}
-              >
-                {showPassword ? "An" : "Hien"}
-              </button>
-            </div>
-
-            {password && (
-              <div className="space-y-1">
-                <div className="h-2 w-full rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden">
-                  <div
-                    className="h-2 rounded-full transition-all duration-300 bg-emerald-500"
-                    style={{ width: passwordMax ? `${(passwordScore / passwordMax) * 100}%` : "0%" }}
-                  />
-                </div>
-                <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
-                  <span>
-                    Do manh:{" "}
-                    <span className="font-medium text-gray-700 dark:text-gray-300">
-                      {["Rat yeu", "Yeu", "Trung binh", "Kha", "Manh", "Rat manh"][passwordScore] || ""}
-                    </span>
-                  </span>
-                  <span className="hidden sm:block">
-                    Goi y: 8 ky tu, chu hoa/thuong, so, ky tu dac biet
-                  </span>
-                </div>
-              </div>
-            )}
-          </div>
-
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
-                Xac nhan mat khau
-              </label>
-              {capsOnConfirm && (
-                <span className="text-xs font-medium text-amber-600 dark:text-amber-400">
-                  Caps Lock dang bat
-                </span>
-              )}
-            </div>
-            <div className="relative">
-              <input
-                id="confirmPassword"
-                type={showConfirmPassword ? "text" : "password"}
-                value={confirmPassword}
-                onChange={(event) => setConfirmPassword(event.target.value)}
-                onKeyUp={(event) => setCapsOnConfirm(event.getModifierState && event.getModifierState("CapsLock"))}
-                placeholder="Nhap lai mat khau"
-                className="w-full rounded-xl border border-gray-200 dark:border-white/10 bg-white dark:bg-gray-900 px-3 py-3 pr-16 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-emerald-500/20 focus:border-emerald-500 transition"
-              />
-              <button
-                type="button"
-                onClick={() => setShowConfirmPassword((value) => !value)}
-                className="absolute inset-y-0 right-0 px-3 text-sm font-medium text-emerald-700 hover:underline dark:text-emerald-300"
-                aria-label={showConfirmPassword ? "An mat khau xac nhan" : "Hien mat khau xac nhan"}
-              >
-                {showConfirmPassword ? "An" : "Hien"}
-              </button>
-            </div>
-            <div className="mt-1 text-xs">
-              {confirmPassword &&
-                (password === confirmPassword ? (
-                  <span className="text-emerald-600 dark:text-emerald-400">Mat khau khop</span>
-                ) : (
-                  <span className="text-red-600 dark:text-red-400">Mat khau khong khop</span>
-                ))}
-            </div>
-          </div>
-
-          <AnimatePresence>
-            {errorMessage && (
-              <motion.div
-                initial={{ opacity: 0, y: -6 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -6 }}
-                className="rounded-xl border border-red-200/60 dark:border-red-800/50 bg-red-50/70 dark:bg-red-900/20 px-4 py-3 text-sm text-red-700 dark:text-red-300"
-              >
-                {errorMessage}
-              </motion.div>
-            )}
-          </AnimatePresence>
-
-          <button
-            type="submit"
-            disabled={isLoading}
-            className="inline-flex w-full items-center justify-center rounded-lg bg-gray-900 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-gray-800 focus:outline-none focus:ring-4 focus:ring-gray-900/20 disabled:opacity-60 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-gray-200"
-          >
-            {isLoading ? "Dang tao tai khoan..." : "Tao tai khoan"}
-          </button>
-        </form>
-
-        <p className="mt-6 text-center text-xs italic text-gray-500 dark:text-gray-400">
-          Meo nho: {motivationTip}
-        </p>
-        <p className="mt-4 text-center text-sm text-gray-600 dark:text-gray-400">
-          Da co tai khoan?{" "}
-          <Link href="/auth/login" className="font-semibold text-emerald-600 hover:underline dark:text-emerald-400">
-            Dang nhap ngay
-          </Link>
-        </p>
       </motion.div>
     </AuthPageShell>
   );
