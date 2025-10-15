@@ -10,15 +10,16 @@ datasource db {
 model User {
   id             String              @id @default(uuid())
   email          String?             @unique
-  password       String?             // Để null nếu đăng nhập bằng Google
+  password       String?             // ????? null n???u ???ng nh??-p b???ng Google
   name           String?
-  image          String?             // Avatar từ tài khoản Google
-  emailVerified  DateTime?           // Xác thực email
-  provider       String?             // "google" hoặc "credentials"
+  image          String?             // Avatar t??? tA?i kho???n Google
+  emailVerified  DateTime?           // XA?c th???c email
+  provider       String?             // "google" ho???c "credentials"
   createdAt      DateTime            @default(now())
 
   tasks          Task[]
   sessions       PomodoroSession[]
+  preference     UserPreference?
 }
 
 
@@ -46,4 +47,21 @@ model PomodoroSession {
 
   userId String
   user   User @relation(fields: [userId], references: [id])
+}
+
+model UserPreference {
+  id                    String  @id @default(uuid())
+  userId                String  @unique
+  user                  User    @relation(fields: [userId], references: [id])
+  displayName           String?
+  role                  String?
+  bio                   String?
+  focusDurationMinutes  Int     @default(25)
+  shortBreakMinutes     Int     @default(5)
+  longBreakMinutes      Int     @default(15)
+  emailNotifications    Boolean @default(true)
+  pushNotifications     Boolean @default(false)
+  weeklyDigest          Boolean @default(true)
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
 }

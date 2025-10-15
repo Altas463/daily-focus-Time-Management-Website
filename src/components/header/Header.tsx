@@ -5,6 +5,8 @@ import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { ChevronDown } from "lucide-react";
+import clsx from "clsx";
 import { getDaypartGreeting } from "@/utils/date";
 
 type MenuLink = {
@@ -102,7 +104,7 @@ export default function Header() {
               </div>
             ) : (
               <>
-                <div className="hidden flex-col items-end sm:flex">
+                <div className="hidden flex-col items-end pr-1 text-right sm:flex">
                   <span className="text-sm font-semibold text-gray-800 dark:text-gray-200">{userName}</span>
                   <span className="text-xs text-gray-500 dark:text-gray-400">{userEmail}</span>
                 </div>
@@ -110,12 +112,33 @@ export default function Header() {
                 <button
                   ref={btnRef}
                   onClick={() => setShowUserMenu((value) => !value)}
-                  className="rounded-xl px-2 py-1.5 text-sm text-gray-700 transition hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-900/10 dark:text-gray-200 dark:hover:bg-gray-800"
+                  className={clsx(
+                    "group relative inline-flex items-center gap-3 rounded-full border border-gray-200 bg-white/90 px-1.5 py-1 shadow-sm transition hover:-translate-y-0.5 hover:border-gray-300 hover:bg-white focus:outline-none focus:ring-2 focus:ring-gray-900/10 dark:border-gray-800 dark:bg-gray-900/80 dark:hover:border-gray-700 dark:hover:bg-gray-900",
+                    showUserMenu && "ring-2 ring-gray-900/10 dark:ring-gray-100/10",
+                  )}
                   aria-haspopup="menu"
                   aria-expanded={showUserMenu}
                   aria-controls="user-menu"
+                  aria-label="Open account menu"
                 >
-                  Menu {showUserMenu ? "[-]" : "[+]"}
+                  <span className="relative flex h-9 w-9 items-center justify-center overflow-hidden rounded-full bg-gray-900 text-sm font-semibold text-white transition-transform group-hover:scale-[1.02] dark:bg-white dark:text-gray-900">
+                    {userAvatar ? (
+                      <Image src={userAvatar} alt={userName} width={40} height={40} className="h-full w-full rounded-full object-cover" unoptimized />
+                    ) : (
+                      getInitials(userName)
+                    )}
+                  </span>
+                  <span className="hidden pr-2 text-left text-xs text-gray-500 transition-colors group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-200 sm:block">
+                    <span className="block text-sm font-semibold text-gray-800 dark:text-gray-200">Account</span>
+                    Menu
+                  </span>
+                  <ChevronDown
+                    className={clsx(
+                      "mr-1 h-4 w-4 text-gray-500 transition-transform duration-200 ease-out group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-200",
+                      showUserMenu && "-rotate-180",
+                    )}
+                    aria-hidden
+                  />
                 </button>
 
                 <AnimatePresence>
