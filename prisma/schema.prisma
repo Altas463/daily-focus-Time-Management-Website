@@ -7,61 +7,137 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Persona {
+  STUDENT
+  FREELANCER
+  DEVELOPER
+}
+
+enum ProjectAccent {
+  EMERALD
+  BLUE
+  PURPLE
+  AMBER
+  ROSE
+}
+
+enum ProjectTaskStatus {
+  TODO
+  IN_PROGRESS
+  REVIEW
+  DONE
+}
+
 model User {
   id             String              @id @default(uuid())
   email          String?             @unique
-  password       String?             // ????? null n???u ???ng nh??-p b???ng Google
+  password       String?
   name           String?
-  image          String?             // Avatar t??? tA?i kho???n Google
-  emailVerified  DateTime?           // XA?c th???c email
-  provider       String?             // "google" ho???c "credentials"
+  image          String?
+  emailVerified  DateTime?
+  provider       String?
   createdAt      DateTime            @default(now())
 
   tasks          Task[]
   sessions       PomodoroSession[]
   preference     UserPreference?
+  projectLanes   ProjectLane[]
+  projects       Project[]
 }
 
-
 model Task {
-  id          String   @id @default(uuid())
-  title       String
-  description String?
-  startDate   DateTime?
-  endDate     DateTime?
-  completed   Boolean  @default(false)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt  
-  reminderSent Boolean @default(false)
+  id           String   @id @default(uuid())
+  title        String
+  description  String?
+  startDate    DateTime?
+  endDate      DateTime?
+  completed    Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  reminderSent Boolean  @default(false)
 
   userId String
   user   User @relation(fields: [userId], references: [id])
 }
 
 model PomodoroSession {
-  id         String   @id @default(uuid())
-  startTime  DateTime
-  endTime    DateTime
-  isBreak    Boolean
-  createdAt  DateTime @default(now())
+  id        String   @id @default(uuid())
+  startTime DateTime
+  endTime   DateTime
+  isBreak   Boolean
+  createdAt DateTime @default(now())
 
   userId String
   user   User @relation(fields: [userId], references: [id])
 }
 
 model UserPreference {
-  id                    String  @id @default(uuid())
-  userId                String  @unique
-  user                  User    @relation(fields: [userId], references: [id])
-  displayName           String?
-  role                  String?
-  bio                   String?
-  focusDurationMinutes  Int     @default(25)
-  shortBreakMinutes     Int     @default(5)
-  longBreakMinutes      Int     @default(15)
-  emailNotifications    Boolean @default(true)
-  pushNotifications     Boolean @default(false)
-  weeklyDigest          Boolean @default(true)
-  createdAt             DateTime @default(now())
-  updatedAt             DateTime @updatedAt
+  id                   String  @id @default(uuid())
+  userId               String  @unique
+  user                 User    @relation(fields: [userId], references: [id])
+  displayName          String?
+  role                 String?
+  bio                  String?
+  focusDurationMinutes Int     @default(25)
+  shortBreakMinutes    Int     @default(5)
+  longBreakMinutes     Int     @default(15)
+  emailNotifications   Boolean @default(true)
+  pushNotifications    Boolean @default(false)
+  weeklyDigest         Boolean @default(true)
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+}
+
+model ProjectLane {
+  id          String   @id @default(uuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  persona     Persona
+  title       String
+  description String?
+  intent      String?
+  ordering    Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  projects Project[]
+
+  @@index([userId, persona])
+}
+
+model Project {
+  id        String         @id @default(uuid())
+  userId    String
+  laneId    String?
+  user      User           @relation(fields: [userId], references: [id])
+  lane      ProjectLane?   @relation(fields: [laneId], references: [id])
+  name      String
+  stage     String
+  dueDate   DateTime?
+  progress  Int            @default(0)
+  focus     String?
+  notes     String?
+  accent    ProjectAccent  @default(EMERALD)
+  priority  Int            @default(0)
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+
+  tasks ProjectTask[]
+
+  @@index([userId])
+  @@index([laneId])
+}
+
+model ProjectTask {
+  id        String            @id @default(uuid())
+  projectId String
+  project   Project           @relation(fields: [projectId], references: [id])
+  label     String
+  status    ProjectTaskStatus @default(TODO)
+  context   String?
+  ordering  Int               @default(0)
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+
+  @@index([projectId])
 }

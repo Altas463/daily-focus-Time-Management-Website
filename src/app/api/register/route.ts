@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server';
+﻿import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
@@ -16,15 +16,14 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: validationError }, { status: 400 });
     }
 
-    // Kiểm tra biến môi trường
     if (!JWT_SECRET) {
-      throw new Error('JWT_SECRET chưa được định nghĩa');
+      throw new Error('JWT_SECRET is not defined');
     }
 
-    // Kiểm tra user tồn tại
+    // Check existing user
     const existingUser = await prisma.user.findUnique({ where: { email } });
     if (existingUser) {
-      return NextResponse.json({ error: 'Email đã tồn tại' }, { status: 400 });
+      return NextResponse.json({ error: 'Email already exists' }, { status: 400 });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -34,6 +33,7 @@ export async function POST(req: Request) {
         email,
         password: hashedPassword,
         name,
+        provider: 'credentials',
       },
     });
 
@@ -47,11 +47,11 @@ export async function POST(req: Request) {
       { expiresIn: '7d' }
     );
 
-    return NextResponse.json({ message: 'Đăng ký thành công', token });
+    return NextResponse.json({ message: 'Registration successful', token });
   } catch (error) {
-    console.error('Đăng ký lỗi:', error);
+    console.error('Registration error:', error);
     return NextResponse.json({
-      error: 'Lỗi server',
+      error: 'Server error',
       detail: error instanceof Error ? error.message : String(error),
     }, { status: 500 });
   }

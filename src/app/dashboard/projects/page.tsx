@@ -1,837 +1,546 @@
-﻿'use client';
+﻿"use client";
 
-import { useMemo, useState } from 'react';
-import BackToDashboardLink from '@/components/BackToDashboardLink';
-import { formatShortDate } from '@/utils/date';
+import { useEffect, useMemo, useState } from "react";
+import clsx from "clsx";
+import BackToDashboardLink from "@/components/BackToDashboardLink";
+import { formatShortDate } from "@/utils/date";
 
-type PersonaKey = 'student' | 'freelancer' | 'developer';
-
-type ProjectTask = {
-  id: string;
-  label: string;
-  status: 'todo' | 'inProgress' | 'review' | 'done';
-  context?: string;
+const accentPalette: Record<PersonaAccentToken, string> = {
+  emerald: "#10b981",
+  blue: "#3b82f6",
+  purple: "#8b5cf6",
+  amber: "#f59e0b",
+  rose: "#f43f5e",
 };
 
-type ProjectCard = {
-  id: string;
-  name: string;
-  stage: string;
-  dueDate: string;
-  progress: number;
-  focus: string;
-  notes: string;
-  accent: 'emerald' | 'blue' | 'purple' | 'amber' | 'rose';
-  tasks: ProjectTask[];
+const taskStatusTone: Record<ProjectTaskStatusToken, string> = {
+  todo: "bg-gray-300 dark:bg-gray-700",
+  inProgress: "bg-sky-400/80 dark:bg-sky-500/80",
+  review: "bg-purple-400/80 dark:bg-purple-500/70",
+  done: "bg-emerald-400/80 dark:bg-emerald-500/70",
 };
 
-type ProjectColumn = {
-  id: string;
-  title: string;
-  description: string;
-  intent: string;
-  projects: ProjectCard[];
-};
-
-type ProjectTemplate = {
-  id: string;
-  title: string;
-  summary: string;
-  bestFor: PersonaKey | 'all';
-  highlights: string[];
-};
-
-type FocusSuggestion = {
-  projectId: string;
-  title: string;
-  summary: string;
-  accent: ProjectCard['accent'];
-  score: number;
-  stage: string;
-  priority: 'Critical focus' | 'High focus' | 'Worth a look' | 'On track';
-  dueLabel: string;
-};
-
-const accentPalette: Record<ProjectCard['accent'], string> = {
-  emerald: '#10b981',
-  blue: '#3b82f6',
-  purple: '#8b5cf6',
-  amber: '#f59e0b',
-  rose: '#f43f5e',
-};
-
-const taskStatusTone: Record<ProjectTask['status'], string> = {
-  todo: 'bg-gray-300 dark:bg-gray-700',
-  inProgress: 'bg-sky-400/80 dark:bg-sky-500/80',
-  review: 'bg-purple-400/80 dark:bg-purple-500/70',
-  done: 'bg-emerald-400/80 dark:bg-emerald-500/70',
-};
-
-const personaOptions: Array<{ key: PersonaKey; label: string; blurb: string }> = [
+const templates: Template[] = [
   {
-    key: 'student',
-    label: 'Students',
-    blurb: 'Keep coursework, group deliverables, and portfolio prep in view.',
+    id: "client-discovery",
+    title: "Client discovery pack",
+    summary: "Prep docs for new retainers or consulting engagements.",
+    bestFor: "freelancer",
+    highlights: ["Meeting notes", "Timeline draft", "Risk tracker"],
   },
   {
-    key: 'freelancer',
-    label: 'Freelancers',
-    blurb: 'Track retainers, proposals, and client feedback loops together.',
+    id: "sprint-health",
+    title: "Sprint health monitor",
+    summary: "Track blockers and scope changes during active sprints.",
+    bestFor: "developer",
+    highlights: ["Health checks", "Velocity signals", "Retro prep"],
   },
   {
-    key: 'developer',
-    label: 'Developers',
-    blurb: 'Map sprints, refactors, and adoption rollouts without leaving focus mode.',
+    id: "capstone",
+    title: "Capstone planning",
+    summary: "Organise deliverables, research, and advisor touchpoints.",
+    bestFor: "student",
+    highlights: ["Advisor syncs", "Research log", "Milestone checklist"],
+  },
+  {
+    id: "all-hands",
+    title: "Launch readiness",
+    summary: "Cross-functional punch list for upcoming releases.",
+    bestFor: "all",
+    highlights: ["QA coverage", "Comms plan", "Support handoff"],
   },
 ];
-
-const boardData: Record<PersonaKey, ProjectColumn[]> = {
-  student: [
-    {
-      id: 'coursework',
-      title: 'Coursework',
-      description: 'Assignments and labs for this term.',
-      intent: 'Ship on time and stay eligibility-ready.',
-      projects: [
-        {
-          id: 'capstone',
-          name: 'Capstone Research Sprint',
-          stage: 'Analysis draft',
-          dueDate: '2025-05-26',
-          progress: 55,
-          focus: 'Outline findings with advisor feedback integrated.',
-          notes: 'Request a desk review before week 8 to avoid rework.',
-          accent: 'emerald',
-          tasks: [
-            { id: 'capstone-1', label: 'Synthesize survey responses', status: 'inProgress' },
-            { id: 'capstone-2', label: 'Draft methodology slide deck', status: 'todo', context: 'Need references' },
-            { id: 'capstone-3', label: 'Book advisor sync', status: 'done' },
-          ],
-        },
-        {
-          id: 'ml-lab',
-          name: 'Machine Learning Lab 05',
-          stage: 'Model tuning',
-          dueDate: '2025-05-17',
-          progress: 35,
-          focus: 'Clean notebook + compare ROC curves with baseline.',
-          notes: 'TA said to prioritise interpretability notes over accuracy.',
-          accent: 'blue',
-          tasks: [
-            { id: 'ml-lab-1', label: 'Refine feature scaling', status: 'inProgress' },
-            { id: 'ml-lab-2', label: 'Write evaluation summary', status: 'todo' },
-            { id: 'ml-lab-3', label: 'Peer review session', status: 'review', context: 'Friday study group' },
-          ],
-        },
-      ],
-    },
-    {
-      id: 'collaboration',
-      title: 'Group Projects',
-      description: 'Shared deliverables across teams.',
-      intent: 'Make next check-in effortless.',
-      projects: [
-        {
-          id: 'ux-rework',
-          name: 'Design Systems Refresh',
-          stage: 'Feedback review',
-          dueDate: '2025-05-30',
-          progress: 70,
-          focus: 'Align new accessibility tokens with Figma library.',
-          notes: 'Needs sign-off from mobility accessibility lead.',
-          accent: 'purple',
-          tasks: [
-            { id: 'ux-rework-1', label: 'Audit component inventory', status: 'done' },
-            { id: 'ux-rework-2', label: 'Update spacing scale', status: 'inProgress' },
-            { id: 'ux-rework-3', label: 'Collect user feedback notes', status: 'todo' },
-          ],
-        },
-        {
-          id: 'case-study',
-          name: 'Consulting Case Competition',
-          stage: 'Presentation polish',
-          dueDate: '2025-05-22',
-          progress: 82,
-          focus: 'Rehearse delivery and tighten financial story.',
-          notes: 'Timeline locked; allocate 1 hour for Q&A practice.',
-          accent: 'amber',
-          tasks: [
-            { id: 'case-study-1', label: 'Finalize slide narrative', status: 'review' },
-            { id: 'case-study-2', label: 'Run timed dry run', status: 'todo' },
-            { id: 'case-study-3', label: 'Update appendix data table', status: 'done' },
-          ],
-        },
-      ],
-    },
-    {
-      id: 'portfolio',
-      title: 'Career & Portfolio',
-      description: 'Longer-term assets that strengthen applications.',
-      intent: 'Ship artifacts recruiters can skim in 90 seconds.',
-      projects: [
-        {
-          id: 'portfolio-site',
-          name: 'Personal Portfolio v3',
-          stage: 'Content choreography',
-          dueDate: '2025-06-14',
-          progress: 48,
-          focus: 'Publish projects index + hero animation tweak.',
-          notes: 'Reserve lab printers for poster version post-finals.',
-          accent: 'rose',
-          tasks: [
-            { id: 'portfolio-site-1', label: 'Write case study intros', status: 'inProgress' },
-            { id: 'portfolio-site-2', label: 'Record walkthrough video', status: 'todo' },
-            { id: 'portfolio-site-3', label: 'Deploy staging build', status: 'done' },
-          ],
-        },
-      ],
-    },
-  ],
-  freelancer: [
-    {
-      id: 'active-retainers',
-      title: 'Active Retainers',
-      description: 'Recurring work with monthly checkpoints.',
-      intent: 'Surface the next deliverable per client.',
-      projects: [
-        {
-          id: 'brand-audit',
-          name: 'Northwind Brand Audit',
-          stage: 'Insights handoff',
-          dueDate: '2025-05-19',
-          progress: 64,
-          focus: 'Translate analytics into actionable playbook.',
-          notes: 'Client wants Loom recap under eight minutes.',
-          accent: 'emerald',
-          tasks: [
-            { id: 'brand-audit-1', label: 'Compile sentiment highlights', status: 'done' },
-            { id: 'brand-audit-2', label: 'Storyboard Loom walkthrough', status: 'todo' },
-            { id: 'brand-audit-3', label: 'Finalize notion handover doc', status: 'inProgress' },
-          ],
-        },
-        {
-          id: 'maintenance',
-          name: 'AtlasSite Care Plan',
-          stage: 'QA window',
-          dueDate: '2025-05-25',
-          progress: 42,
-          focus: 'Bundle bug fixes with SEO crawl updates.',
-          notes: 'Coordinate release window with in-house dev lead.',
-          accent: 'blue',
-          tasks: [
-            { id: 'maintenance-1', label: 'Audit lighthouse regressions', status: 'inProgress' },
-            { id: 'maintenance-2', label: 'Prep client-ready changelog', status: 'todo' },
-            { id: 'maintenance-3', label: 'Schedule post-release check', status: 'todo' },
-          ],
-        },
-      ],
-    },
-    {
-      id: 'pipeline',
-      title: 'Pipeline',
-      description: 'Opportunities that need structured follow-up.',
-      intent: 'Keep proposals timely and outcomes visible.',
-      projects: [
-        {
-          id: 'proposal',
-          name: 'Rework CMS Proposal',
-          stage: 'Scope validation',
-          dueDate: '2025-05-16',
-          progress: 25,
-          focus: 'Confirm backlog size and maintenance appetite.',
-          notes: 'Send comparative pricing table before Friday call.',
-          accent: 'purple',
-          tasks: [
-            { id: 'proposal-1', label: 'Draft options matrix', status: 'inProgress' },
-            { id: 'proposal-2', label: 'Collect testimonials', status: 'todo' },
-            { id: 'proposal-3', label: 'Budget review with accountant', status: 'todo' },
-          ],
-        },
-        {
-          id: 'workshop',
-          name: 'Async Ways of Working Workshop',
-          stage: 'Participant onboarding',
-          dueDate: '2025-05-28',
-          progress: 58,
-          focus: 'Build worksheet assets and gather case studies.',
-          notes: 'Flagged need for captioned recordings in follow-up.',
-          accent: 'amber',
-          tasks: [
-            { id: 'workshop-1', label: 'Script facilitation outline', status: 'inProgress' },
-            { id: 'workshop-2', label: 'Prepare miro board template', status: 'done' },
-            { id: 'workshop-3', label: 'Design participant packet', status: 'review' },
-          ],
-        },
-      ],
-    },
-    {
-      id: 'backlog',
-      title: 'Backlog & Experiments',
-      description: 'Ideas that can convert into future retainers.',
-      intent: 'Incubate assets when client time loosens.',
-      projects: [
-        {
-          id: 'lead-magnet',
-          name: 'Notion Content Library Template',
-          stage: 'Outline ready',
-          dueDate: '2025-06-04',
-          progress: 18,
-          focus: 'Design landing page wireframe and teaser email.',
-          notes: 'Aim to publish right before summer inquiry season.',
-          accent: 'rose',
-          tasks: [
-            { id: 'lead-magnet-1', label: 'Draft copy skeleton', status: 'todo' },
-            { id: 'lead-magnet-2', label: 'Collect testimonial snippets', status: 'todo' },
-            { id: 'lead-magnet-3', label: 'Build Notion template blocks', status: 'inProgress' },
-          ],
-        },
-      ],
-    },
-  ],
-  developer: [
-    {
-      id: 'sprint',
-      title: 'Current Sprint',
-      description: 'Active user stories targeted for this iteration.',
-      intent: 'Keep blockers surfaced before stand-up.',
-      projects: [
-        {
-          id: 'notification-core',
-          name: 'Notification Center Refactor',
-          stage: 'QA handoff',
-          dueDate: '2025-05-21',
-          progress: 72,
-          focus: 'Stabilise queue workers and document failure modes.',
-          notes: 'Coordinate release with mobile team to avoid double pings.',
-          accent: 'emerald',
-          tasks: [
-            { id: 'notification-core-1', label: 'Write load test scripts', status: 'done' },
-            { id: 'notification-core-2', label: 'Finalize retry strategy', status: 'inProgress' },
-            { id: 'notification-core-3', label: 'Pair QA verification', status: 'review' },
-          ],
-        },
-        {
-          id: 'billing-updates',
-          name: 'Usage-Based Billing Upgrade',
-          stage: 'Integration testing',
-          dueDate: '2025-05-24',
-          progress: 46,
-          focus: 'Align invoice line-items with finance data warehouse.',
-          notes: 'Need sign-off from compliance before toggling feature flag.',
-          accent: 'blue',
-          tasks: [
-            { id: 'billing-updates-1', label: 'Sync with finance about rounding', status: 'todo' },
-            { id: 'billing-updates-2', label: 'Backfill historic usage', status: 'inProgress' },
-            { id: 'billing-updates-3', label: 'Write integration tests', status: 'todo' },
-          ],
-        },
-      ],
-    },
-    {
-      id: 'foundational',
-      title: 'Architecture',
-      description: 'Strategic work that pays off each sprint.',
-      intent: 'Invest in platform upgrades intentionally.',
-      projects: [
-        {
-          id: 'design-system',
-          name: 'Cross-platform Design Tokens',
-          stage: 'Rollout planning',
-          dueDate: '2025-06-10',
-          progress: 38,
-          focus: 'Align native and web consumers on token naming.',
-          notes: 'Document migration path for legacy SCSS variables.',
-          accent: 'purple',
-          tasks: [
-            { id: 'design-system-1', label: 'Map token gaps', status: 'inProgress' },
-            { id: 'design-system-2', label: 'Draft migration checklist', status: 'todo' },
-            { id: 'design-system-3', label: 'Pilot in settings module', status: 'todo' },
-          ],
-        },
-        {
-          id: 'observability',
-          name: 'Observability Playbook',
-          stage: 'Outline review',
-          dueDate: '2025-05-29',
-          progress: 58,
-          focus: 'Codify runbooks and normalize alert severities.',
-          notes: 'Security team requested section on incident triage.',
-          accent: 'amber',
-          tasks: [
-            { id: 'observability-1', label: 'Draft escalation matrix', status: 'inProgress' },
-            { id: 'observability-2', label: 'Collect SLO baselines', status: 'review' },
-            { id: 'observability-3', label: 'Publish to internal wiki', status: 'todo' },
-          ],
-        },
-      ],
-    },
-    {
-      id: 'adoption',
-      title: 'Adoption & Enablement',
-      description: 'Helping teams land the change.',
-      intent: 'Share context and reduce back-and-forth.',
-      projects: [
-        {
-          id: 'enablement-kit',
-          name: 'AI Feature Enablement Kit',
-          stage: 'Stakeholder briefing',
-          dueDate: '2025-06-02',
-          progress: 65,
-          focus: 'Ship hands-on labs plus success metrics dashboard.',
-          notes: 'Marketing requested case studies for beta launch.',
-          accent: 'rose',
-          tasks: [
-            { id: 'enablement-kit-1', label: 'Outline enablement narrative', status: 'inProgress' },
-            { id: 'enablement-kit-2', label: 'Draft metrics dashboard', status: 'todo' },
-            { id: 'enablement-kit-3', label: 'Record feature walkthrough', status: 'review' },
-          ],
-        },
-      ],
-    },
-  ],
-};
-
-const templates: ProjectTemplate[] = [
-  {
-    id: 'client-onboarding',
-    title: 'Client Onboarding Playbook',
-    summary: 'Capture kickoff actions, permissions, and welcome automations in one place.',
-    bestFor: 'freelancer',
-    highlights: ['Discovery checklist', '15-day milestone plan', 'Feedback loops'],
-  },
-  {
-    id: 'course-sprint',
-    title: 'Semester Sprint Planner',
-    summary: 'Cluster assignments, labs, and study blocks by course and difficulty.',
-    bestFor: 'student',
-    highlights: ['Week-by-week view', 'Group task handover', 'Exam prep boosters'],
-  },
-  {
-    id: 'release-readiness',
-    title: 'Release Readiness Tracker',
-    summary: 'Coordinate QA sign-offs, docs, and rollbacks for multi-team launches.',
-    bestFor: 'developer',
-    highlights: ['Risk matrix', 'Launch war room notes', 'Post-release checklist'],
-  },
-  {
-    id: 'idea-incubator',
-    title: 'Idea Incubator Board',
-    summary: 'Log experiments, demand signals, and traction notes before investing fully.',
-    bestFor: 'all',
-    highlights: ['Impact vs. effort score', 'Validation log', 'Template handoff'],
-  },
-];
-
-const DAY_IN_MS = 1000 * 60 * 60 * 24;
-
-function buildFocusSuggestions(projects: ProjectCard[], limit = 3): FocusSuggestion[] {
-  const today = new Date();
-  return projects
-    .map((project) => {
-      const due = new Date(project.dueDate);
-      const hasValidDue = !Number.isNaN(due.getTime());
-      const daysUntilDue = hasValidDue
-        ? Math.round((due.getTime() - today.getTime()) / DAY_IN_MS)
-        : null;
-
-      let dueScore = 30;
-      if (hasValidDue && daysUntilDue !== null) {
-        if (daysUntilDue < 0) dueScore = 95;
-        else if (daysUntilDue === 0) dueScore = 85;
-        else if (daysUntilDue <= 2) dueScore = 75;
-        else if (daysUntilDue <= 7) dueScore = 55;
-        else if (daysUntilDue <= 14) dueScore = 40;
-        else dueScore = 25;
-      }
-
-      const progressScore = Math.max(0, 100 - project.progress);
-      const reviewBoost = project.tasks.some((task) => task.status === 'review') ? 12 : 0;
-      const todoCount = project.tasks.filter((task) => task.status === 'todo').length;
-      const todoBoost = Math.min(todoCount * 4, 16);
-
-      const score = Math.round(dueScore * 0.5 + progressScore * 0.4 + reviewBoost + todoBoost);
-
-      const duePhrase = (() => {
-        if (!hasValidDue || daysUntilDue === null) return 'No due date yet';
-        if (daysUntilDue < 0) {
-          const overdueDays = Math.abs(daysUntilDue);
-          return `Overdue by ${overdueDays} day${overdueDays === 1 ? '' : 's'}`;
-        }
-        if (daysUntilDue === 0) return 'Due today';
-        if (daysUntilDue === 1) return 'Due tomorrow';
-        return `Due in ${daysUntilDue} days`;
-      })();
-
-      const progressPhrase =
-        project.progress < 40
-          ? `Only ${project.progress}% complete`
-          : project.progress < 70
-            ? `${project.progress}% complete`
-            : `Tracking at ${project.progress}%`;
-
-      const reviewPhrase = project.tasks.some((task) => task.status === 'review')
-        ? 'Review requested'
-        : todoCount > 0
-          ? `${todoCount} task${todoCount === 1 ? '' : 's'} still todo`
-          : 'Tasks on track';
-
-      const summary = `${duePhrase}. ${progressPhrase}. ${reviewPhrase}.`;
-
-      const priority: FocusSuggestion['priority'] =
-        score >= 85
-          ? 'Critical focus'
-          : score >= 65
-            ? 'High focus'
-            : score >= 45
-              ? 'Worth a look'
-              : 'On track';
-
-      const dueLabel =
-        hasValidDue && daysUntilDue !== null
-          ? formatShortDate(due)
-          : 'No due date';
-
-      return {
-        projectId: project.id,
-        title: project.name,
-        summary,
-        accent: project.accent,
-        score,
-        stage: project.stage,
-        priority,
-        dueLabel,
-      };
-    })
-    .sort((a, b) => b.score - a.score)
-    .slice(0, limit);
-}
-
-function ProjectProgressRing({ value, accent }: { value: number; accent: ProjectCard['accent'] }) {
-  const safeValue = Number.isFinite(value) ? Math.min(Math.max(value, 0), 100) : 0;
-  const radius = 26;
-  const circumference = 2 * Math.PI * radius;
-  const offset = circumference - (safeValue / 100) * circumference;
-
-  return (
-    <div className="relative h-16 w-16">
-      <svg viewBox="0 0 64 64" className="h-16 w-16" aria-hidden>
-        <circle
-          cx="32"
-          cy="32"
-          r={radius}
-          strokeWidth="8"
-          fill="none"
-          className="stroke-gray-200 dark:stroke-gray-800"
-        />
-        <circle
-          cx="32"
-          cy="32"
-          r={radius}
-          strokeWidth="8"
-          fill="none"
-          strokeLinecap="round"
-          stroke={accentPalette[accent]}
-          strokeDasharray={`${circumference} ${circumference}`}
-          strokeDashoffset={offset}
-          className="transition-[stroke-dashoffset]"
-        />
-      </svg>
-      <div className="absolute inset-0 flex items-center justify-center text-sm font-semibold text-gray-900 dark:text-gray-100">
-        {Math.round(safeValue)}%
-      </div>
-    </div>
-  );
-}
 
 export default function ProjectsPage() {
-  const [activePersona, setActivePersona] = useState<PersonaKey>('student');
-  const personaBoard = boardData[activePersona];
+  const [data, setData] = useState<ProjectBoardResponse | null>(null);
+  const [activePersona, setActivePersona] = useState<PersonaKey>("student");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const projectList = useMemo(
-    () => personaBoard.flatMap((column) => column.projects),
-    [personaBoard],
-  );
+  useEffect(() => {
+    let isMounted = true;
 
-  const stats = useMemo(() => {
-    const totalProjects = projectList.length;
-    const progressSum = projectList.reduce((sum, project) => sum + project.progress, 0);
-    const averageProgress = totalProjects ? Math.round(progressSum / totalProjects) : 0;
-    const today = new Date();
-    const dueSoonCount = projectList.filter((project) => {
-      const due = new Date(project.dueDate);
-      if (Number.isNaN(due.getTime())) return false;
-      const diff = Math.round((due.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
-      return diff >= 0 && diff <= 7;
-    }).length;
-    const reviewCount = projectList.filter((project) =>
-      project.tasks.some((task) => task.status === 'review'),
-    ).length;
+    async function loadBoard() {
+      setLoading(true);
+      setError(null);
 
-    return { totalProjects, averageProgress, dueSoonCount, reviewCount };
-  }, [projectList]);
+      try {
+        const response = await fetch("/api/projects", { cache: "no-store" });
+        if (!response.ok) {
+          const body = await response.json().catch(() => ({}));
+          throw new Error(body.error ?? "Unable to load project hub right now.");
+        }
 
-  const focusSuggestions = useMemo(
-    () => buildFocusSuggestions(projectList),
-    [projectList],
-  );
+        const payload = (await response.json()) as ProjectBoardResponse;
+        if (!isMounted) return;
+
+        setData(payload);
+      } catch (fetchError: unknown) {
+        if (!isMounted) return;
+        const message =
+          fetchError instanceof Error ? fetchError.message : "Something went wrong while loading projects.";
+        setError(message);
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    }
+
+    void loadBoard();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!data) return;
+    const personaKeys = data.personas.map((persona) => persona.key);
+    if (personaKeys.length === 0) return;
+    if (!personaKeys.includes(activePersona)) {
+      setActivePersona(personaKeys[0]);
+    }
+  }, [data, activePersona]);
+
+  const personaOptions = data?.personas ?? [];
+  const activePersonaDetails = personaOptions.find((persona) => persona.key === activePersona);
+
+  const stats = data?.stats;
+  const statCards = useMemo(() => {
+    if (!stats) return [] as Array<{ label: string; value: string | number }>;
+    const completionRate = stats.tasksTotal === 0 ? 0 : Math.round((stats.tasksCompleted / stats.tasksTotal) * 100);
+    return [
+      { label: "Active projects", value: stats.activeProjects },
+      { label: "Total projects", value: stats.totalProjects },
+      { label: "Tasks complete", value: `${stats.tasksCompleted}/${stats.tasksTotal}` },
+      { label: "Completion rate", value: `${completionRate}%` },
+    ];
+  }, [stats]);
+
+  const boardColumns = data?.board?.[activePersona] ?? [];
+  const focusSuggestions = data?.focus ?? [];
 
   return (
-    <div className="mx-auto flex max-w-7xl flex-col gap-8">
+    <div className="mx-auto flex max-w-6xl flex-col gap-6">
       <BackToDashboardLink />
 
-      <header className="flex flex-col gap-6 rounded-3xl border border-gray-200 bg-white p-8 shadow-sm dark:border-gray-800 dark:bg-gray-900">
-        <div className="flex flex-col gap-4">
+      <header className="rounded-3xl border border-gray-200 bg-white p-8 shadow-sm dark:border-gray-800 dark:bg-gray-900">
+        <p className="text-xs font-semibold uppercase tracking-[0.24em] text-gray-500 dark:text-gray-400">Project hub</p>
+        <div className="mt-2 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
           <div>
-            <span className="text-xs font-semibold uppercase tracking-[0.28em] text-gray-500 dark:text-gray-400">
-              Project Hub
-            </span>
-            <h1 className="mt-2 text-3xl font-semibold text-gray-900 dark:text-gray-50">
-              Kanban views by project groups
-            </h1>
+            <h1 className="text-3xl font-semibold text-gray-900 dark:text-gray-50">Keep every initiative moving forward</h1>
+            <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">
+              Switch personas to focus on the work that matters this week. Your board mirrors the data behind focus sessions,
+              task lists, and delivery milestones.
+            </p>
           </div>
-          <p className="max-w-2xl text-sm text-gray-600 dark:text-gray-300">
-            Switch between learner, freelance, and engineering boards to see how tasks roll up per
-            project. Track due dates, progress rings, and punch-list notes in one place - ideal for
-            power users migrating from Notion or Trello who want structure without losing focus.
-          </p>
         </div>
-
-        <div className="flex flex-wrap gap-3">
-          {personaOptions.map((persona) => {
-            const active = persona.key === activePersona;
-            return (
-              <button
-                key={persona.key}
-                type="button"
-                onClick={() => setActivePersona(persona.key)}
-                className={[
-                  'inline-flex items-center gap-3 rounded-full border px-4 py-2 text-sm transition',
-                  active
-                    ? 'border-gray-900 bg-gray-900 text-white shadow-sm dark:border-gray-100 dark:bg-gray-100 dark:text-gray-900'
-                    : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-200 dark:hover:border-gray-700',
-                ].join(' ')}
-              >
-                <span className="font-semibold">{persona.label}</span>
-                <span className="hidden text-xs text-gray-400 sm:inline">{persona.blurb}</span>
-              </button>
-            );
-          })}
-        </div>
-
-        <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          <StatCard label="Active projects" value={stats.totalProjects} />
-          <StatCard label="Average progress" value={`${stats.averageProgress}%`} />
-          <StatCard label="Due within 7 days" value={stats.dueSoonCount} />
-          <StatCard label="Reviews pending" value={stats.reviewCount} />
-        </section>
       </header>
 
       <section className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900">
-        <header className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
-          <div>
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-              Focus suggestions
-            </h2>
-            <p className="text-sm text-gray-500 dark:text-gray-400">
-              Prioritised projects based on due dates, progress, and review load.
-            </p>
+        <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
+          <div className="flex flex-1 flex-col gap-4">
+            <div className="flex flex-wrap gap-2">
+              {personaOptions.map((option) => (
+                <button
+                  key={option.key}
+                  type="button"
+                  onClick={() => setActivePersona(option.key)}
+                  className={clsx(
+                    "rounded-full border px-4 py-2 text-sm font-semibold transition",
+                    activePersona === option.key
+                      ? "border-gray-900 bg-gray-900 text-white shadow-sm dark:border-gray-100 dark:bg-gray-100 dark:text-gray-900"
+                      : "border-gray-300 text-gray-600 hover:border-gray-400 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:border-gray-600 dark:hover:bg-gray-900/60",
+                  )}
+                >
+                  {option.label}
+                </button>
+              ))}
+            </div>
+            {activePersonaDetails?.blurb && (
+              <p className="text-sm text-gray-500 dark:text-gray-400">{activePersonaDetails.blurb}</p>
+            )}
           </div>
-          <span className="text-xs uppercase tracking-[0.24em] text-gray-400 dark:text-gray-500">
-            Dynamic insights per persona board
-          </span>
-        </header>
 
-        {focusSuggestions.length > 0 ? (
-          <div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-            {focusSuggestions.map((suggestion) => (
-              <article
-                key={suggestion.projectId}
-                className="relative overflow-hidden rounded-3xl border border-gray-200 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-lg dark:border-gray-800 dark:bg-gray-900"
-              >
-                <span
-                  aria-hidden
-                  className="absolute inset-x-0 top-0 h-1"
-                  style={{ background: accentPalette[suggestion.accent] }}
-                />
-                <div className="flex items-center justify-between gap-3">
-                  <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
-                    {suggestion.title}
-                  </h3>
-                  <span className="rounded-full border border-gray-200 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-gray-500 dark:border-gray-700 dark:text-gray-300">
-                    {suggestion.priority}
-                  </span>
-                </div>
-                <p className="mt-3 text-xs leading-relaxed text-gray-600 dark:text-gray-300">
-                  {suggestion.summary}
-                </p>
-                <div className="mt-4 flex flex-wrap items-center justify-between gap-3 text-xs text-gray-500 dark:text-gray-400">
-                  <span className="font-medium text-gray-600 dark:text-gray-300">{suggestion.stage}</span>
-                  <span>{suggestion.dueLabel}</span>
-                  <span className="rounded-full bg-gray-100 px-2 py-0.5 font-semibold text-gray-600 dark:bg-gray-800 dark:text-gray-300">
-                    Score {suggestion.score}
-                  </span>
-                </div>
-              </article>
+          <div className="grid flex-none grid-cols-2 gap-3 sm:grid-cols-4">
+            {statCards.map((card) => (
+              <StatCard key={card.label} label={card.label} value={card.value} />
             ))}
           </div>
-        ) : (
-          <p className="mt-4 text-sm text-gray-500 dark:text-gray-400">
-            All projects are tracking smoothly.
-          </p>
-        )}
+        </div>
       </section>
 
-      <section aria-label="Project Kanban board" className="flex flex-col gap-4">
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-50">Project groups</h2>
-            <p className="text-sm text-gray-500 dark:text-gray-400">
-              Group tasks by project to spot progress, blockers, and runway at a glance.
-            </p>
-          </div>
-        </div>
-
-        <div className="overflow-x-auto pb-2">
-          <div className="flex min-w-max gap-6">
-            {personaBoard.map((column) => (
-              <section
-                key={column.id}
-                className="w-[320px] shrink-0 rounded-3xl border border-gray-200 bg-gray-50/70 p-5 dark:border-gray-800 dark:bg-gray-900/60"
-              >
-                <header className="mb-4 space-y-2">
-                  <div className="flex items-center justify-between">
-                    <h3 className="text-base font-semibold text-gray-900 dark:text-gray-100">
-                      {column.title}
-                    </h3>
-                    <span className="rounded-full bg-gray-200 px-2 py-0.5 text-xs font-medium text-gray-600 dark:bg-gray-800 dark:text-gray-300">
-                      {column.projects.length}
-                    </span>
-                  </div>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">{column.description}</p>
-                  <p className="text-xs font-medium uppercase tracking-[0.18em] text-gray-400 dark:text-gray-500">
-                    {column.intent}
+      {loading ? (
+        <LoadingBoard />
+      ) : error ? (
+        <ErrorState message={error} />
+      ) : (
+        <>
+          <section className="grid gap-6 lg:grid-cols-[3fr,2fr]">
+            <article className="space-y-6 rounded-3xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900">
+              <header className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Focus suggestions</h2>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                    High-impact projects ranked by urgency, progress, and upcoming deadlines.
                   </p>
-                </header>
-
-                <div className="space-y-4">
-                  {column.projects.map((project) => (
-                    <article
-                      key={project.id}
-                      className="space-y-4 rounded-2xl border border-white/60 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-lg dark:border-gray-800/60 dark:bg-gray-900"
-                    >
-                      <div className="flex items-start gap-4">
-                        <ProjectProgressRing value={project.progress} accent={project.accent} />
-                        <div className="flex flex-1 flex-col gap-1">
-                          <div className="flex items-center justify-between gap-2">
-                            <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
-                              {project.name}
-                            </h4>
-                            <span className="rounded-full bg-gray-100 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-gray-500 dark:bg-gray-800 dark:text-gray-300">
-                              {project.stage}
-                            </span>
-                          </div>
-                          <p className="text-xs text-gray-500 dark:text-gray-400">
-                            Due {formatShortDate(new Date(project.dueDate))} | {project.focus}
-                          </p>
-                        </div>
-                      </div>
-
-                      <div className="space-y-3">
-                        <ul className="space-y-2">
-                          {project.tasks.map((task) => (
-                            <li
-                              key={task.id}
-                              className="flex flex-col gap-1 rounded-xl border border-gray-100 bg-gray-50 px-3 py-2 text-sm text-gray-600 dark:border-gray-800 dark:bg-gray-800/60 dark:text-gray-200"
-                            >
-                              <div className="flex items-center justify-between gap-2">
-                                <span className="font-medium text-gray-800 dark:text-gray-100">
-                                  {task.label}
-                                </span>
-                                <span
-                                  className={[
-                                    'h-2.5 w-2.5 rounded-full',
-                                    taskStatusTone[task.status],
-                                  ].join(' ')}
-                                  aria-hidden
-                                />
-                              </div>
-                              {task.context && (
-                                <span className="text-xs text-gray-500 dark:text-gray-400">
-                                  {task.context}
-                                </span>
-                              )}
-                            </li>
-                          ))}
-                        </ul>
-
-                        <div className="rounded-xl border border-dashed border-gray-200 bg-gray-50 px-3 py-3 text-xs text-gray-600 dark:border-gray-700 dark:bg-gray-800/60 dark:text-gray-300">
-                          {project.notes}
-                        </div>
-                      </div>
-                    </article>
-                  ))}
                 </div>
-              </section>
-            ))}
-          </div>
-        </div>
-      </section>
+                <span className="text-xs uppercase tracking-[0.2em] text-gray-400 dark:text-gray-500">Auto curated</span>
+              </header>
 
-      <section className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900">
-        <header className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
-          <div>
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-              Project templates
-            </h2>
-            <p className="text-sm text-gray-500 dark:text-gray-400">
-              Optional blueprints to spin up consistent project groups faster.
-            </p>
-          </div>
-          <span className="text-xs uppercase tracking-[0.24em] text-gray-400 dark:text-gray-500">
-            Designed for power users switching from workspace tools
-          </span>
-        </header>
+              <div className="space-y-3">
+                {focusSuggestions.length === 0 ? (
+                  <div className="rounded-2xl border border-dashed border-gray-200 bg-gray-50 p-6 text-sm text-gray-500 dark:border-gray-700 dark:bg-gray-900/50 dark:text-gray-300">
+                    Add a project or task to see personalised recommendations.
+                  </div>
+                ) : (
+                  focusSuggestions.map((suggestion) => <FocusSuggestionCard key={suggestion.projectId} suggestion={suggestion} />)
+                )}
+              </div>
+            </article>
 
-        <div className="mt-5 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-          {templates
-            .filter((template) => template.bestFor === 'all' || template.bestFor === activePersona)
-            .map((template) => (
-              <article
-                key={template.id}
-                className="flex flex-col gap-3 rounded-2xl border border-gray-200 bg-gray-50 p-4 transition hover:-translate-y-0.5 hover:border-gray-300 dark:border-gray-800 dark:bg-gray-800/60"
-              >
-                <div className="flex items-center justify-between gap-2">
-                  <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
-                    {template.title}
-                  </h3>
-                  <span className="rounded-full border border-gray-200 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-gray-500 dark:border-gray-700 dark:text-gray-300">
-                    {template.bestFor === 'all' ? 'All' : template.bestFor}
-                  </span>
+            <article className="space-y-6 rounded-3xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900">
+              <header className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Delivery radar</h2>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">Upcoming hand-offs and deadlines pulled from your board.</p>
                 </div>
-                <p className="text-xs text-gray-500 dark:text-gray-400">{template.summary}</p>
-                <ul className="space-y-1 text-xs text-gray-600 dark:text-gray-300">
-                  {template.highlights.map((highlight) => (
-                    <li key={highlight} className="flex items-center gap-2">
-                      <span className="h-1.5 w-1.5 rounded-full bg-gray-400 dark:bg-gray-500" aria-hidden />
-                      <span>{highlight}</span>
+                <span className="text-xs text-gray-400 dark:text-gray-500">This week</span>
+              </header>
+
+              <ul className="space-y-3 text-sm text-gray-600 dark:text-gray-300">
+                {focusSuggestions.length === 0 ? (
+                  <li className="rounded-xl border border-dashed border-gray-200 bg-gray-50 p-4 text-xs text-gray-500 dark:border-gray-700 dark:bg-gray-900/50 dark:text-gray-400">
+                    Nothing queued up—great time to plan the next milestone.
+                  </li>
+                ) : (
+                  focusSuggestions.slice(0, 4).map((item) => (
+                    <li key={item.projectId} className="flex items-start gap-3 rounded-xl border border-gray-200 bg-gray-50 p-4 dark:border-gray-800 dark:bg-gray-900/60">
+                      <span className="mt-1 h-2 w-2 rounded-full" style={{ backgroundColor: accentPalette[item.accent] }} aria-hidden />
+                      <div className="flex flex-1 flex-col gap-1">
+                        <span className="text-sm font-semibold text-gray-900 dark:text-gray-100">{item.title}</span>
+                        <span className="text-xs uppercase tracking-[0.14em] text-gray-400 dark:text-gray-500">{item.stage}</span>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">{item.dueLabel}</p>
+                      </div>
                     </li>
-                  ))}
-                </ul>
-              </article>
-            ))}
-        </div>
-      </section>
+                  ))
+                )}
+              </ul>
+            </article>
+          </section>
+
+          <section className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900">
+            <header className="mb-6 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+              <div>
+                <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Board overview</h2>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  Columns reflect how you categorise the work. Drill into cards to see the tasks tied to each outcome.
+                </p>
+              </div>
+              <span className="text-xs uppercase tracking-[0.18em] text-gray-400 dark:text-gray-500">{boardColumns.length} columns</span>
+            </header>
+
+            <div className="grid gap-6 lg:grid-cols-2 xl:grid-cols-3">
+              {boardColumns.map((column) => (
+                <ProjectColumn key={column.id} column={column} />
+              ))}
+
+              {boardColumns.length === 0 && (
+                <div className="rounded-2xl border border-dashed border-gray-200 bg-gray-50 p-8 text-center text-sm text-gray-500 dark:border-gray-700 dark:bg-gray-900/50 dark:text-gray-300">
+                  No projects yet—start by creating a column that matches how you track work.
+                </div>
+              )}
+            </div>
+          </section>
+
+          <section className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900">
+            <header className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+              <div>
+                <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Project templates</h2>
+                <p className="text-sm text-gray-500 dark:text-gray-400">Optional blueprints to spin up consistent project groups faster.</p>
+              </div>
+              <span className="text-xs uppercase tracking-[0.24em] text-gray-400 dark:text-gray-500">
+                Designed for power users switching from workspace tools
+              </span>
+            </header>
+
+            <div className="mt-5 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+              {templates
+                .filter((template) => template.bestFor === "all" || template.bestFor === activePersona)
+                .map((template) => (
+                  <article
+                    key={template.id}
+                    className="flex flex-col gap-3 rounded-2xl border border-gray-200 bg-gray-50 p-4 transition hover:-translate-y-0.5 hover:border-gray-300 dark:border-gray-800 dark:bg-gray-800/60"
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">{template.title}</h3>
+                      <span className="rounded-full border border-gray-200 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-gray-500 dark:border-gray-700 dark:text-gray-300">
+                        {template.bestFor === "all" ? "All" : template.bestFor}
+                      </span>
+                    </div>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">{template.summary}</p>
+                    <ul className="space-y-1 text-xs text-gray-600 dark:text-gray-300">
+                      {template.highlights.map((highlight) => (
+                        <li key={highlight} className="flex items-center gap-2">
+                          <span className="h-1.5 w-1.5 rounded-full bg-gray-400 dark:bg-gray-500" aria-hidden />
+                          <span>{highlight}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </article>
+                ))}
+            </div>
+          </section>
+        </>
+      )}
     </div>
+  );
+}
+
+function LoadingBoard() {
+  return (
+    <section className="grid gap-6 lg:grid-cols-[3fr,2fr]">
+      <div className="space-y-4 rounded-3xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900">
+        <div className="h-4 w-48 animate-pulse rounded-full bg-gray-200 dark:bg-gray-700" />
+        <div className="space-y-3">
+          {Array.from({ length: 3 }).map((_, index) => (
+            <div key={index} className="h-16 animate-pulse rounded-2xl bg-gray-100 dark:bg-gray-800/60" />
+          ))}
+        </div>
+      </div>
+      <div className="space-y-4 rounded-3xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900">
+        <div className="h-4 w-32 animate-pulse rounded-full bg-gray-200 dark:bg-gray-700" />
+        <div className="space-y-3">
+          {Array.from({ length: 4 }).map((_, index) => (
+            <div key={index} className="h-20 animate-pulse rounded-2xl bg-gray-100 dark:bg-gray-800/60" />
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function ErrorState({ message }: { message: string }) {
+  return (
+    <section className="rounded-3xl border border-red-200 bg-red-50 p-6 text-sm text-red-700 dark:border-red-900/40 dark:bg-red-900/20 dark:text-red-200">
+      {message}
+    </section>
   );
 }
 
 function StatCard({ label, value }: { label: string; value: number | string }) {
   return (
     <div className="rounded-2xl border border-gray-200 bg-gray-50 px-4 py-5 text-gray-700 dark:border-gray-800 dark:bg-gray-900/60 dark:text-gray-200">
-      <span className="text-xs font-medium uppercase tracking-[0.18em] text-gray-500 dark:text-gray-400">
-        {label}
-      </span>
+      <span className="text-xs font-medium uppercase tracking-[0.18em] text-gray-500 dark:text-gray-400">{label}</span>
       <p className="mt-2 text-2xl font-semibold text-gray-900 dark:text-gray-100">{value}</p>
     </div>
   );
 }
+
+function FocusSuggestionCard({ suggestion }: { suggestion: FocusSuggestion }) {
+  return (
+    <article className="flex items-start gap-4 rounded-2xl border border-gray-200 bg-gray-50 p-4 transition hover:-translate-y-0.5 hover:border-gray-300 dark:border-gray-800 dark:bg-gray-900/60">
+      <div
+        className="flex h-10 w-10 items-center justify-center rounded-full text-xs font-semibold text-white"
+        style={{ backgroundColor: accentPalette[suggestion.accent] }}
+      >
+        {suggestion.title
+          .split(" ")
+          .filter(Boolean)
+          .slice(0, 2)
+          .map((word) => word[0]?.toUpperCase())
+          .join("")}
+      </div>
+      <div className="flex flex-1 flex-col gap-1">
+        <div className="flex items-center justify-between gap-2">
+          <div>
+            <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">{suggestion.title}</p>
+            <p className="text-xs uppercase tracking-[0.14em] text-gray-400 dark:text-gray-500">{suggestion.stage}</p>
+          </div>
+          <FocusPriorityBadge priority={suggestion.priority} />
+        </div>
+        <p className="text-xs text-gray-500 dark:text-gray-400">{suggestion.summary}</p>
+        <p className="text-xs font-medium text-gray-600 dark:text-gray-300">{suggestion.dueLabel}</p>
+      </div>
+    </article>
+  );
+}
+
+function FocusPriorityBadge({ priority }: { priority: FocusSuggestion["priority"] }) {
+  const tone: Record<FocusSuggestion["priority"], string> = {
+    "Critical focus": "bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-200",
+    "High focus": "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-200",
+    "Worth a look": "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-200",
+    "On track": "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-200",
+  };
+
+  return (
+    <span className={clsx("rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.16em]", tone[priority])}>{priority}</span>
+  );
+}
+
+function ProjectColumn({ column }: { column: ProjectBoardColumn }) {
+  return (
+    <section className="flex h-full flex-col gap-4 rounded-2xl border border-gray-200 bg-gray-50 p-5 dark:border-gray-800 dark:bg-gray-900">
+      <header className="space-y-2">
+        <div className="flex items-center justify-between">
+          <h3 className="text-base font-semibold text-gray-900 dark:text-gray-100">{column.title}</h3>
+          <span className="rounded-full bg-gray-200 px-2 py-0.5 text-xs font-medium text-gray-600 dark:bg-gray-800 dark:text-gray-300">
+            {column.projects.length}
+          </span>
+        </div>
+        {column.description && <p className="text-xs text-gray-500 dark:text-gray-400">{column.description}</p>}
+        {column.intent && (
+          <p className="text-xs font-medium uppercase tracking-[0.18em] text-gray-400 dark:text-gray-500">{column.intent}</p>
+        )}
+      </header>
+
+      <div className="space-y-4">
+        {column.projects.map((project) => (
+          <article key={project.id} className="space-y-4 rounded-2xl border border-white/60 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-lg dark:border-gray-800/60 dark:bg-gray-900">
+            <div className="flex items-start gap-4">
+              <ProjectProgressRing value={project.progress} accent={project.accent} />
+              <div className="flex flex-1 flex-col gap-1">
+                <div className="flex items-center justify-between gap-2">
+                  <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100">{project.name}</h4>
+                  <span className="rounded-full bg-gray-100 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-gray-500 dark:bg-gray-800 dark:text-gray-300">
+                    {project.stage}
+                  </span>
+                </div>
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  {project.dueDate ? `Due ${formatShortDate(new Date(project.dueDate))}` : "No due date"}
+                  {project.focus ? ` | ${project.focus}` : ""}
+                </p>
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              <ul className="space-y-2">
+                {project.tasks.map((task) => (
+                  <li key={task.id} className="flex flex-col gap-1 rounded-xl border border-gray-100 bg-gray-50 px-3 py-2 text-sm text-gray-600 dark:border-gray-800 dark:bg-gray-800/60 dark:text-gray-200">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="font-medium text-gray-800 dark:text-gray-100">{task.label}</span>
+                      <span className={clsx("h-2.5 w-2.5 rounded-full", taskStatusTone[task.status])} aria-hidden />
+                    </div>
+                    {task.context && <span className="text-xs text-gray-500 dark:text-gray-400">{task.context}</span>}
+                  </li>
+                ))}
+              </ul>
+
+              {project.notes && (
+                <div className="rounded-xl border border-dashed border-gray-200 bg-gray-50 px-3 py-3 text-xs text-gray-600 dark:border-gray-700 dark:bg-gray-800/60 dark:text-gray-300">
+                  {project.notes}
+                </div>
+              )}
+            </div>
+          </article>
+        ))}
+
+        {column.projects.length === 0 && (
+          <div className="rounded-xl border border-dashed border-gray-200 bg-gray-100 p-6 text-center text-xs text-gray-500 dark:border-gray-700 dark:bg-gray-800/60 dark:text-gray-400">
+            No projects here yet.
+          </div>
+        )}
+      </div>
+    </section>
+  );
+}
+
+function ProjectProgressRing({ value, accent }: { value: number; accent: PersonaAccentToken }) {
+  const radius = 26;
+  const circumference = 2 * Math.PI * radius;
+  const offset = circumference - (value / 100) * circumference;
+  const stroke = accentPalette[accent];
+
+  return (
+    <div className="relative h-16 w-16">
+      <svg className="h-full w-full" viewBox="0 0 64 64">
+        <circle cx="32" cy="32" r={radius} fill="none" stroke="rgba(148, 163, 184, 0.25)" strokeWidth="6" />
+        <circle
+          cx="32"
+          cy="32"
+          r={radius}
+          fill="none"
+          stroke={stroke}
+          strokeWidth="6"
+          strokeDasharray={`${circumference} ${circumference}`}
+          strokeDashoffset={offset}
+          strokeLinecap="round"
+          transform="rotate(-90 32 32)"
+        />
+      </svg>
+      <div className="absolute inset-0 flex flex-col items-center justify-center text-xs font-semibold text-gray-900 dark:text-gray-100">
+        {value}%
+      </div>
+    </div>
+  );
+}
+
+// Type declarations --------------------------------------------------------
+
+type PersonaKey = "student" | "freelancer" | "developer";
+
+type ProjectTaskStatusToken = "todo" | "inProgress" | "review" | "done";
+
+type PersonaAccentToken = "emerald" | "blue" | "purple" | "amber" | "rose";
+
+type ProjectBoardTask = {
+  id: string;
+  label: string;
+  status: ProjectTaskStatusToken;
+  context: string | null;
+};
+
+type ProjectBoardCard = {
+  id: string;
+  name: string;
+  stage: string;
+  dueDate: string | null;
+  progress: number;
+  focus: string | null;
+  notes: string | null;
+  accent: PersonaAccentToken;
+  tasks: ProjectBoardTask[];
+};
+
+type ProjectBoardColumn = {
+  id: string;
+  title: string;
+  description: string | null;
+  intent: string | null;
+  projects: ProjectBoardCard[];
+};
+
+type FocusSuggestion = {
+  projectId: string;
+  title: string;
+  summary: string;
+  accent: PersonaAccentToken;
+  score: number;
+  stage: string;
+  priority: "Critical focus" | "High focus" | "Worth a look" | "On track";
+  dueLabel: string;
+};
+
+type ProjectBoardResponse = {
+  personas: Array<{ key: PersonaKey; label: string; blurb: string }>;
+  stats: {
+    activeProjects: number;
+    totalProjects: number;
+    tasksCompleted: number;
+    tasksTotal: number;
+    upcomingDue: number;
+    overdue: number;
+  };
+  board: Record<PersonaKey, ProjectBoardColumn[]>;
+  focus: FocusSuggestion[];
+};
+
+type Template = {
+  id: string;
+  title: string;
+  summary: string;
+  bestFor: PersonaKey | "all";
+  highlights: string[];
+};

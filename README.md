@@ -1,65 +1,44 @@
-# 📅 Daily Focus - Ứng dụng Quản Lý Thời Gian & Tập Trung Cá Nhân
+﻿# Daily Focus – Time Management & Personal Focus
 
-**Daily Focus** là một ứng dụng web giúp bạn quản lý công việc hàng ngày, cải thiện sự tập trung và tăng năng suất bằng kỹ thuật Pomodoro. Dự án hướng tới việc xây dựng một công cụ cá nhân đơn giản, hiện đại và hiệu quả.
+Daily Focus is a web app that helps you manage daily tasks, stay focused, and boost productivity using the Pomodoro technique. The goal is a simple, modern, effective personal tool.
 
-## 🚀 Tính năng chính
+## Features
 
-### 1. 🧑‍💼 Đăng ký / Đăng nhập
-- Xác thực người dùng bằng JWT.
-- Đăng nhập với Email/Password hoặc OAuth (Google).
-- Lưu trữ thông tin người dùng trong PostgreSQL.
+1. Auth (Email/Password + Google OAuth)
+2. Task management (CRUD)
+3. Pomodoro timer (25/5 default) with history
+4. Productivity stats (tasks and focus time)
+5. Email reminders for upcoming deadlines
+6. Modern, responsive UI (Tailwind, dark mode, Framer Motion)
 
-### 2. ✅ Quản lý Task (CRUD)
-- **Create:** Tạo task mới (tên, mô tả, deadline).
-- **Read:** Hiển thị danh sách task cá nhân.
-- **Update:** Chỉnh sửa, đánh dấu hoàn thành.
-- **Delete:** Xoá task khi không cần thiết.
+## Tech Stack
 
-### 3. ⏱️ Pomodoro Timer
-- Bộ đếm thời gian 25 phút làm việc / 5 phút nghỉ.
-- Ghi lại các phiên Pomodoro để thống kê.
+| Tech                | Purpose                          |
+|---------------------|----------------------------------|
+| Next.js (App Router)| Frontend + API routes            |
+| TailwindCSS         | Fast UI building                 |
+| TypeScript          | Safer, maintainable code         |
+| PostgreSQL          | Persist users, tasks, projects   |
+| Prisma              | Type-safe ORM                    |
+| JWT / NextAuth      | Authentication                   |
+| Nodemailer          | Email notifications              |
+| Framer Motion       | Motion effects                   |
 
-### 4. 📊 Thống kê năng suất
-- Thống kê số task hoàn thành theo ngày, tuần, tháng.
-- Thống kê thời gian làm việc theo Pomodoro sessions.
+## Setup
 
-### 5. 📧 Gửi Email Nhắc Nhở
-- Nhắc deadline sắp đến qua email.
-
-### 6. 🎨 UI/UX Hiện Đại
-- Giao diện tối giản, đẹp với TailwindCSS.
-- Responsive trên mobile, có Dark Mode.
-- Hiệu ứng chuyển động mượt mà (Framer Motion).
-
----
-
-## 🛠️ Công nghệ sử dụng
-
-| Công nghệ        | Mục đích                             |
-|------------------|--------------------------------------|
-| **Next.js (App Router)** | Frontend + Backend (API routes) |
-| **TailwindCSS**  | Thiết kế giao diện nhanh chóng        |
-| **TypeScript**   | Code an toàn, dễ bảo trì              |
-| **PostgreSQL**   | Lưu trữ người dùng và task            |
-| **JWT**          | Xác thực người dùng                   |
-| **Nodemailer**   | Gửi email nhắc nhở & chúc mừng        |
-| **Framer Motion**| Hiệu ứng chuyển động                  |
-
----
-
-## 📦 Cài đặt & chạy dự án
-
-### 1. Clone repository
-```bash
+1. Clone
+`ash
 git clone https://github.com/Altas463/daily-focus-Time-Management-Website.git
-```
-### 2. Cài đặt dependencies
-```bash
+cd daily-focus-Time-Management-Website
+`
+
+2. Install deps
+`ash
 npm install
-```
-### 3. Thiết lập biến môi trường .env.local
-Tạo file .env.local và thêm các biến sau:
-```bash
+`
+
+3. Configure environment (.env or .env.local)
+`ash
 DATABASE_URL=postgresql://username:password@localhost:5432/dailyfocus
 JWT_SECRET=your_jwt_secret
 EMAIL_USER=your_email@example.com
@@ -67,35 +46,32 @@ EMAIL_PASS=your_email_password
 GOOGLE_CLIENT_ID=your_google_client_id
 GOOGLE_CLIENT_SECRET=your_google_client_secret
 NEXTAUTH_SECRET=your_nextauth_secret
-```
-⚠️ Đảm bảo đã cài và cấu hình PostgreSQL trên máy bạn.
+`
 
-### 4. Khởi tạo Database
-```bash
+4. Database
+`ash
 npx prisma migrate dev --name init
-```
+`
 
-### 5. Chạy ứng dụng
-```bash
+5. Run
+`ash
 npm run dev
-```
+`
 
-🛤 Lộ trình phát triển
- - ✅ Xác thực người dùng (JWT + Google OAuth)
- - ✅ CRUD Task + Deadline
- - ✅ Pomodoro Timer hoạt động
- - ✅ Thống kê năng suất theo ngày/tuần/tháng
- - ✅ Email nhắc nhở và thông báo hoàn thành
- - ⏳ Đồng bộ đa thiết bị / đồng bộ thời gian thực
- - 🔜 Hỗ trợ ngôn ngữ đa dạng (i18n)
+## Roadmap
+- ✅ Auth (JWT + Google OAuth)
+- ✅ CRUD Tasks + deadlines
+- ✅ Pomodoro timer working
+- ✅ Productivity stats (daily/weekly/monthly)
+- ✅ Email reminders
+- ⏳ Realtime sync / multi-device
+- 🔜 Internationalization (i18n)
 
-🤝 Đóng góp
-Bạn có thể đóng góp bằng cách:
-- Mở issue nếu phát hiện bug
-- Tạo pull request với tính năng mới
-- Cải thiện giao diện hoặc hiệu năng
+## Contributing
+- Open issues for bugs
+- Send PRs for improvements
+- UI/UX and performance contributions are welcome
 
-📬 Liên hệ
-Nếu bạn có bất kỳ câu hỏi hoặc đề xuất nào, hãy liên hệ:
+## Contact
 - Email: atu3012@gmail.com
 - GitHub: Altas463

@@ -1,4 +1,4 @@
-// lib/validators/auth.ts
+﻿// lib/validators/auth.ts
 
 export function validateLogin({
   email,
@@ -8,15 +8,15 @@ export function validateLogin({
   password?: string;
 }): string | null {
   if (!email || !password) {
-    return 'Vui lòng điền đầy đủ email và mật khẩu';
+    return 'Please provide both email and password';
   }
 
   const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailPattern.test(email)) {
-    return 'Email không hợp lệ';
+    return 'Invalid email';
   }
 
-  return null; // hợp lệ
+  return null;
 }
 
 export function validateRegister({
@@ -29,16 +29,16 @@ export function validateRegister({
   password?: string;
 }): string | null {
   if (!name || !email || !password) {
-    return 'Vui lòng điền đầy đủ các trường';
+    return 'Please fill out all required fields';
   }
 
   const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailPattern.test(email)) {
-    return 'Email không hợp lệ';
+    return 'Invalid email';
   }
 
   if (password.length < 6) {
-    return 'Mật khẩu phải có ít nhất 6 ký tự';
+    return 'Password must be at least 6 characters';
   }
 
   return null;

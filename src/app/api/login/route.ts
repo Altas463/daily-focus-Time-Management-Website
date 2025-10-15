@@ -1,4 +1,4 @@
-// app/api/login/route.ts
+﻿// app/api/login/route.ts
 
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
@@ -12,7 +12,7 @@ export async function POST(req: Request) {
   try {
     const { email, password } = await req.json();
 
-    // Sử dụng hàm kiểm tra đầu vào từ validator
+    // Validate input
     const validationError = validateLogin({ email, password });
     if (validationError) {
       return NextResponse.json({ error: validationError }, { status: 400 });
@@ -21,7 +21,7 @@ export async function POST(req: Request) {
     const user = await prisma.user.findUnique({ where: { email } });
     if (!user || !user.password) {
       return NextResponse.json(
-        { error: "Email hoặc mật khẩu không đúng" },
+        { error: "Invalid email or password" },
         { status: 401 }
       );
     }
@@ -29,7 +29,7 @@ export async function POST(req: Request) {
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
       return NextResponse.json(
-        { error: "Email hoặc mật khẩu không đúng" },
+        { error: "Invalid email or password" },
         { status: 401 }
       );
     }
@@ -52,6 +52,6 @@ export async function POST(req: Request) {
     });
   } catch (error) {
     console.error("Login error:", error);
-    return NextResponse.json({ error: "Lỗi server" }, { status: 500 });
+    return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
 }

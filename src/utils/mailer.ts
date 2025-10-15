@@ -1,4 +1,4 @@
-import nodemailer from "nodemailer";
+﻿import nodemailer from "nodemailer";
 
 export const sendDeadlineReminder = async (
   to: string,
@@ -16,11 +16,11 @@ export const sendDeadlineReminder = async (
   await transporter.sendMail({
     from: `"Daily Focus" <${process.env.EMAIL_USER}>`,
     to,
-    subject: "⏰ Nhắc nhở task sắp đến hạn!",
+    subject: "Task Due Soon Reminder",
     html: `
-      <h2>🔔 Nhắc nhở task: <strong>${taskTitle}</strong></h2>
-      <p>Deadline của task là: <strong>${deadline}</strong></p>
-      <p>Hãy hoàn thành đúng hạn nhé! 🚀</p>
+      <h2>Reminder: <strong>${taskTitle}</strong></h2>
+      <p>This task is due by: <strong>${deadline}</strong></p>
+      <p>You've got this — stay focused!</p>
     `,
   });
 };

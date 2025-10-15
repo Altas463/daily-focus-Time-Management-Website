@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { FC, useState, useEffect, useRef } from "react";
 import DatePicker from "react-datepicker";
@@ -30,7 +30,7 @@ const TaskEditModal: FC<Props> = ({ task, onClose, onUpdate, onDelete }) => {
   const startPickerRef = useRef<HTMLDivElement>(null);
   const endPickerRef = useRef<HTMLDivElement>(null);
 
-  // Đóng picker khi click ngoài
+  // Close pickers when clicking outside
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (
@@ -68,7 +68,7 @@ const TaskEditModal: FC<Props> = ({ task, onClose, onUpdate, onDelete }) => {
   };
 
   const handleDelete = () => {
-    if (confirm("Bạn có chắc muốn xoá task này?")) {
+    if (confirm("Are you sure you want to delete this task?")) {
       onDelete?.(task.id);
       onClose();
     }
@@ -80,7 +80,7 @@ const TaskEditModal: FC<Props> = ({ task, onClose, onUpdate, onDelete }) => {
         <button
           onClick={onClose}
           className="absolute top-3 right-3 bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:text-red-500 hover:bg-gray-300 dark:hover:bg-gray-600 shadow-md rounded-full w-8 h-8 flex items-center justify-center z-50"
-          aria-label="Đóng"
+          aria-label="Close"
         >
           <FiX />
         </button>
@@ -89,13 +89,13 @@ const TaskEditModal: FC<Props> = ({ task, onClose, onUpdate, onDelete }) => {
           {/* Title */}
           <div className="mb-8">
             <label className="block text-base font-bold text-blue-600 dark:text-blue-400 mb-3 tracking-wide">
-              Tiêu đề
+              Title
             </label>
             <input
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="Nhập tiêu đề task..."
+              placeholder="Enter task title..."
               className="w-full text-2xl font-semibold text-gray-900 dark:text-white bg-white dark:bg-gray-900 border-0 border-b-2 border-blue-200 dark:border-blue-700 focus:border-blue-500 dark:focus:border-blue-400 focus:outline-none placeholder-gray-400 dark:placeholder-gray-500 rounded-t-md transition"
             />
           </div>
@@ -103,13 +103,13 @@ const TaskEditModal: FC<Props> = ({ task, onClose, onUpdate, onDelete }) => {
           {/* Description */}
           <div className="mb-8">
             <label className="block text-base font-bold text-blue-600 dark:text-blue-400 mb-3 tracking-wide">
-              Mô tả
+              Description
             </label>
             <textarea
               rows={4}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="Thêm mô tả..."
+              placeholder="Add a description..."
               className="w-full p-4 rounded-xl bg-gray-100/80 dark:bg-gray-800/80 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-700 focus:outline-none focus:border-blue-500 dark:focus:border-blue-400 resize-none transition"
             />
           </div>
@@ -118,16 +118,16 @@ const TaskEditModal: FC<Props> = ({ task, onClose, onUpdate, onDelete }) => {
           <div className="mb-10">
             <div className="flex flex-col md:flex-row gap-6">
               {/* Start Date */}
-              <div className="flex-1 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 shadow-md p-4 flex flex-col gap-2 relative">
+              <div className="flex-1 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 shadow-md p-4 flex flex-col gap-2 relative" ref={startPickerRef}>
                 <span className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
                   <FiCalendar className="text-base text-blue-400 dark:text-blue-300" />
-                  Bắt đầu
+                  Start
                 </span>
                 <button
                   onClick={() => setShowStartPicker(!showStartPicker)}
                   className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-100/70 dark:bg-gray-900/70 text-gray-800 dark:text-gray-100 border border-gray-200 dark:border-gray-700 hover:bg-gray-200/80 dark:hover:bg-gray-800/80 transition font-medium"
                 >
-                  <span>{formatDayMonth(startDate) || 'Chon ngay'}</span>
+                  <span>{formatDayMonth(startDate) || 'Pick a date'}</span>
                 </button>
                 {showStartPicker && (
                   <div className="absolute z-40 mt-2">
@@ -145,16 +145,16 @@ const TaskEditModal: FC<Props> = ({ task, onClose, onUpdate, onDelete }) => {
                 )}
               </div>
               {/* End Date */}
-              <div className="flex-1 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 shadow-md p-4 flex flex-col gap-2 relative">
+              <div className="flex-1 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 shadow-md p-4 flex flex-col gap-2 relative" ref={endPickerRef}>
                 <span className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
                   <FiCalendar className="text-base text-pink-400 dark:text-pink-300" />
-                  Kết thúc
+                  End
                 </span>
                 <button
                   onClick={() => setShowEndPicker(!showEndPicker)}
                   className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-100/70 dark:bg-gray-900/70 text-gray-800 dark:text-gray-100 border border-gray-200 dark:border-gray-700 hover:bg-gray-200/80 dark:hover:bg-gray-800/80 transition font-medium"
                 >
-                  <span>{formatDayMonth(endDate) || 'Chon ngay'}</span>
+                  <span>{formatDayMonth(endDate) || 'Pick a date'}</span>
                 </button>
                 {showEndPicker && (
                   <div className="absolute z-40 mt-2">
@@ -181,7 +181,7 @@ const TaskEditModal: FC<Props> = ({ task, onClose, onUpdate, onDelete }) => {
               className="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-red-600 hover:bg-red-700 text-white shadow-sm transition font-semibold"
             >
               <FiTrash2 />
-              Xoá
+              Delete
             </button>
             <button
               onClick={handleSave}
@@ -189,7 +189,7 @@ const TaskEditModal: FC<Props> = ({ task, onClose, onUpdate, onDelete }) => {
               className="flex items-center gap-2 px-7 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white disabled:opacity-60 shadow-sm transition font-semibold"
             >
               <FiSave />
-              Lưu
+              Save
             </button>
           </div>
         </div>

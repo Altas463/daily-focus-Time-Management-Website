@@ -1,25 +1,25 @@
-'use client';
+﻿'use client';
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 const groups = [
   {
-    title: 'T??"NG QUAN',
+    title: 'OVERVIEW',
     tone: 'primary',
     items: [{ href: '/dashboard', label: 'Dashboard' }],
   },
   {
-    title: 'LA?M VI??+C',
+    title: 'WORK',
     tone: 'work',
     items: [
-      { href: '/dashboard/tasks', label: 'Qu???n lA? Task' },
+      { href: '/dashboard/tasks', label: 'Tasks' },
       { href: '/dashboard/projects', label: 'Project Hub' },
       { href: '/dashboard/pomodoro', label: 'Pomodoro Timer' },
     ],
   },
   {
-    title: 'BA?O CA?O',
+    title: 'REPORTS',
     tone: 'report',
     items: [
       { href: '/dashboard/stats', label: 'Reports' },
@@ -104,12 +104,12 @@ const Sidebar = () => {
         <div className="rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-800 dark:bg-gray-900">
           <div className="mb-2 flex items-center justify-between">
             <span className="text-xs font-semibold uppercase tracking-[0.12em] text-gray-500 dark:text-gray-400">
-              Gợi ý hôm nay
+              Tip for today
             </span>
             <span className="h-1 w-8 rounded-full bg-gray-300 dark:bg-gray-600" aria-hidden />
           </div>
           <p className="text-xs leading-relaxed text-gray-600 dark:text-gray-300">
-            Thử hoàn thành một vòng Pomodoro: 25 phút tập trung và 5 phút nghỉ ngắn để duy trì nhịp làm việc.
+            Try a Pomodoro: 25 minutes focus + 5 minute break.
           </p>
         </div>
       </div>
@@ -118,4 +118,5 @@ const Sidebar = () => {
 };
 
 export default Sidebar;
+
 

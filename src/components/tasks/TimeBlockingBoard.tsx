@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useMemo, useState } from "react";
 import { Droppable } from "@hello-pangea/dnd";
@@ -33,7 +33,7 @@ const formatWindowLabel = (hour: number, minute: number, duration: TimeBlockDura
     minute: "2-digit",
   });
 
-  return `${formatter.format(start)} – ${formatter.format(end)}`;
+  return formatter.format(start) + " - " + formatter.format(end);
 };
 
 const buildTimeBlocks = () => {
@@ -48,7 +48,7 @@ const buildTimeBlocks = () => {
         startMinute: 0,
         duration,
         windowLabel,
-        label: `${windowLabel} • ${duration}m`,
+        label: windowLabel + " - " + duration + "m",
       });
     }
   }
@@ -260,7 +260,7 @@ const TimeBlockingBoard = ({
         <Clock3 className="h-4 w-4" aria-hidden />
         <span>
           {scheduledTasks.length > 0
-            ? `${scheduledTasks.length} block${scheduledTasks.length > 1 ? "s" : ""} • ${totalMinutes} scheduled minutes`
+            ? `${scheduledTasks.length} block${scheduledTasks.length > 1 ? "s" : ""} â€¢ ${totalMinutes} scheduled minutes`
             : "No blocks scheduled yet"}
         </span>
       </div>
@@ -324,7 +324,7 @@ const TimeBlockingBoard = ({
                         </div>
                         {isPending && (
                           <div className="absolute inset-0 flex items-center justify-center rounded-2xl bg-white/80 text-xs font-semibold uppercase tracking-[0.3em] text-gray-500 dark:bg-gray-900/80 dark:text-gray-300">
-                            Updating…
+                            Updating...
                           </div>
                         )}
                         {provided.placeholder}
@@ -342,3 +342,4 @@ const TimeBlockingBoard = ({
 };
 
 export default TimeBlockingBoard;
+

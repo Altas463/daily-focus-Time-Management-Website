@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 const tips = [
   "Break big goals into the next three actions.",

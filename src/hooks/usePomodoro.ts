@@ -1,4 +1,4 @@
-// src/hooks/usePomodoro.ts
+﻿// src/hooks/usePomodoro.ts
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
@@ -17,15 +17,15 @@ export function usePomodoro(
   const [secondsLeft, setSecondsLeft] = useState(workDuration);
   const [sessionStart, setSessionStart] = useState<Date | null>(null);
 
-  // Trạng thái đã load localStorage
+  // Track whether localStorage has been restored
   const [restored, setRestored] = useState(false);
 
-  // Hàm kết thúc phiên, dùng useCallback để không bị lỗi phụ thuộc
+  // End the current session and flip mode
   const handleSessionEnd = useCallback(async () => {
     const now = new Date();
     if (sessionStart) {
       await saveSession(mode === 'break', sessionStart, now);
-      console.log(`[Pomodoro] Saved ${mode} session: ${sessionStart.toISOString()} → ${now.toISOString()}`);
+      console.log(`[Pomodoro] Saved ${mode} session: ${sessionStart.toISOString()} -> ${now.toISOString()}`);
     }
 
     const nextMode = mode === 'work' ? 'break' : 'work';
@@ -34,7 +34,7 @@ export function usePomodoro(
     setSecondsLeft(nextMode === 'work' ? workDuration : breakDuration);
   }, [mode, sessionStart, workDuration, breakDuration]);
 
-  // Load trạng thái từ localStorage khi mount
+  // Load state from localStorage on mount
   useEffect(() => {
     try {
       const saved = localStorage.getItem('pomodoroState');
@@ -61,7 +61,7 @@ export function usePomodoro(
     setRestored(true);
   }, []);
 
-  // Lưu trạng thái vào localStorage khi thay đổi
+  // Persist state to localStorage on change
   useEffect(() => {
     if (!restored) return;
 
@@ -80,21 +80,21 @@ export function usePomodoro(
     }
   }, [workDuration, breakDuration, isRunning, mode, secondsLeft, sessionStart, restored]);
 
-  // Đồng bộ lại secondsLeft khi duration hoặc mode thay đổi, nhưng không reset khi đang chạy hoặc đã bắt đầu session
+  // Keep secondsLeft in sync with duration when not running or mid-session
   useEffect(() => {
     if (!restored || isRunning || sessionStart) return;
 
     setSecondsLeft(mode === 'work' ? workDuration : breakDuration);
   }, [workDuration, breakDuration, mode, restored, isRunning, sessionStart]);
 
-  // Xử lý đếm ngược
+  // Countdown runner
   useEffect(() => {
     if (!isRunning) return;
 
     const interval = setInterval(() => {
       setSecondsLeft((prev) => {
         if (prev <= 1) {
-          handleSessionEnd(); // kết thúc phiên khi hết giờ
+          handleSessionEnd();
           return 0;
         }
         return prev - 1;
@@ -141,7 +141,7 @@ export function usePomodoro(
   };
 }
 
-// ✅ Gửi session dưới dạng ISO string
+// Send session in ISO string format
 async function saveSession(isBreak: boolean, startTime: Date, endTime: Date) {
   try {
     await fetch('/api/pomodoro-sessions', {
@@ -154,6 +154,6 @@ async function saveSession(isBreak: boolean, startTime: Date, endTime: Date) {
       }),
     });
   } catch (error) {
-    console.error('Lỗi khi lưu session:', error);
+    console.error('Failed to save session:', error);
   }
 }

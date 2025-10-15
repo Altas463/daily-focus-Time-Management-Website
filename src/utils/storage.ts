@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 type Converter<T> = (value: string) => T;
 
@@ -22,7 +22,7 @@ export function writeToStorageInternal<T>(key: string, value: T) {
     const payload = typeof value === "string" ? value : JSON.stringify(value);
     window.localStorage.setItem(key, payload);
   } catch {
-    // swallow – storage may be disabled or full
+    // swallow errors — storage may be disabled or full
   }
 }
 

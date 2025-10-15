@@ -1,6 +1,4 @@
-'use client';
-
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 
@@ -15,7 +13,7 @@ export const useAuth = () => {
   }, []);
 
   useEffect(() => {
-    // Nếu không có session và không có token local => chưa đăng nhập
+    // If there is no session and no local token -> not logged in
     if (status === 'unauthenticated' && isTokenPresent === false) {
       router.replace('/auth/login');
     }

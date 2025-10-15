@@ -63,7 +63,7 @@ export default function TermsPage() {
         </main>
 
         <footer className="text-xs text-gray-500 dark:text-gray-400">
-          Effective {new Date().getFullYear()} · We welcome feedback about these terms at support@dailyfocus.app.
+          Effective {new Date().getFullYear()} — We welcome feedback about these terms at support@dailyfocus.app.
         </footer>
       </div>
     </div>
