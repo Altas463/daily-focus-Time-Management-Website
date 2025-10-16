@@ -1,4 +1,4 @@
-import { Persona, ProjectAccent, ProjectTaskStatus } from "@prisma/client";
+ï»¿import { Persona, ProjectAccent, ProjectTaskStatus } from "@prisma/client";
 
 export type DefaultProjectTask = {
   label: string;
@@ -121,7 +121,7 @@ export const defaultLanes: DefaultLane[] = [
     ordering: 0,
     projects: [
       {
-        name: "Brand refresh – Lumen Health",
+        name: "Brand refresh â€“ Lumen Health",
         stage: "Feedback incorporation",
         dueDate: "2025-05-19",
         progress: 60,
@@ -136,7 +136,7 @@ export const defaultLanes: DefaultLane[] = [
         ],
       },
       {
-        name: "Content system – Byte & Co",
+        name: "Content system â€“ Byte & Co",
         stage: "Copy alignment",
         dueDate: "2025-05-28",
         progress: 30,
@@ -160,7 +160,7 @@ export const defaultLanes: DefaultLane[] = [
     ordering: 1,
     projects: [
       {
-        name: "Motion package – Slate Studios",
+        name: "Motion package â€“ Slate Studios",
         stage: "Proposal draft",
         dueDate: "2025-05-20",
         progress: 20,
@@ -184,7 +184,7 @@ export const defaultLanes: DefaultLane[] = [
     ordering: 0,
     projects: [
       {
-        name: "Focus sessions – analytics beta",
+        name: "Focus sessions â€“ analytics beta",
         stage: "QA pass",
         dueDate: "2025-05-23",
         progress: 70,
@@ -199,7 +199,7 @@ export const defaultLanes: DefaultLane[] = [
         ],
       },
       {
-        name: "Mobile parity – focus timer",
+        name: "Mobile parity â€“ focus timer",
         stage: "Implementation",
         dueDate: "2025-05-30",
         progress: 40,
