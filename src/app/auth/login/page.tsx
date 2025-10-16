@@ -7,7 +7,6 @@ import { signIn } from "next-auth/react";
 import { ArrowRight, Eye, EyeOff, Loader2, Lock, Mail, ShieldCheck, Sparkles } from "lucide-react";
 import AuthPageShell from "@/components/auth/AuthPageShell";
 import { useSpotlightStage } from "@/hooks/useSpotlightStage";
-import { calculatePasswordStrength } from "@/utils/password";
 import { getMotivationTip } from "@/utils/motivation";
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -17,8 +16,6 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [capsOn, setCapsOn] = useState(false);
   const [remember, setRemember] = useState(true);
-  const [pwScore, setPwScore] = useState(0);
-  const [pwMax, setPwMax] = useState(4);
   const router = useRouter();
   const { stageRef, handleMouseMove } = useSpotlightStage();
   const motivationTip = useMemo(
@@ -37,20 +34,6 @@ export default function LoginPage() {
     }
     return true;
   };
-  useEffect(() => {
-    const { score, maxScore } = calculatePasswordStrength(password);
-    setPwScore(score);
-    setPwMax(maxScore);
-  }, [password]);
-  const strengthLabel = ["Yeu", "Trung binh", "Kha", "Manh", "Rat manh"][pwScore] || "";
-  const strengthClass =
-    [
-      "bg-gradient-to-r from-rose-500 to-orange-400",
-      "bg-gradient-to-r from-orange-400 to-amber-400",
-      "bg-gradient-to-r from-amber-400 to-yellow-400",
-      "bg-gradient-to-r from-lime-400 to-emerald-400",
-      "bg-gradient-to-r from-emerald-400 to-teal-500",
-    ][pwScore] || "bg-gray-300";
   const handleLogin = async (event: React.FormEvent) => {
     event.preventDefault();
     setErrorMessage(null);
@@ -112,17 +95,7 @@ export default function LoginPage() {
         </>
       }
     >
-      <motion.div
-        initial={{ opacity: 0, y: 24, scale: 0.98 }}
-        animate={{ opacity: 1, y: 0, scale: 1 }}
-        transition={{ duration: 0.6, ease: "easeOut" }}
-        className="relative overflow-hidden rounded-3xl border border-white/70 bg-white/80 px-6 py-8 shadow-2xl backdrop-blur-sm dark:border-white/10 dark:bg-gray-950/75 sm:px-10 sm:py-12"
-      >
-        <div className="pointer-events-none absolute inset-0">
-          <div className="absolute -right-24 -top-32 h-72 w-72 rounded-full bg-blue-200/60 blur-3xl dark:bg-emerald-700/30" />
-          <div className="absolute bottom-0 left-1/2 h-64 w-64 -translate-x-1/2 translate-y-1/2 rounded-full bg-white/70 blur-[120px] dark:bg-white/10" />
-        </div>
-        <div className="relative">
+      <div>
           <div className="mb-10 flex flex-col items-center gap-3 text-center">
             <div className="inline-flex items-center gap-2 rounded-full border border-slate-200/70 bg-slate-100/70 px-3 py-1 text-xs font-semibold text-slate-700 shadow-sm dark:border-emerald-500/30 dark:bg-emerald-500/10 dark:text-emerald-200">
               <ShieldCheck className="h-4 w-4" aria-hidden />
@@ -154,7 +127,7 @@ export default function LoginPage() {
                   value={email}
                   onChange={(event) => setEmail(event.target.value)}
                   placeholder="you@example.com"
-                  className="w-full rounded-2xl border border-slate-200/80 bg-white/90 px-4 py-3 pl-12 text-sm font-medium text-gray-900 placeholder:text-gray-400 transition focus:border-slate-500 focus:outline-none focus:ring-4 focus:ring-slate-400/20 dark:border-white/10 dark:bg-gray-900/70 dark:text-white dark:placeholder:text-gray-500 dark:focus:border-emerald-400 dark:focus:ring-emerald-400/20"
+                  className="w-full rounded-lg border border-gray-200 bg-white px-4 py-3 pl-12 text-sm font-medium text-gray-900 placeholder:text-gray-400 transition focus:border-gray-400 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:border-gray-800 dark:bg-gray-900 dark:text-white dark:placeholder:text-gray-500 dark:focus:border-gray-600 dark:focus:ring-gray-800/40"
                 />
               </div>
             </div>
@@ -182,7 +155,7 @@ export default function LoginPage() {
                   onChange={(event) => setPassword(event.target.value)}
                   onKeyUp={onPasswordKeyUp}
                   placeholder="Nhap mat khau"
-                  className="w-full rounded-2xl border border-slate-200/80 bg-white/90 px-4 py-3 pl-12 pr-12 text-sm font-medium text-gray-900 placeholder:text-gray-400 transition focus:border-slate-500 focus:outline-none focus:ring-4 focus:ring-slate-400/20 dark:border-white/10 dark:bg-gray-900/70 dark:text-white dark:placeholder:text-gray-500 dark:focus:border-emerald-400 dark:focus:ring-emerald-400/20"
+                  className="w-full rounded-lg border border-gray-200 bg-white px-4 py-3 pl-12 pr-12 text-sm font-medium text-gray-900 placeholder:text-gray-400 transition focus:border-gray-400 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:border-gray-800 dark:bg-gray-900 dark:text-white dark:placeholder:text-gray-500 dark:focus:border-gray-600 dark:focus:ring-gray-800/40"
                 />
                 <button
                   type="button"
@@ -198,28 +171,14 @@ export default function LoginPage() {
                   <span className="sr-only">{showPassword ? "An mat khau" : "Hien mat khau"}</span>
                 </button>
               </div>
-              <div className="space-y-1">
-                <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
-                  <span>Do manh:</span>
-                  <span className="font-medium text-gray-700 dark:text-gray-300">{strengthLabel}</span>
-                </div>
-                <div className="h-2 w-full overflow-hidden rounded-full bg-slate-200/80 dark:bg-white/10">
-                  <div
-                    className={`h-2 rounded-full transition-all duration-300 ${strengthClass}`}
-                    style={{ width: pwMax ? `${(pwScore / pwMax) * 100}%` : "0%" }}
-                  />
-                </div>
-                <div className="text-xs text-gray-500 dark:text-gray-400">
-                  Goi y: toi thieu 8 ky tu, so, chu hoa, ky tu dac biet
-                </div>
-              </div>
+              {/* Password strength meter removed for login */}
             </div>
 
-            <div className="flex flex-col gap-3 rounded-2xl border border-slate-200/70 bg-slate-50/60 px-4 py-3 text-sm text-gray-600 shadow-sm dark:border-white/10 dark:bg-white/[0.04] dark:text-gray-300 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-col gap-3 rounded-lg border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-600 shadow-sm dark:border-gray-800 dark:bg-gray-900/60 dark:text-gray-300 sm:flex-row sm:items-center sm:justify-between">
               <label className="inline-flex items-center gap-2 select-none">
                 <input
                   type="checkbox"
-                  className="h-4 w-4 rounded border-gray-300 text-slate-600 focus:ring-slate-400 dark:border-white/20 dark:bg-transparent dark:text-emerald-400 dark:focus:ring-emerald-400"
+                  className="h-4 w-4 rounded border-gray-300 text-gray-700 focus:ring-gray-400 dark:border-gray-700 dark:bg-transparent dark:text-white dark:focus:ring-gray-600"
                   checked={remember}
                   onChange={(event) => setRemember(event.target.checked)}
                 />
@@ -227,11 +186,11 @@ export default function LoginPage() {
               </label>
               <span className="text-xs text-gray-500 dark:text-gray-400">
                 Bang viec dang nhap ban dong y voi{" "}
-                <Link href="/terms" className="font-medium text-slate-700 underline-offset-4 hover:underline dark:text-emerald-300">
+                <Link href="/terms" className="font-medium text-gray-700 underline-offset-4 hover:underline dark:text-white">
                   Dieu khoan
                 </Link>{" "}
                 &{" "}
-                <Link href="/privacy" className="font-medium text-slate-700 underline-offset-4 hover:underline dark:text-emerald-300">
+                <Link href="/privacy" className="font-medium text-gray-700 underline-offset-4 hover:underline dark:text-white">
                   Bao mat
                 </Link>
               </span>
@@ -253,7 +212,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={isLoading}
-              className="group inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-slate-900 via-slate-900 to-slate-800 px-6 py-3 text-sm font-semibold text-white shadow-lg transition hover:from-slate-800 hover:to-slate-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-600 disabled:opacity-60 dark:from-emerald-400 dark:via-emerald-500 dark:to-emerald-400 dark:text-gray-900 dark:hover:from-emerald-300 dark:hover:to-emerald-400 dark:focus-visible:outline-emerald-300"
+              className="group inline-flex w-full items-center justify-center gap-2 rounded-lg bg-gray-900 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-gray-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600 disabled:opacity-60 dark:bg-white dark:text-gray-900"
             >
               {isLoading ? (
                 <>
@@ -285,7 +244,7 @@ export default function LoginPage() {
             onClick={handleGoogleSignIn}
             disabled={isLoading}
             type="button"
-            className="inline-flex w-full items-center justify-center gap-3 rounded-2xl border border-slate-200/80 bg-white/90 px-6 py-3 text-sm font-medium text-gray-700 shadow-sm transition hover:border-slate-300 hover:shadow-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-600 disabled:opacity-60 dark:border-white/10 dark:bg-gray-900/60 dark:text-gray-100 dark:hover:border-white/20 dark:hover:bg-gray-900"
+            className="inline-flex w-full items-center justify-center gap-3 rounded-lg border border-gray-200 bg-white px-6 py-3 text-sm font-medium text-gray-700 shadow-sm transition hover:bg-gray-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600 disabled:opacity-60 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-100"
           >
             <span
               aria-hidden
@@ -296,18 +255,17 @@ export default function LoginPage() {
             Dang nhap voi Google
           </button>
 
-          <div className="mt-8 rounded-2xl border border-dashed border-slate-200/80 bg-slate-50/70 px-4 py-3 text-xs text-gray-500 dark:border-white/10 dark:bg-white/[0.03] dark:text-gray-400">
+          <div className="mt-8 rounded-lg border border-dashed border-gray-200 bg-gray-50 px-4 py-3 text-xs text-gray-500 dark:border-gray-800 dark:bg-gray-900/60 dark:text-gray-400">
             Meo nho: {motivationTip}
           </div>
 
           <p className="mt-6 text-center text-sm text-gray-600 dark:text-gray-400">
             Chua co tai khoan?{" "}
-            <Link href="/auth/register" className="font-semibold text-slate-900 underline-offset-4 hover:underline dark:text-emerald-300">
+            <Link href="/auth/register" className="font-semibold text-gray-900 underline-offset-4 hover:underline dark:text-white">
               Dang ky ngay
             </Link>
           </p>
         </div>
-      </motion.div>
     </AuthPageShell>
   );
 }

@@ -158,17 +158,7 @@ export default function RegisterPage() {
         </>
       }
     >
-      <motion.div
-        initial={{ opacity: 0, y: 24, scale: 0.98 }}
-        animate={{ opacity: 1, y: 0, scale: 1 }}
-        transition={{ duration: 0.6, ease: "easeOut" }}
-        className="relative overflow-hidden rounded-3xl border border-white/70 bg-white/80 px-6 py-8 shadow-2xl backdrop-blur-sm dark:border-white/10 dark:bg-gray-950/75 sm:px-10 sm:py-12"
-      >
-        <div className="pointer-events-none absolute inset-0">
-          <div className="absolute -left-28 -top-32 h-80 w-80 rounded-full bg-emerald-200/50 blur-3xl dark:bg-emerald-800/40" />
-          <div className="absolute right-0 bottom-0 h-64 w-64 translate-x-1/3 translate-y-1/3 rounded-full bg-white/70 blur-[120px] dark:bg-white/10" />
-        </div>
-        <div className="relative">
+      <div>
           <div className="mb-10 flex flex-col items-center gap-3 text-center">
             <div className="inline-flex items-center gap-2 rounded-full border border-emerald-200/60 bg-emerald-50/80 px-3 py-1 text-xs font-semibold text-emerald-700 shadow-sm dark:border-emerald-500/30 dark:bg-emerald-500/10 dark:text-emerald-200">
               <ShieldCheck className="h-4 w-4" aria-hidden />
@@ -199,7 +189,7 @@ export default function RegisterPage() {
                   value={name}
                   onChange={(event) => setName(event.target.value)}
                   placeholder="Nguyen Van A"
-                  className="w-full rounded-2xl border border-emerald-200/60 bg-white/90 px-4 py-3 pl-12 text-sm font-medium text-gray-900 placeholder:text-gray-400 transition focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-400/20 dark:border-white/10 dark:bg-gray-900/70 dark:text-white dark:placeholder:text-gray-500 dark:focus:border-emerald-300 dark:focus:ring-emerald-500/20"
+                  className="w-full rounded-lg border border-gray-200 bg-white px-4 py-3 pl-12 text-sm font-medium text-gray-900 placeholder:text-gray-400 transition focus:border-gray-400 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:border-gray-800 dark:bg-gray-900 dark:text-white dark:placeholder:text-gray-500 dark:focus:border-gray-600 dark:focus:ring-gray-800/40"
                 />
               </div>
             </div>
@@ -221,7 +211,7 @@ export default function RegisterPage() {
                   value={email}
                   onChange={(event) => setEmail(event.target.value)}
                   placeholder="you@example.com"
-                  className="w-full rounded-2xl border border-emerald-200/60 bg-white/90 px-4 py-3 pl-12 text-sm font-medium text-gray-900 placeholder:text-gray-400 transition focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-400/20 dark:border-white/10 dark:bg-gray-900/70 dark:text-white dark:placeholder:text-gray-500 dark:focus:border-emerald-300 dark:focus:ring-emerald-500/20"
+                  className="w-full rounded-lg border border-gray-200 bg-white px-4 py-3 pl-12 text-sm font-medium text-gray-900 placeholder:text-gray-400 transition focus:border-gray-400 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:border-gray-800 dark:bg-gray-900 dark:text-white dark:placeholder:text-gray-500 dark:focus:border-gray-600 dark:focus:ring-gray-800/40"
                 />
               </div>
             </div>
@@ -249,12 +239,12 @@ export default function RegisterPage() {
                   onChange={(event) => setPassword(event.target.value)}
                   onKeyUp={(event) => setCapsOnPw(event.getModifierState && event.getModifierState("CapsLock"))}
                   placeholder="Nhap mat khau"
-                  className="w-full rounded-2xl border border-emerald-200/60 bg-white/90 px-4 py-3 pl-12 pr-12 text-sm font-medium text-gray-900 placeholder:text-gray-400 transition focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-400/20 dark:border-white/10 dark:bg-gray-900/70 dark:text-white dark:placeholder:text-gray-500 dark:focus:border-emerald-300 dark:focus:ring-emerald-500/20"
+                  className="w-full rounded-lg border border-gray-200 bg-white px-4 py-3 pl-12 pr-12 text-sm font-medium text-gray-900 placeholder:text-gray-400 transition focus:border-gray-400 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:border-gray-800 dark:bg-gray-900 dark:text-white dark:placeholder:text-gray-500 dark:focus:border-gray-600 dark:focus:ring-gray-800/40"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword((value) => !value)}
-                  className="absolute inset-y-0 right-0 flex items-center px-4 text-emerald-600 transition hover:text-emerald-700 dark:text-emerald-300 dark:hover:text-emerald-200"
+                  className="absolute inset-y-0 right-0 flex items-center px-4 text-gray-500 transition hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
                   aria-label={showPassword ? "An mat khau" : "Hien mat khau"}
                 >
                   {showPassword ? (
@@ -268,7 +258,7 @@ export default function RegisterPage() {
 
               {password && (
                 <div className="space-y-2">
-                  <div className="h-2 w-full overflow-hidden rounded-full bg-emerald-100/70 dark:bg-white/10">
+                  <div className="h-2 w-full overflow-hidden rounded-full bg-gray-200 dark:bg-white/10">
                     <div
                       className={`h-2 rounded-full transition-all duration-300 ${passwordStrengthClass}`}
                       style={{ width: passwordMax ? `${(passwordScore / passwordMax) * 100}%` : "0%" }}
@@ -310,12 +300,12 @@ export default function RegisterPage() {
                   onChange={(event) => setConfirmPassword(event.target.value)}
                   onKeyUp={(event) => setCapsOnConfirm(event.getModifierState && event.getModifierState("CapsLock"))}
                   placeholder="Nhap lai mat khau"
-                  className="w-full rounded-2xl border border-emerald-200/60 bg-white/90 px-4 py-3 pl-12 pr-12 text-sm font-medium text-gray-900 placeholder:text-gray-400 transition focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-400/20 dark:border-white/10 dark:bg-gray-900/70 dark:text-white dark:placeholder:text-gray-500 dark:focus:border-emerald-300 dark:focus:ring-emerald-500/20"
+                  className="w-full rounded-lg border border-gray-200 bg-white px-4 py-3 pl-12 pr-12 text-sm font-medium text-gray-900 placeholder:text-gray-400 transition focus:border-gray-400 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:border-gray-800 dark:bg-gray-900 dark:text-white dark:placeholder:text-gray-500 dark:focus:border-gray-600 dark:focus:ring-gray-800/40"
                 />
                 <button
                   type="button"
                   onClick={() => setShowConfirmPassword((value) => !value)}
-                  className="absolute inset-y-0 right-0 flex items-center px-4 text-emerald-600 transition hover:text-emerald-700 dark:text-emerald-300 dark:hover:text-emerald-200"
+                  className="absolute inset-y-0 right-0 flex items-center px-4 text-gray-500 transition hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
                   aria-label={showConfirmPassword ? "An mat khau xac nhan" : "Hien mat khau xac nhan"}
                 >
                   {showConfirmPassword ? (
@@ -360,7 +350,7 @@ export default function RegisterPage() {
             <button
               type="submit"
               disabled={isLoading}
-              className="group inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-emerald-500 via-emerald-500 to-emerald-600 px-6 py-3 text-sm font-semibold text-white shadow-lg transition hover:from-emerald-400 hover:to-emerald-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-400 disabled:opacity-60 dark:text-gray-900"
+              className="group inline-flex w-full items-center justify-center gap-2 rounded-lg bg-gray-900 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-gray-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600 disabled:opacity-60 dark:bg-white dark:text-gray-900"
             >
               {isLoading ? (
                 <>
@@ -376,18 +366,17 @@ export default function RegisterPage() {
             </button>
           </form>
 
-          <div className="mt-8 rounded-2xl border border-dashed border-emerald-200/70 bg-emerald-50/80 px-4 py-3 text-xs text-emerald-700 dark:border-emerald-500/20 dark:bg-emerald-500/10 dark:text-emerald-200">
+          <div className="mt-8 rounded-lg border border-dashed border-gray-200 bg-gray-50 px-4 py-3 text-xs text-gray-600 dark:border-gray-800 dark:bg-gray-900/60 dark:text-gray-400">
             Meo nho: {motivationTip}
           </div>
 
           <p className="mt-6 text-center text-sm text-gray-600 dark:text-gray-400">
             Da co tai khoan?{" "}
-            <Link href="/auth/login" className="font-semibold text-emerald-600 underline-offset-4 hover:underline dark:text-emerald-300">
+            <Link href="/auth/login" className="font-semibold text-gray-900 underline-offset-4 hover:underline dark:text-white">
               Dang nhap ngay
             </Link>
           </p>
         </div>
-      </motion.div>
     </AuthPageShell>
   );
 }
