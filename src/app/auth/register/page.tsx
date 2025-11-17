@@ -42,12 +42,12 @@ export default function RegisterPage() {
   const passwordStrengthLabel = ["Rat yeu", "Yeu", "Trung binh", "Kha", "Manh", "Rat manh"];
   const passwordStrengthClass =
     [
-      "bg-gradient-to-r from-rose-500 to-orange-400",
-      "bg-gradient-to-r from-orange-400 to-amber-400",
-      "bg-gradient-to-r from-amber-400 to-yellow-400",
-      "bg-gradient-to-r from-lime-400 to-emerald-400",
-      "bg-gradient-to-r from-emerald-400 to-teal-500",
-      "bg-gradient-to-r from-teal-500 to-sky-500",
+      "bg-rose-500",
+      "bg-orange-400",
+      "bg-amber-400",
+      "bg-lime-400",
+      "bg-emerald-500",
+      "bg-teal-500",
     ][passwordScore] || "bg-gray-300";
   const isPasswordMatching = confirmPassword.length > 0 && password === confirmPassword;
   const ConfirmIcon = confirmPassword.length === 0 ? Lock : isPasswordMatching ? CheckCircle2 : CircleAlert;

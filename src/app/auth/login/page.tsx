@@ -230,12 +230,12 @@ export default function LoginPage() {
 
           <div className="relative my-8 flex items-center gap-3 text-[11px] font-semibold uppercase tracking-[0.3em] text-gray-400">
             <span
-              className="h-px flex-1 bg-gradient-to-r from-transparent via-gray-300/70 to-transparent dark:via-white/10"
+              className="h-px flex-1 bg-gray-200 dark:bg-gray-800"
               aria-hidden
             />
             <span>Hoac tiep tuc</span>
             <span
-              className="h-px flex-1 bg-gradient-to-r from-transparent via-gray-300/70 to-transparent dark:via-white/10"
+              className="h-px flex-1 bg-gray-200 dark:bg-gray-800"
               aria-hidden
             />
           </div>
@@ -248,7 +248,7 @@ export default function LoginPage() {
           >
             <span
               aria-hidden
-              className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-gradient-to-br from-[#4285F4] via-[#34A853] to-[#FBBC05] text-xs font-black text-white shadow-sm"
+              className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-blue-600 text-xs font-black text-white shadow-sm"
             >
               G
             </span>

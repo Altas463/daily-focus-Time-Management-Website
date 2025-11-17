@@ -8,7 +8,7 @@ export default function PomodoroPage() {
   return (
     <div className="relative flex min-h-screen flex-col overflow-hidden bg-slate-950 text-slate-100">
       <div className="pointer-events-none absolute inset-0 -z-10">
-        <div className="absolute inset-x-0 top-[-40%] mx-auto h-[40rem] w-[40rem] rounded-full bg-gradient-to-br from-blue-500/20 via-emerald-400/10 to-transparent blur-3xl" />
+        <div className="absolute inset-x-0 top-[-40%] mx-auto h-[40rem] w-[40rem] rounded-full bg-blue-500/15 blur-3xl" />
         <div className="absolute bottom-[-30%] left-[10%] h-[32rem] w-[32rem] rounded-full bg-emerald-500/15 blur-3xl" />
         <div className="absolute right-[-15%] top-[15%] hidden h-[28rem] w-[28rem] rounded-full bg-blue-500/10 blur-3xl md:block" />
       </div>
@@ -38,7 +38,7 @@ export default function PomodoroPage() {
               className="relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 p-8 text-center backdrop-blur"
             >
               <div className="mx-auto flex h-40 w-40 items-center justify-center">
-                <div className="breathing-orb relative h-full w-full rounded-full bg-gradient-to-br from-blue-500/60 via-blue-400/30 to-emerald-400/40" />
+                <div className="breathing-orb relative h-full w-full rounded-full bg-blue-500/50" />
               </div>
               <div className="mt-6 space-y-2 text-sm text-slate-200/80">
                 <p className="font-medium uppercase tracking-[0.2em] text-slate-100/90">Breathing space</p>
@@ -79,7 +79,7 @@ export default function PomodoroPage() {
           position: absolute;
           inset: 0;
           border-radius: 9999px;
-          background: radial-gradient(circle at 30% 30%, rgba(165, 243, 252, 0.4), transparent 65%);
+          background: rgba(165, 243, 252, 0.2);
           mix-blend-mode: screen;
         }
 
