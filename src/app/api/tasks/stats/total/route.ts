@@ -3,9 +3,9 @@ import prisma from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 
-// Hàm lấy nhãn tuần dạng "Tuần 18/5"
+// Function to get week label in format "Week 18/5"
 function formatWeekLabel(date: Date) {
-  return `Tuần ${date.getDate()}/${date.getMonth() + 1}`;
+  return `Week ${date.getDate()}/${date.getMonth() + 1}`;
 }
 
 export async function GET() {
@@ -22,7 +22,7 @@ export async function GET() {
     return NextResponse.json({ error: "User not found" }, { status: 404 });
   }
 
-  // Tổng số task hoàn thành
+  // Total number of completed tasks
   const completedCount = await prisma.task.count({
     where: {
       userId: user.id,
@@ -30,14 +30,14 @@ export async function GET() {
     },
   });
 
-  // Lấy ngày hiện tại, xác định ngày bắt đầu tuần (Thứ 2) và tạo mảng tuần
+  // Get current date, determine start of week (Monday) and create array of weeks
   const now = new Date();
 
-  // Hàm tính ngày đầu tuần (Thứ 2)
+  // Function to calculate the Monday of the week
   function getMonday(d: Date) {
     const date = new Date(d);
     const day = date.getDay();
-    const diff = (day === 0 ? -6 : 1) - day; // nếu Chủ Nhật (0), trừ 6 ngày, else trừ đi offset đến thứ 2
+    const diff = (day === 0 ? -6 : 1) - day;
     date.setDate(date.getDate() + diff);
     date.setHours(0, 0, 0, 0);
     return date;
@@ -45,7 +45,7 @@ export async function GET() {
 
   const mondayThisWeek = getMonday(now);
 
-  // Tạo mảng 7 tuần gần nhất, mỗi phần tử là {start: Date, end: Date}
+  // Create array of 7 recent weeks, each element is {start: Date, end: Date}
   const weeks = [];
   for (let i = 6; i >= 0; i--) {
     const start = new Date(mondayThisWeek);
@@ -57,7 +57,7 @@ export async function GET() {
     weeks.push({ start, end });
   }
 
-  // Query đếm số task hoàn thành trong từng tuần
+  // Query to count completed tasks in each week
   const weeklyCompleted = await Promise.all(
     weeks.map(async ({ start, end }) => {
       const count = await prisma.task.count({

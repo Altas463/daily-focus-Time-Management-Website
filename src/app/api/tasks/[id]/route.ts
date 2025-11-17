@@ -4,14 +4,14 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import type { Prisma } from "@prisma/client";
 
-// Lấy ID từ URL bằng cách parse request.url
+// Extract ID from URL by parsing request.url
 function extractIdFromUrl(req: NextRequest): string | null {
   const url = new URL(req.url);
   const segments = url.pathname.split("/");
   return segments[segments.length - 1] || null;
 }
 
-// PUT: Cập nhật toàn bộ task
+// PUT: Update entire task
 export async function PUT(request: NextRequest) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.email) {
@@ -92,7 +92,7 @@ export async function PUT(request: NextRequest) {
   }
 }
 
-// PATCH: Cập nhật một phần
+// PATCH: Update partially
 export async function PATCH(request: NextRequest) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.email) {
@@ -118,7 +118,7 @@ export async function PATCH(request: NextRequest) {
   }
 }
 
-// DELETE: Xoá task
+// DELETE: Delete task
 export async function DELETE(request: NextRequest) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.email) {

@@ -32,21 +32,21 @@ const TaskCard: FC<TaskCardProps> = ({ task, onUpdate, onDelete }) => {
           {task.title}
         </h3>
 
-        {/* Nút mở modal ở góc phải dùng icon hiện đại */}
-        <div
-          onClick={(e) => {
-            e.stopPropagation();
-            setShowModal(true);
-          }}
-          className="absolute top-2 right-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 text-lg"
-          aria-label="Mở chỉnh sửa task"
+        {/* Button to open modal in top right with modern icon */}
+         <div
+           onClick={(e) => {
+             e.stopPropagation();
+             setShowModal(true);
+           }}
+           className="absolute top-2 right-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 text-lg"
+           aria-label="Edit task"
           role="button"
           tabIndex={0}
         >
           <FiMoreHorizontal />
         </div>
 
-        {/* Hiển thị thời gian ở góc dưới, đổi màu theo trạng thái hoàn thành */}
+        {/* Show time in the bottom corner, change color based on completion status */}
         {dueText && (
           <div className="mt-3">
             <span

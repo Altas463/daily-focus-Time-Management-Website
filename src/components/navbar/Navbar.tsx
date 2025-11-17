@@ -23,8 +23,8 @@ export default function Navbar() {
   }, []);
 
   const links = [
-    { href: '/auth/login', label: 'Đăng nhập' },
-    { href: '/auth/register', label: 'Đăng ký' },
+    { href: '/auth/login', label: 'Sign In' },
+    { href: '/auth/register', label: 'Sign Up' },
     { href: '/dashboard', label: 'Dashboard' },
   ];
 

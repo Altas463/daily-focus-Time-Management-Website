@@ -26,18 +26,18 @@ type Highlight = {
 const highlights: Highlight[] = [
   {
     icon: Sparkles,
-    title: 'Giao dien tinh gon',
-    description: 'Tap trung vao nhung tac vu quan trong nhat ngay tu luc dang nhap.',
+    title: 'Clean Interface',
+    description: 'Focus on the most important tasks right from login.',
   },
   {
     icon: CalendarCheck2,
-    title: 'Dong bo nhip song',
-    description: 'Ke hoach ngay duoc dong bo va nhac nho thong minh.',
+    title: 'Synced Rhythm',
+    description: 'Daily plans are synced and smart reminders notify you.',
   },
   {
     icon: ShieldCheck,
-    title: 'Bao mat vung chac',
-    description: 'Du lieu cua ban luon duoc bao ve voi xac thuc hien dai.',
+    title: 'Strong Security',
+    description: 'Your data is always protected with modern authentication.',
   },
 ];
 

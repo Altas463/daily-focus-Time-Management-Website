@@ -35,23 +35,23 @@ const columnConfig: Record<
   { title: string; description: string; badgeColor: string; emptyText: string }
 > = {
   incomplete: {
-    title: "Dang thuc hien",
-    description: "Task dang mo, keo tha de chuyen trang thai",
+    title: "In Progress",
+    description: "Tasks in progress, drag and drop to change status",
     badgeColor: "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300",
-    emptyText: "Tat ca da hoan thanh, them task moi de tiep tuc nao!",
+    emptyText: "All tasks completed, create new ones to continue!",
   },
   completed: {
-    title: "Da hoan thanh",
-    description: "Luu vet nhung gi ban da lam duoc",
+    title: "Completed",
+    description: "Keep track of what you have accomplished",
     badgeColor: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300",
-    emptyText: "Chua co task hoan thanh. Ban co the keo tha tu cot ben kia.",
+    emptyText: "No completed tasks yet. You can drag tasks from the other column.",
   },
 };
 
 const quickTemplates = [
-  { title: "Lap ke hoach ngay", description: "Danh sach 3 uu tien quan trong" },
-  { title: "Buoi daily standup", description: "Thong tin tien do + tro ngai" },
-  { title: "Tong ket cuoi ngay", description: "Nhan xet + len ke hoach ngay mai" },
+  { title: "Daily planning", description: "List of 3 important priorities" },
+  { title: "Daily standup", description: "Progress update + blockers" },
+  { title: "End of day recap", description: "Reflection + plan for tomorrow" },
 ] as const;
 
 const toneBadge: Record<TaskUrgency["tone"], string> = {
@@ -124,24 +124,24 @@ export default function TasksPage() {
   );
 
   const handleCreateTask = async (column: ColumnKey) => {
-    const formState = newTaskMap[column];
-    const trimmedTitle = formState.title.trim();
-    if (!trimmedTitle) {
-      setFormErrors((prev) => ({ ...prev, [column]: "Vui long nhap tieu de task" }));
-      return;
-    }
+     const formState = newTaskMap[column];
+     const trimmedTitle = formState.title.trim();
+     if (!trimmedTitle) {
+       setFormErrors((prev) => ({ ...prev, [column]: "Please enter a task title" }));
+       return;
+     }
 
-    if (formState.startDate && formState.endDate) {
-      const start = new Date(formState.startDate);
-      const end = new Date(formState.endDate);
-      if (start > end) {
-        setFormErrors((prev) => ({
-          ...prev,
-          [column]: "Thoi gian ket thuc phai lon hon thoi gian bat dau",
-        }));
-        return;
-      }
-    }
+     if (formState.startDate && formState.endDate) {
+       const start = new Date(formState.startDate);
+       const end = new Date(formState.endDate);
+       if (start > end) {
+         setFormErrors((prev) => ({
+           ...prev,
+           [column]: "End time must be greater than start time",
+         }));
+         return;
+       }
+     }
 
     setFormErrors((prev) => ({ ...prev, [column]: null }));
     setSubmitting((prev) => ({ ...prev, [column]: true }));
@@ -168,7 +168,7 @@ export default function TasksPage() {
       setFormVisible((prev) => ({ ...prev, [column]: false }));
     } catch (error) {
       console.error("Failed to create task:", error);
-      setFormErrors((prev) => ({ ...prev, [column]: "Khong the tao task. Thu lai sau." }));
+      setFormErrors((prev) => ({ ...prev, [column]: "Unable to create task. Please try again." }));
     } finally {
       setSubmitting((prev) => ({ ...prev, [column]: false }));
     }
@@ -373,9 +373,9 @@ export default function TasksPage() {
   const nextDueTask = useMemo(() => findNextDueTask(columns.incomplete), [columns.incomplete]);
 
   const filterOptions = [
-    { key: "all", label: "Tat ca" },
-    { key: "dueSoon", label: "Sap den han" },
-    { key: "overdue", label: "Qua han" },
+    { key: "all", label: "All" },
+    { key: "dueSoon", label: "Due Soon" },
+    { key: "overdue", label: "Overdue" },
   ] as const;
 
   return (
@@ -385,18 +385,18 @@ export default function TasksPage() {
           <BackToDashboardLink />
 
           <div className="space-y-3 text-center">
-            <h1 className="text-4xl font-bold text-gray-900 dark:text-white">Quan ly cong viec</h1>
+            <h1 className="text-4xl font-bold text-gray-900 dark:text-white">Task Management</h1>
             <p className="text-lg text-gray-600 dark:text-gray-300">
-              Ke hoach ro rang giup ban tap trung va khong bo lo dead-line quan trong.
+              Clear planning helps you focus and not miss important deadlines.
             </p>
           </div>
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {[
-              { label: "Tong task", value: taskSummary.total },
-              { label: "Dang thuc hien", value: taskSummary.incomplete },
-              { label: "Qua han", value: taskSummary.overdue },
-              { label: "Hoan thanh", value: taskSummary.completed },
+              { label: "Total Tasks", value: taskSummary.total },
+              { label: "In Progress", value: taskSummary.incomplete },
+              { label: "Overdue", value: taskSummary.overdue },
+              { label: "Completed", value: taskSummary.completed },
             ].map((item) => (
               <div
                 key={item.label}
@@ -436,7 +436,7 @@ export default function TasksPage() {
                 type="search"
                 value={searchTerm}
                 onChange={(event) => setSearchTerm(event.target.value)}
-                placeholder="Tim task..."
+                placeholder="Search tasks..."
                 className="w-full rounded-full border border-gray-200 bg-white py-2 px-4 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-gray-900/10 dark:border-gray-800 dark:bg-gray-900 dark:text-white"
               />
             </div>
