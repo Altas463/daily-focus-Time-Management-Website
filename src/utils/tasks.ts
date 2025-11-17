@@ -79,19 +79,19 @@ export function summarizeTasks(tasks: TaskLike[], now: Date = new Date()): TaskS
  * Determines the urgency tone/label for a given task deadline.
  */
 export function getTaskUrgency(endDate?: string | null, now: Date = new Date()): TaskUrgency {
-  if (!endDate) return { tone: "default", label: "Khong uu tien" };
+   if (!endDate) return { tone: "default", label: "No priority" };
 
-  const due = new Date(endDate);
-  if (Number.isNaN(due.getTime())) return { tone: "default", label: "Khong ro han" };
+   const due = new Date(endDate);
+   if (Number.isNaN(due.getTime())) return { tone: "default", label: "No deadline" };
 
-  const diffInMs = due.getTime() - now.getTime();
-  const diffInDays = Math.ceil(diffInMs / MS_IN_DAY);
+   const diffInMs = due.getTime() - now.getTime();
+   const diffInDays = Math.ceil(diffInMs / MS_IN_DAY);
 
-  if (diffInDays < 0) return { tone: "danger", label: "Qua han" };
-  if (diffInDays <= 1) return { tone: "warning", label: "Can gap" };
-  if (diffInDays <= 3) return { tone: "notice", label: "Dang gan" };
-  return { tone: "success", label: "Binh thuong" };
-}
+   if (diffInDays < 0) return { tone: "danger", label: "Overdue" };
+   if (diffInDays <= 1) return { tone: "warning", label: "Urgent" };
+   if (diffInDays <= 3) return { tone: "notice", label: "Soon" };
+   return { tone: "success", label: "Normal" };
+ }
 
 export function isTaskOverdue(endDate?: string | null, now: Date = new Date()): boolean {
   if (!endDate) return false;

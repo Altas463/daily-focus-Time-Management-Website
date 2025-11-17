@@ -23,17 +23,17 @@ export default function LoginPage() {
     []
   );
   const validateInput = () => {
-    if (!email || !password) {
-      setErrorMessage("Vui long dien day du cac truong");
-      return false;
-    }
-    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    if (!emailPattern.test(email)) {
-      setErrorMessage("Email khong hop le");
-      return false;
-    }
-    return true;
-  };
+     if (!email || !password) {
+       setErrorMessage("Please fill in all fields");
+       return false;
+     }
+     const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+     if (!emailPattern.test(email)) {
+       setErrorMessage("Invalid email");
+       return false;
+     }
+     return true;
+   };
   const handleLogin = async (event: React.FormEvent) => {
     event.preventDefault();
     setErrorMessage(null);
@@ -41,7 +41,7 @@ export default function LoginPage() {
     setIsLoading(true);
     const res = await signIn("credentials", { redirect: false, email, password });
     setIsLoading(false);
-    if (res?.error) setErrorMessage("Email hoac mat khau khong dung");
+    if (res?.error) setErrorMessage("Invalid email or password");
     else router.push("/dashboard");
   };
   const handleGoogleSignIn = async () => {
@@ -73,7 +73,7 @@ export default function LoginPage() {
             className="inline-flex items-center gap-2 rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-lg dark:bg-emerald-500/90"
           >
             <Sparkles className="h-4 w-4" aria-hidden />
-            <span>Khoi dong ngay hieu qua</span>
+            <span>Get Started Effectively</span>
           </motion.div>
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
@@ -89,8 +89,7 @@ export default function LoginPage() {
             transition={{ delay: 0.16, duration: 0.6 }}
             className="mt-6 max-w-md text-base text-gray-600 dark:text-gray-300"
           >
-            Bot nhieu hon. Tap trung hon. Mot khong gian gon gang de ban hoan thanh dieu quan
-            trong moi ngay.
+            Do more. Focus better. A clean space to accomplish what matters every day.
           </motion.p>
         </>
       }
@@ -99,13 +98,13 @@ export default function LoginPage() {
           <div className="mb-10 flex flex-col items-center gap-3 text-center">
             <div className="inline-flex items-center gap-2 rounded-full border border-slate-200/70 bg-slate-100/70 px-3 py-1 text-xs font-semibold text-slate-700 shadow-sm dark:border-emerald-500/30 dark:bg-emerald-500/10 dark:text-emerald-200">
               <ShieldCheck className="h-4 w-4" aria-hidden />
-              <span>Dang nhap an toan</span>
+              <span>Secure Sign In</span>
             </div>
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white sm:text-4xl">
-              Chao mung tro lai
+              Welcome Back
             </h1>
             <p className="max-w-sm text-sm text-gray-600 dark:text-gray-300">
-              Dang nhap de tiep tuc nhung muc tieu da dat ra.
+              Sign in to continue the goals you set out to achieve.
             </p>
           </div>
 
@@ -135,13 +134,13 @@ export default function LoginPage() {
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
-                  Mat khau
-                </label>
-                {capsOn && (
-                  <span className="text-xs font-medium text-amber-600 dark:text-amber-400">
-                    Caps Lock dang bat
-                  </span>
-                )}
+                    Password
+                  </label>
+                  {capsOn && (
+                    <span className="text-xs font-medium text-amber-600 dark:text-amber-400">
+                      Caps Lock is on
+                    </span>
+                  )}
               </div>
               <div className="relative">
                 <Lock
@@ -154,21 +153,21 @@ export default function LoginPage() {
                   value={password}
                   onChange={(event) => setPassword(event.target.value)}
                   onKeyUp={onPasswordKeyUp}
-                  placeholder="Nhap mat khau"
+                  placeholder="Enter password"
                   className="w-full rounded-lg border border-gray-200 bg-white px-4 py-3 pl-12 pr-12 text-sm font-medium text-gray-900 placeholder:text-gray-400 transition focus:border-gray-400 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:border-gray-800 dark:bg-gray-900 dark:text-white dark:placeholder:text-gray-500 dark:focus:border-gray-600 dark:focus:ring-gray-800/40"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword((value) => !value)}
                   className="absolute inset-y-0 right-0 flex items-center px-4 text-gray-500 transition hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-                  aria-label={showPassword ? "An mat khau" : "Hien mat khau"}
+                  aria-label={showPassword ? "Hide password" : "Show password"}
                 >
                   {showPassword ? (
                     <EyeOff className="h-4 w-4" aria-hidden />
                   ) : (
                     <Eye className="h-4 w-4" aria-hidden />
                   )}
-                  <span className="sr-only">{showPassword ? "An mat khau" : "Hien mat khau"}</span>
+                  <span className="sr-only">{showPassword ? "Hide password" : "Show password"}</span>
                 </button>
               </div>
               {/* Password strength meter removed for login */}
@@ -182,16 +181,16 @@ export default function LoginPage() {
                   checked={remember}
                   onChange={(event) => setRemember(event.target.checked)}
                 />
-                Ghi nho dang nhap
+                Remember sign in
               </label>
               <span className="text-xs text-gray-500 dark:text-gray-400">
-                Bang viec dang nhap ban dong y voi{" "}
+                By signing in, you agree with our{" "}
                 <Link href="/terms" className="font-medium text-gray-700 underline-offset-4 hover:underline dark:text-white">
-                  Dieu khoan
+                  Terms
                 </Link>{" "}
                 &{" "}
                 <Link href="/privacy" className="font-medium text-gray-700 underline-offset-4 hover:underline dark:text-white">
-                  Bao mat
+                  Privacy
                 </Link>
               </span>
             </div>
@@ -217,11 +216,11 @@ export default function LoginPage() {
               {isLoading ? (
                 <>
                   <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
-                  Dang dang nhap...
+                  Signing in...
                 </>
               ) : (
                 <>
-                  Dang nhap
+                  Sign In
                   <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" aria-hidden />
                 </>
               )}
@@ -233,7 +232,7 @@ export default function LoginPage() {
               className="h-px flex-1 bg-gray-200 dark:bg-gray-800"
               aria-hidden
             />
-            <span>Hoac tiep tuc</span>
+            <span>Or continue</span>
             <span
               className="h-px flex-1 bg-gray-200 dark:bg-gray-800"
               aria-hidden
@@ -252,19 +251,19 @@ export default function LoginPage() {
             >
               G
             </span>
-            Dang nhap voi Google
+            Sign In with Google
           </button>
 
           <div className="mt-8 rounded-lg border border-dashed border-gray-200 bg-gray-50 px-4 py-3 text-xs text-gray-500 dark:border-gray-800 dark:bg-gray-900/60 dark:text-gray-400">
-            Meo nho: {motivationTip}
-          </div>
+             Tip: {motivationTip}
+           </div>
 
-          <p className="mt-6 text-center text-sm text-gray-600 dark:text-gray-400">
-            Chua co tai khoan?{" "}
-            <Link href="/auth/register" className="font-semibold text-gray-900 underline-offset-4 hover:underline dark:text-white">
-              Dang ky ngay
-            </Link>
-          </p>
+           <p className="mt-6 text-center text-sm text-gray-600 dark:text-gray-400">
+             Don&apos;t have an account?{" "}
+             <Link href="/auth/register" className="font-semibold text-gray-900 underline-offset-4 hover:underline dark:text-white">
+               Sign Up
+             </Link>
+           </p>
         </div>
     </AuthPageShell>
   );

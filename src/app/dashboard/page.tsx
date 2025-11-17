@@ -122,11 +122,11 @@ export default function DashboardPage() {
     return (
       <div className="grid min-h-screen place-items-center bg-white dark:bg-gray-950">
         <div className="rounded-xl border border-gray-200 bg-white p-6 text-gray-700 shadow-sm dark:border-gray-800 dark:bg-gray-900 dark:text-gray-300">
-          <div className="h-1 w-56 overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
-            <div className="h-1 w-1/3 animate-[load_1.2s_ease_infinite] rounded-full bg-blue-500 dark:bg-blue-400" />
-          </div>
-          <p className="mt-3 text-sm">Dang tai dashboard...</p>
-        </div>
+           <div className="h-1 w-56 overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
+             <div className="h-1 w-1/3 animate-[load_1.2s_ease_infinite] rounded-full bg-blue-500 dark:bg-blue-400" />
+           </div>
+           <p className="mt-3 text-sm">Loading dashboard...</p>
+         </div>
         <style jsx>{`
           @keyframes load {
             0% {
@@ -146,10 +146,10 @@ export default function DashboardPage() {
       <div className="mx-auto max-w-7xl space-y-8 px-4 py-8 sm:px-6 lg:px-8">
         <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="text-center">
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-            {greetingText}, {session?.user?.name || "ban"}!
+            {greetingText}, {session?.user?.name || "friend"}!
           </h1>
           <p className="mx-auto mt-2 max-w-2xl text-lg text-gray-600 dark:text-gray-300">
-            Tap trung vao viec quan trong, nho Daily Focus ghi lai va theo doi tien do moi ngay.
+            Focus on what matters, let Daily Focus record your progress and track it every day.
           </p>
         </motion.div>
 
@@ -213,7 +213,7 @@ export default function DashboardPage() {
             <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm dark:border-gray-800 dark:bg-gray-900">
               <div className="border-b border-gray-200 p-6 dark:border-gray-800">
                 <div className="flex items-center justify-between gap-3">
-                  <h3 className="text-xl font-bold text-gray-900 dark:text-white">Task chua hoan thanh</h3>
+                  <h3 className="text-xl font-bold text-gray-900 dark:text-white">Tasks Not Completed</h3>
                   <span className="rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-sm font-medium text-amber-700 dark:border-amber-900/40 dark:bg-amber-900/20 dark:text-amber-300">
                     {taskSummary.incomplete} task
                   </span>
@@ -223,8 +223,8 @@ export default function DashboardPage() {
                 {incompleteTasks.length === 0 ? (
                   <div className="grid place-items-center py-12 text-center">
                     <div className="mb-3 h-14 w-14 rounded-full bg-emerald-100 dark:bg-emerald-900/30" />
-                    <h4 className="mb-1 text-lg font-semibold text-gray-900 dark:text-white">Tat ca da hoan thanh!</h4>
-                    <p className="text-gray-500 dark:text-gray-400">Khong con task nao dang cho. Dung lai nghi ngoi nao.</p>
+                    <h4 className="mb-1 text-lg font-semibold text-gray-900 dark:text-white">All Completed!</h4>
+                    <p className="text-gray-500 dark:text-gray-400">No tasks waiting. Take a break and relax.</p>
                   </div>
                 ) : (
                   <div className="space-y-4">
@@ -258,9 +258,9 @@ export default function DashboardPage() {
                             <button
                               onClick={() => handleComplete(task.id)}
                               className="rounded-xl bg-gray-900 px-4 py-2 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-black/90 focus:outline-none focus:ring-2 focus:ring-gray-900/20 dark:bg-white dark:text-gray-900 dark:hover:bg-white/90"
-                              aria-label={`Danh dau hoan thanh ${task.title}`}
+                              aria-label={`Mark completed ${task.title}`}
                             >
-                              Hoan thanh
+                              Complete
                             </button>
                           </div>
                         </motion.div>
@@ -275,8 +275,8 @@ export default function DashboardPage() {
           <motion.section initial={{ opacity: 0, x: 18 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.12 }}>
             <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm dark:border-gray-800 dark:bg-gray-900">
               <div className="border-b border-gray-200 p-6 dark:border-gray-800">
-                <h3 className="text-xl font-bold text-gray-900 dark:text-white">Dong ho Pomodoro</h3>
-                <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Tap trung 25 phut, nghi 5 phut</p>
+                <h3 className="text-xl font-bold text-gray-900 dark:text-white">Pomodoro Timer</h3>
+                  <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Focus for 25 min, break for 5 min</p>
               </div>
               <div className="p-6">
                 <PomodoroTimer />

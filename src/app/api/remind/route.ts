@@ -13,7 +13,6 @@ export async function POST() {
     const tasks = await prisma.task.findMany({
       where: {
         completed: false,
-        // Dùng tên trường đúng trong schema, nếu vẫn lỗi bạn kiểm tra lại migration
         reminderSent: false,
         endDate: {
           gte: now,
@@ -28,8 +27,8 @@ export async function POST() {
     let sent = 0;
 
     for (const task of tasks) {
-      // Kiểm tra tồn tại email và endDate trước khi gửi mail
-      if (task.user?.email && task.endDate) {
+       // Check if email and endDate exist before sending mail
+       if (task.user?.email && task.endDate) {
         await sendDeadlineReminder(
           task.user.email,
           task.title,
@@ -46,11 +45,11 @@ export async function POST() {
     }
 
     return NextResponse.json({
-      message: `Đã gửi ${sent} email nhắc nhở deadline.`,
+      message: `Sent ${sent} reminder emails.`,
     });
   } catch (error) {
-    console.error("Lỗi gửi email:", error);
-    return NextResponse.json({ error: "Lỗi gửi email" }, { status: 500 });
+    console.error("Error sending email:", error);
+    return NextResponse.json({ error: "Error sending email" }, { status: 500 });
   } finally {
     await prisma.$disconnect();
   }

@@ -39,7 +39,7 @@ export default function RegisterPage() {
     setPasswordMax(maxScore);
   }, [password]);
 
-  const passwordStrengthLabel = ["Rat yeu", "Yeu", "Trung binh", "Kha", "Manh", "Rat manh"];
+  const passwordStrengthLabel = ["Very Weak", "Weak", "Fair", "Good", "Strong", "Very Strong"];
   const passwordStrengthClass =
     [
       "bg-rose-500",
@@ -60,24 +60,24 @@ export default function RegisterPage() {
 
   const validateInput = () => {
     if (!name || !email || !password || !confirmPassword) {
-      setErrorMessage("Vui long dien day du cac truong");
+      setErrorMessage("Please fill in all fields");
       return false;
     }
     if (name.trim().length < 2) {
-      setErrorMessage("Ten can it nhat 2 ky tu");
+      setErrorMessage("Name must be at least 2 characters");
       return false;
     }
     const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     if (!emailPattern.test(email)) {
-      setErrorMessage("Email khong hop le");
+      setErrorMessage("Invalid email");
       return false;
     }
     if (password.length < 8) {
-      setErrorMessage("Mat khau can it nhat 8 ky tu");
+      setErrorMessage("Password must be at least 8 characters");
       return false;
     }
     if (password !== confirmPassword) {
-      setErrorMessage("Mat khau xac nhan khong khop");
+      setErrorMessage("Passwords do not match");
       return false;
     }
     return true;
@@ -98,7 +98,7 @@ export default function RegisterPage() {
 
       if (!res.ok) {
         const errorData = await res.json().catch(() => ({}));
-        setErrorMessage(errorData.error || "Dang ky that bai. Vui long thu lai");
+        setErrorMessage(errorData.error || "Registration failed. Please try again");
         setIsLoading(false);
         return;
       }
@@ -107,20 +107,20 @@ export default function RegisterPage() {
       if (typeof window !== "undefined") {
         localStorage.setItem("token", token);
         try {
-          const decoded: JwtPayload = jwtDecode(token);
-          localStorage.setItem("name", decoded.name || "User");
-        } catch (error) {
-          console.error("Khong the giai ma token:", error);
+           const decoded: JwtPayload = jwtDecode(token);
+           localStorage.setItem("name", decoded.name || "User");
+         } catch (error) {
+           console.error("Unable to decode token:", error);
+         }
         }
-      }
 
-      setIsLoading(false);
-      router.push("/auth/login");
-    } catch (error) {
-      console.error("Loi ket noi:", error);
-      setErrorMessage("Khong the ket noi den may chu");
-      setIsLoading(false);
-    }
+        setIsLoading(false);
+        router.push("/auth/login");
+        } catch (error) {
+        console.error("Connection error:", error);
+        setErrorMessage("Unable to connect to server");
+        setIsLoading(false);
+        }
   };
 
   return (
@@ -137,7 +137,7 @@ export default function RegisterPage() {
             className="inline-flex items-center gap-2 rounded-full bg-emerald-500/90 px-4 py-2 text-sm font-semibold text-white shadow-lg"
           >
             <Sparkles className="h-4 w-4" aria-hidden />
-            <span>Mo khoa tiem nang ban</span>
+            <span>Unlock Your Potential</span>
           </motion.div>
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
@@ -145,7 +145,7 @@ export default function RegisterPage() {
             transition={{ delay: 0.08, duration: 0.6 }}
             className="text-4xl font-semibold tracking-tight text-gray-900 dark:text-white"
           >
-            Bat dau hanh trinh tap trung
+            Start Your Focus Journey
           </motion.h2>
           <motion.p
             initial={{ opacity: 0, y: 24 }}
@@ -153,30 +153,30 @@ export default function RegisterPage() {
             transition={{ delay: 0.16, duration: 0.6 }}
             className="mt-6 max-w-md text-base text-gray-600 dark:text-gray-300"
           >
-            Tao tai khoan Daily Focus de gom viec, dat muc tieu va tien nhanh hon moi ngay.
+            Create a Daily Focus account to organize tasks, set goals and progress faster every day.
           </motion.p>
         </>
       }
     >
       <div>
           <div className="mb-10 flex flex-col items-center gap-3 text-center">
-            <div className="inline-flex items-center gap-2 rounded-full border border-emerald-200/60 bg-emerald-50/80 px-3 py-1 text-xs font-semibold text-emerald-700 shadow-sm dark:border-emerald-500/30 dark:bg-emerald-500/10 dark:text-emerald-200">
-              <ShieldCheck className="h-4 w-4" aria-hidden />
-              <span>An toan & nhanh chong</span>
-            </div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white sm:text-4xl">
-              Tao tai khoan
-            </h1>
-            <p className="max-w-sm text-sm text-gray-600 dark:text-gray-300">
-              Chi mat vai phut de bat dau nang suat hon.
-            </p>
-          </div>
+             <div className="inline-flex items-center gap-2 rounded-full border border-emerald-200/60 bg-emerald-50/80 px-3 py-1 text-xs font-semibold text-emerald-700 shadow-sm dark:border-emerald-500/30 dark:bg-emerald-500/10 dark:text-emerald-200">
+               <ShieldCheck className="h-4 w-4" aria-hidden />
+               <span>Safe & Fast</span>
+             </div>
+             <h1 className="text-3xl font-bold text-gray-900 dark:text-white sm:text-4xl">
+               Create Account
+             </h1>
+             <p className="max-w-sm text-sm text-gray-600 dark:text-gray-300">
+               Takes just a few minutes to get started and boost productivity.
+             </p>
+           </div>
 
           <form onSubmit={handleRegister} className="space-y-6" noValidate>
             <div className="space-y-2">
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
-                Ten
-              </label>
+               <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
+                 Name
+               </label>
               <div className="relative">
                 <UserRound
                   className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 dark:text-gray-500"
@@ -188,7 +188,7 @@ export default function RegisterPage() {
                   autoComplete="name"
                   value={name}
                   onChange={(event) => setName(event.target.value)}
-                  placeholder="Nguyen Van A"
+                  placeholder="John Doe"
                   className="w-full rounded-lg border border-gray-200 bg-white px-4 py-3 pl-12 text-sm font-medium text-gray-900 placeholder:text-gray-400 transition focus:border-gray-400 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:border-gray-800 dark:bg-gray-900 dark:text-white dark:placeholder:text-gray-500 dark:focus:border-gray-600 dark:focus:ring-gray-800/40"
                 />
               </div>
@@ -219,13 +219,13 @@ export default function RegisterPage() {
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
-                  Mat khau
-                </label>
-                {capsOnPw && (
-                  <span className="text-xs font-medium text-amber-600 dark:text-amber-400">
-                    Caps Lock dang bat
-                  </span>
-                )}
+                    Password
+                  </label>
+                  {capsOnPw && (
+                    <span className="text-xs font-medium text-amber-600 dark:text-amber-400">
+                      Caps Lock is on
+                    </span>
+                  )}
               </div>
               <div className="relative">
                 <Lock
@@ -238,21 +238,21 @@ export default function RegisterPage() {
                   value={password}
                   onChange={(event) => setPassword(event.target.value)}
                   onKeyUp={(event) => setCapsOnPw(event.getModifierState && event.getModifierState("CapsLock"))}
-                  placeholder="Nhap mat khau"
+                  placeholder="Enter password"
                   className="w-full rounded-lg border border-gray-200 bg-white px-4 py-3 pl-12 pr-12 text-sm font-medium text-gray-900 placeholder:text-gray-400 transition focus:border-gray-400 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:border-gray-800 dark:bg-gray-900 dark:text-white dark:placeholder:text-gray-500 dark:focus:border-gray-600 dark:focus:ring-gray-800/40"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword((value) => !value)}
                   className="absolute inset-y-0 right-0 flex items-center px-4 text-gray-500 transition hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-                  aria-label={showPassword ? "An mat khau" : "Hien mat khau"}
+                  aria-label={showPassword ? "Hide password" : "Show password"}
                 >
                   {showPassword ? (
                     <EyeOff className="h-4 w-4" aria-hidden />
                   ) : (
                     <Eye className="h-4 w-4" aria-hidden />
                   )}
-                  <span className="sr-only">{showPassword ? "An mat khau" : "Hien mat khau"}</span>
+                  <span className="sr-only">{showPassword ? "Hide password" : "Show password"}</span>
                 </button>
               </div>
 
@@ -266,12 +266,12 @@ export default function RegisterPage() {
                   </div>
                   <div className="flex flex-col gap-1 text-xs text-gray-500 dark:text-gray-400 sm:flex-row sm:items-center sm:justify-between">
                     <span>
-                      Do manh:{" "}
+                      Strength:{" "}
                       <span className="font-medium text-gray-700 dark:text-gray-300">
                         {passwordStrengthLabel[passwordScore] || ""}
                       </span>
                     </span>
-                    <span>Goi y: 8 ky tu, chu hoa/thuong, so, ky tu dac biet</span>
+                    <span>Tip: 8+ chars, uppercase/lowercase, numbers, special characters</span>
                   </div>
                 </div>
               )}
@@ -280,13 +280,13 @@ export default function RegisterPage() {
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
-                  Xac nhan mat khau
-                </label>
-                {capsOnConfirm && (
-                  <span className="text-xs font-medium text-amber-600 dark:text-amber-400">
-                    Caps Lock dang bat
-                  </span>
-                )}
+                    Confirm Password
+                  </label>
+                  {capsOnConfirm && (
+                    <span className="text-xs font-medium text-amber-600 dark:text-amber-400">
+                      Caps Lock is on
+                    </span>
+                  )}
               </div>
               <div className="relative">
                 <ConfirmIcon
@@ -299,21 +299,21 @@ export default function RegisterPage() {
                   value={confirmPassword}
                   onChange={(event) => setConfirmPassword(event.target.value)}
                   onKeyUp={(event) => setCapsOnConfirm(event.getModifierState && event.getModifierState("CapsLock"))}
-                  placeholder="Nhap lai mat khau"
+                  placeholder="Confirm password"
                   className="w-full rounded-lg border border-gray-200 bg-white px-4 py-3 pl-12 pr-12 text-sm font-medium text-gray-900 placeholder:text-gray-400 transition focus:border-gray-400 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:border-gray-800 dark:bg-gray-900 dark:text-white dark:placeholder:text-gray-500 dark:focus:border-gray-600 dark:focus:ring-gray-800/40"
                 />
                 <button
                   type="button"
                   onClick={() => setShowConfirmPassword((value) => !value)}
                   className="absolute inset-y-0 right-0 flex items-center px-4 text-gray-500 transition hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-                  aria-label={showConfirmPassword ? "An mat khau xac nhan" : "Hien mat khau xac nhan"}
+                  aria-label={showConfirmPassword ? "Hide password" : "Show password"}
                 >
                   {showConfirmPassword ? (
                     <EyeOff className="h-4 w-4" aria-hidden />
                   ) : (
                     <Eye className="h-4 w-4" aria-hidden />
                   )}
-                  <span className="sr-only">{showConfirmPassword ? "An mat khau xac nhan" : "Hien mat khau xac nhan"}</span>
+                  <span className="sr-only">{showConfirmPassword ? "Hide password" : "Show password"}</span>
                 </button>
               </div>
               {confirmPassword && (
@@ -329,7 +329,7 @@ export default function RegisterPage() {
                   ) : (
                     <CircleAlert className="h-3.5 w-3.5" aria-hidden />
                   )}
-                  <span>{isPasswordMatching ? "Mat khau khop" : "Mat khau khong khop"}</span>
+                  <span>{isPasswordMatching ? "Passwords match" : "Passwords do not match"}</span>
                 </div>
               )}
             </div>
@@ -353,29 +353,29 @@ export default function RegisterPage() {
               className="group inline-flex w-full items-center justify-center gap-2 rounded-lg bg-gray-900 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-gray-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600 disabled:opacity-60 dark:bg-white dark:text-gray-900"
             >
               {isLoading ? (
-                <>
-                  <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
-                  Dang tao tai khoan...
-                </>
-              ) : (
-                <>
-                  Tao tai khoan
-                  <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" aria-hidden />
-                </>
-              )}
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
+                    Creating account...
+                  </>
+                ) : (
+                  <>
+                    Create Account
+                    <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" aria-hidden />
+                  </>
+                )}
             </button>
           </form>
 
           <div className="mt-8 rounded-lg border border-dashed border-gray-200 bg-gray-50 px-4 py-3 text-xs text-gray-600 dark:border-gray-800 dark:bg-gray-900/60 dark:text-gray-400">
-            Meo nho: {motivationTip}
-          </div>
+             Tip: {motivationTip}
+           </div>
 
-          <p className="mt-6 text-center text-sm text-gray-600 dark:text-gray-400">
-            Da co tai khoan?{" "}
-            <Link href="/auth/login" className="font-semibold text-gray-900 underline-offset-4 hover:underline dark:text-white">
-              Dang nhap ngay
-            </Link>
-          </p>
+           <p className="mt-6 text-center text-sm text-gray-600 dark:text-gray-400">
+             Already have an account?{" "}
+             <Link href="/auth/login" className="font-semibold text-gray-900 underline-offset-4 hover:underline dark:text-white">
+               Sign In
+             </Link>
+           </p>
         </div>
     </AuthPageShell>
   );

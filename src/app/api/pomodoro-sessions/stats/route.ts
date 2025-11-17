@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth'; // tùy cấu trúc của bạn
+import { authOptions } from '@/lib/auth';
 
 export async function GET() {
   const session = await getServerSession(authOptions);
@@ -12,7 +12,7 @@ export async function GET() {
 
   const userEmail = session.user.email;
 
-  // Lấy thời gian đầu và cuối của ngày hôm nay
+  // Get the start and end of today
   const now = new Date();
   const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   const endOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
@@ -43,7 +43,7 @@ export async function GET() {
       totalFocusSeconds,
     });
   } catch (error) {
-    console.error('Lỗi khi truy vấn Pomodoro summary:', error);
+    console.error('Error querying Pomodoro summary:', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
