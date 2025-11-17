@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import Navbar from '@/components/navbar/Navbar';
 import Link from 'next/link';
@@ -6,31 +6,31 @@ import { motion } from 'framer-motion';
 
 const featureHighlights = [
   {
-    title: 'Simple by default',
-    description: 'Plan your day with a lightweight board and let Daily Focus handle the structure.',
+    title: 'Effortlessly simple',
+    description: 'Plan your day with an intuitive board that adapts to your workflow, not the other way around.',
   },
   {
-    title: 'Keep streaks visible',
-    description: 'See how many days in a row you stayed on track to maintain momentum.',
+    title: 'Stay motivated daily',
+    description: 'Watch your streaks grow and feel the momentum as you build consistent productive habits.',
   },
   {
-    title: 'Focus without friction',
-    description: 'Use the Pomodoro timer, quick task templates, and keyboard shortcuts to stay in flow.',
+    title: 'Flow without interruption',
+    description: 'Immerse yourself in deep work with our Pomodoro timer, smart templates, and seamless keyboard shortcuts.',
   },
 ];
 
 const whatYouGet = [
   {
-    title: 'Task management',
-    description: 'Organise work by status, due date, and urgency. Drag and drop across columns with confidence.',
+    title: 'Smart task organization',
+    description: 'Organize your work effortlessly with drag-and-drop boards that keep priorities clear and deadlines visible.',
   },
   {
-    title: 'Pomodoro timer',
-    description: 'Switch between focus and break intervals, track progress, and log completed sessions automatically.',
+    title: 'Built-in focus timer',
+    description: 'Alternate between focused work sessions and refreshing breaks, while automatically tracking your progress.',
   },
   {
-    title: 'Daily insights',
-    description: 'Review streaks, upcoming deadlines, and balanced focus time from a single dashboard.',
+    title: 'Actionable daily insights',
+    description: 'Get a clear picture of your productivity with streaks, upcoming deadlines, and balanced focus time—all in one dashboard.',
   },
 ];
 
@@ -64,7 +64,7 @@ export default function HomePage() {
               transition={{ duration: 0.6, delay: 0.05 }}
               className="mt-4 text-5xl font-bold leading-tight md:text-6xl"
             >
-              Structure your day without the noise.
+              Transform your focus into achievement.
             </motion.h1>
 
             <motion.p
@@ -73,8 +73,8 @@ export default function HomePage() {
               transition={{ duration: 0.6, delay: 0.12 }}
               className="mt-6 max-w-xl text-lg leading-relaxed text-gray-600 dark:text-gray-300"
             >
-              Daily Focus helps you plan, execute, and review what matters. Reduce clutter, maintain healthy workflows,
-              and keep your goals visible at a glance.
+              Daily Focus turns your intentions into accomplishments. Cut through the clutter, build sustainable habits,
+              and watch your progress unfold day by day.
             </motion.p>
 
             <motion.div
@@ -124,10 +124,10 @@ export default function HomePage() {
 
       <section className="border-t border-gray-200 bg-white px-6 py-20 dark:border-gray-800 dark:bg-gray-950">
         <div className="mx-auto max-w-7xl">
-          <div className="mx-auto mb-12 max-w-2xl text-center">
-            <h2 className="text-3xl font-semibold md:text-4xl">Why teams rely on Daily Focus</h2>
+          <div className="mx-auto max-w-2xl text-center">
+            <h2 className="text-3xl font-semibold md:text-4xl">Why professionals choose Daily Focus</h2>
             <p className="mt-3 text-base text-gray-600 dark:text-gray-300">
-              Purpose-built for solo executives, product squads, and remote teams who want clarity without complexity.
+              Designed for ambitious individuals and teams who value clarity, consistency, and meaningful progress over complexity.
             </p>
           </div>
 
@@ -148,13 +148,13 @@ export default function HomePage() {
       <section className="px-6 py-20">
         <div className="mx-auto grid max-w-7xl gap-12 md:grid-cols-2 md:items-center">
           <div>
-            <h2 className="text-3xl font-semibold text-gray-900 dark:text-white">Everything you need to stay on track</h2>
+            <h2 className="text-3xl font-semibold text-gray-900 dark:text-white">Everything you need to thrive</h2>
             <p className="mt-4 text-base text-gray-600 dark:text-gray-300">
-              Switch seamlessly between planning and doing. Daily Focus keeps context close, surfaces what is due next,
-              and highlights the progress you are making every week.
+              Move seamlessly from planning to execution. Daily Focus keeps your priorities front and center,
+              highlights what&apos;s coming next, and celebrates the progress you make every single day.
             </p>
             <div className="mt-6 flex flex-wrap gap-3 text-xs text-gray-600 dark:text-gray-300">
-              {['Plan smarter', 'Track consistently', 'Celebrate progress'].map((tag) => (
+              {['Plan with intention', 'Stay consistent', 'Celebrate wins'].map((tag) => (
                 <span key={tag} className="rounded-full border border-gray-200 px-3 py-1 dark:border-gray-700">
                   {tag}
                 </span>
@@ -177,9 +177,10 @@ export default function HomePage() {
 
       <section className="border-t border-gray-200 bg-white px-6 py-16 dark:border-gray-800 dark:bg-gray-950">
         <div className="mx-auto max-w-5xl text-center">
-          <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">Curious about the details?</h2>
+          <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">Have questions? We&apos;re here to help.</h2>
           <p className="mt-3 text-sm text-gray-600 dark:text-gray-300">
-            We believe in transparency. Learn how we protect your data, how we operate, and how you can reach us.
+            We believe in complete transparency. Learn how we protect your privacy, understand our service commitments, 
+            and connect with our team whenever you need support.
           </p>
           <div className="mt-6 flex flex-col items-center justify-center gap-3 text-sm text-blue-600 dark:text-blue-400 sm:flex-row">
             {quickLinks.map((link) => (
@@ -195,7 +196,7 @@ export default function HomePage() {
         <div className="mx-auto max-w-4xl px-6">
           <div className="mb-4">
             <h4 className="text-2xl font-bold text-gray-900 dark:text-white">Daily Focus</h4>
-            <p className="mt-1 text-gray-600 dark:text-gray-400">Stay organised. Stay present.</p>
+            <p className="mt-1 text-gray-600 dark:text-gray-400">Achieve more, stress less.</p>
           </div>
           <div className="mb-6 flex items-center justify-center gap-4 text-sm text-gray-500 dark:text-gray-400">
             <Link href="/privacy" className="hover:underline">Privacy</Link>
