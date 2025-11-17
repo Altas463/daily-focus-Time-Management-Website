@@ -10,7 +10,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   const hideNav = pathname === '/dashboard/pomodoro';
 
   return (
-    <div className="flex min-h-screen bg-gray-100 text-gray-900 dark:bg-gray-950 dark:text-gray-100">
+    <div className="flex min-h-screen bg-gradient-to-br from-white via-slate-50 to-slate-100 text-slate-900 dark:from-slate-900 dark:via-slate-950 dark:to-slate-950 dark:text-slate-100">
       {!hideNav && (
         <aside className="hidden shrink-0 md:block">
           <Sidebar />
@@ -25,8 +25,9 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
       <style jsx>{`
         :global(html) { scroll-behavior: smooth; }
         :global(*::-webkit-scrollbar) { width: 8px; height: 8px; }
-        :global(*::-webkit-scrollbar-thumb) { background: rgba(100, 100, 100, 0.25); border-radius: 9999px; }
-        :global(*::-webkit-scrollbar-thumb:hover) { background: rgba(100, 100, 100, 0.35); }
+        :global(*::-webkit-scrollbar-track) { background: transparent; }
+        :global(*::-webkit-scrollbar-thumb) { background: rgba(100, 116, 139, 0.3); border-radius: 9999px; }
+        :global(*::-webkit-scrollbar-thumb:hover) { background: rgba(100, 116, 139, 0.5); }
       `}</style>
     </div>
   );
