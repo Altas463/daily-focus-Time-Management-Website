@@ -1,26 +1,26 @@
-﻿const sections = [
+const sections = [
   {
-    heading: 'Using Daily Focus',
+    heading: 'Using Daily Focus responsibly',
     items: [
-      'You must be at least 16 years old to create an account or have parental consent.',
-      'You are responsible for content added to your workspace and for keeping login credentials secure.',
-      'Beta features may change without notice; we will clearly mark anything experimental.',
+      'You must be 16 or older to create an account, or have parental permission if you\'re younger.',
+      'Keep your login details secure and take responsibility for what you add to your workspace.',
+      'Some features are in beta and may change—we\'ll always let you know what\'s experimental.',
     ],
   },
   {
-    heading: 'Payments and cancellation',
+    heading: 'Billing and subscriptions',
     items: [
-      'Subscriptions renew automatically unless cancelled at least 24 hours before the renewal date.',
-      'You can downgrade or cancel any paid plan from the billing screen and continue using the free tier.',
-      'Fees are non-refundable except where required by local law.',
+      'Paid plans renew automatically unless you cancel at least 24 hours before your next billing date.',
+      'Downgrade or cancel anytime from your billing settings—your free features remain active.',
+      'Fees are non-refundable except where required by applicable law.',
     ],
   },
   {
-    heading: 'Acceptable use',
+    heading: 'Community guidelines',
     items: [
-      'Do not upload malicious code, attempt to disrupt the service, or access data that is not yours.',
-      'Respect intellectual property rights when storing and sharing content through Daily Focus.',
-      'We may suspend access if activity violates these terms or applicable regulations.',
+      'Don\'t upload harmful code, try to disrupt our service, or access data that isn\'t yours.',
+      'Respect intellectual property rights when sharing content through Daily Focus.',
+      'We may suspend access if activities violate these terms or applicable laws.',
     ],
   },
 ];
@@ -31,10 +31,10 @@ export default function TermsPage() {
       <div className="mx-auto flex max-w-3xl flex-col gap-12 px-6 py-16">
         <header className="space-y-4 text-center">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gray-500 dark:text-gray-400">Terms of service</p>
-          <h1 className="text-4xl font-semibold">The essentials for using Daily Focus</h1>
+          <h1 className="text-4xl font-semibold">Our commitment to you</h1>
           <p className="text-sm text-gray-600 dark:text-gray-300">
-            Please read these terms carefully. They describe your rights, responsibilities, and the commitments
-            we make to deliver a reliable experience.
+            These terms outline our shared understanding—your rights and responsibilities, and the promises 
+            we make to provide you with a reliable, secure experience.
           </p>
         </header>
 
@@ -54,16 +54,16 @@ export default function TermsPage() {
           ))}
 
           <section className="space-y-3">
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Changes to these terms</h2>
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Keeping these terms current</h2>
             <p className="text-sm text-gray-600 dark:text-gray-300">
-              When we update these terms we will highlight the change in the dashboard banner and update the revision
-              date below. Continued use of Daily Focus means you accept the latest version.
+              When we update these terms, we&apos;ll highlight the changes in your dashboard and update the date below.
+              Continuing to use Daily Focus means you accept the latest version.
             </p>
           </section>
         </main>
 
         <footer className="text-xs text-gray-500 dark:text-gray-400">
-          Effective {new Date().getFullYear()} — We welcome feedback about these terms at support@dailyfocus.app.
+          Effective {new Date().getFullYear()} — Your thoughts on these terms are always welcome at support@dailyfocus.app.
         </footer>
       </div>
     </div>
