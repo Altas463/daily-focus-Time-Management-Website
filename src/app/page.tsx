@@ -311,7 +311,7 @@ export default function HomePage() {
             </div>
 
             <div className="relative grid gap-8 md:grid-cols-3">
-              {featureHighlights.map((feature, index) => {
+              {featureHighlights.map((feature) => {
                 const Icon = feature.icon;
                 return (
                   <motion.div
