@@ -10,19 +10,16 @@ const featureHighlights = [
     title: 'Effortlessly simple',
     description: 'Plan your day with an intuitive board that adapts to your workflow, not the other way around.',
     icon: Zap,
-    gradient: 'from-yellow-400 to-orange-500',
   },
   {
     title: 'Stay motivated daily',
     description: 'Watch your streaks grow and feel the momentum as you build consistent productive habits.',
     icon: TrendingUp,
-    gradient: 'from-green-400 to-blue-500',
   },
   {
     title: 'Flow without interruption',
     description: 'Immerse yourself in deep work with our Pomodoro timer, smart templates, and seamless keyboard shortcuts.',
     icon: Target,
-    gradient: 'from-purple-400 to-pink-500',
   },
 ];
 
@@ -78,11 +75,11 @@ const stats = [
 
 export default function HomePage() {
   return (
-    <div className="relative min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 text-slate-900 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 dark:text-white overflow-hidden">
+    <div className="relative min-h-screen bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-white overflow-hidden">
       {/* Background decorative elements */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-blue-400/20 to-purple-600/20 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-tr from-cyan-400/20 to-blue-600/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-cyan-500/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
       </div>
 
       <Navbar />
@@ -97,10 +94,10 @@ export default function HomePage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, ease: "easeOut" }}
-                className="inline-flex items-center gap-2 px-4 py-2 mb-6 text-sm font-medium rounded-full bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-950/50 dark:to-purple-950/50 border border-blue-200/50 dark:border-blue-800/50"
+                className="inline-flex items-center gap-2 px-4 py-2 mb-6 text-sm font-medium rounded-full bg-blue-50 dark:bg-blue-950/50 border border-blue-200 dark:border-blue-800"
               >
                 <Sparkles className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-                <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Focus better. Finish smarter.</span>
+                <span className="text-blue-600 dark:text-blue-400 font-medium">Focus better. Finish smarter.</span>
               </motion.div>
 
               <motion.h1
@@ -110,7 +107,7 @@ export default function HomePage() {
                 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight tracking-tight"
               >
                 <span className="block">Transform your</span>
-                <span className="block bg-gradient-to-r from-blue-600 via-purple-600 to-cyan-600 bg-clip-text text-transparent">focus into achievement</span>
+                <span className="block text-blue-600 dark:text-blue-400">focus into achievement</span>
               </motion.h1>
 
               <motion.p
@@ -130,11 +127,10 @@ export default function HomePage() {
               >
                 <Link
                   href="/auth/register"
-                  className="group relative px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-200 flex items-center justify-center gap-2"
+                  className="group relative px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-200 flex items-center justify-center gap-2"
                 >
                   <span>Start for free</span>
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                  <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 opacity-0 group-hover:opacity-100 blur-lg transition-opacity"></div>
                 </Link>
 
                 <Link
@@ -154,8 +150,8 @@ export default function HomePage() {
               transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
               className="relative"
             >
-              <div className="relative bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 rounded-2xl border border-slate-200/50 dark:border-slate-700/50 p-8 shadow-2xl">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-400/20 to-purple-600/20 rounded-full blur-2xl"></div>
+              <div className="relative bg-slate-100 dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-8 shadow-2xl">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full blur-2xl"></div>
 
                 <div className="text-sm font-medium text-slate-500 dark:text-slate-400 mb-6 flex items-center gap-2">
                   <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
@@ -165,7 +161,7 @@ export default function HomePage() {
                 <div className="space-y-3">
                   <div className="bg-white dark:bg-slate-800 rounded-lg p-4 border border-slate-200 dark:border-slate-700 hover:shadow-lg transition-shadow">
                     <div className="flex items-center gap-3 mb-2">
-                      <div className="w-8 h-8 rounded bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center text-white text-xs font-bold">K</div>
+                      <div className="w-8 h-8 rounded bg-blue-500 flex items-center justify-center text-white text-xs font-bold">K</div>
                       <div className="text-sm font-semibold text-slate-900 dark:text-white">Kanban Board</div>
                     </div>
                     <div className="grid grid-cols-3 gap-2 mt-3">
@@ -177,10 +173,10 @@ export default function HomePage() {
 
                   <div className="bg-white dark:bg-slate-800 rounded-lg p-4 border border-slate-200 dark:border-slate-700 hover:shadow-lg transition-shadow">
                     <div className="flex items-center gap-3 mb-2">
-                      <div className="w-8 h-8 rounded bg-gradient-to-r from-green-500 to-cyan-500 flex items-center justify-center text-white text-xs font-bold">P</div>
+                      <div className="w-8 h-8 rounded bg-green-500 flex items-center justify-center text-white text-xs font-bold">P</div>
                       <div className="text-sm font-semibold text-slate-900 dark:text-white">Pomodoro Timer</div>
                     </div>
-                    <div className="bg-gradient-to-r from-green-100 to-cyan-100 dark:from-green-950/30 dark:to-cyan-950/30 rounded p-3 mt-3">
+                    <div className="bg-green-50 dark:bg-green-950/30 rounded p-3 mt-3">
                       <div className="text-2xl font-bold text-green-700 dark:text-green-300 text-center">25:00</div>
                       <div className="text-xs text-green-600 dark:text-green-400 text-center mt-1">Focus Session</div>
                     </div>
@@ -188,7 +184,7 @@ export default function HomePage() {
 
                   <div className="bg-white dark:bg-slate-800 rounded-lg p-4 border border-slate-200 dark:border-slate-700 hover:shadow-lg transition-shadow">
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded bg-gradient-to-r from-orange-500 to-red-500 flex items-center justify-center text-white text-xs font-bold">S</div>
+                      <div className="w-8 h-8 rounded bg-orange-500 flex items-center justify-center text-white text-xs font-bold">S</div>
                       <div className="text-sm font-semibold text-slate-900 dark:text-white">15 Day Streak! 🔥</div>
                     </div>
                   </div>
@@ -200,7 +196,7 @@ export default function HomePage() {
       </section>
 
       {/* Stats Section */}
-      <section className="relative py-16 bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm">
+      <section className="relative py-16 bg-white dark:bg-slate-900/50">
         <div className="mx-auto max-w-7xl px-6">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -218,7 +214,7 @@ export default function HomePage() {
                 viewport={{ once: true }}
                 className="space-y-2"
               >
-                <div className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                <div className="text-3xl md:text-4xl font-bold text-blue-600 dark:text-blue-400">
                   {stat.value}
                 </div>
                 <div className="text-sm text-slate-600 dark:text-slate-400">{stat.label}</div>
@@ -256,9 +252,9 @@ export default function HomePage() {
                   viewport={{ once: true }}
                   className="group relative"
                 >
-                  <div className="absolute inset-0 bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 rounded-2xl transform rotate-1 group-hover:rotate-2 transition-transform"></div>
+                  <div className="absolute inset-0 bg-slate-100 dark:bg-slate-800 rounded-2xl transform rotate-1 group-hover:rotate-2 transition-transform"></div>
                   <div className="relative bg-white dark:bg-slate-900 rounded-2xl p-8 border border-slate-200 dark:border-slate-700 shadow-lg hover:shadow-xl transition-shadow">
-                    <div className={`inline-flex p-3 rounded-xl bg-gradient-to-r ${feature.gradient} mb-6`}>
+                    <div className={`inline-flex p-3 rounded-xl ${index === 0 ? 'bg-yellow-500' : index === 1 ? 'bg-green-500' : 'bg-purple-500'} mb-6`}>
                       <Icon className="w-6 h-6 text-white" />
                     </div>
                     <h3 className="text-xl font-semibold mb-3">{feature.title}</h3>
@@ -272,7 +268,7 @@ export default function HomePage() {
       </section>
 
       {/* Features Grid Section */}
-      <section className="relative py-20 px-6 bg-gradient-to-br from-blue-50/50 to-purple-50/50 dark:from-blue-950/20 dark:to-purple-950/20">
+      <section className="relative py-20 px-6 bg-blue-50 dark:bg-slate-900">
         <div className="mx-auto max-w-7xl">
           <div className="grid gap-16 lg:grid-cols-2 items-center">
             <motion.div
@@ -283,7 +279,8 @@ export default function HomePage() {
             >
               <h2 className="text-3xl md:text-4xl font-bold mb-6">Everything you need to thrive</h2>
               <p className="text-lg text-slate-600 dark:text-slate-300 mb-8 leading-relaxed">
-                Move seamlessly from planning to execution. Daily Focus keeps your priorities front and center, highlights what's coming next, and celebrates your progress every single day.
+                Move seamlessly from planning to execution. Daily Focus keeps your priorities front and center,
+                highlights what&apos;s coming next, and celebrates your progress every single day.
               </p>
               <div className="flex flex-wrap gap-3">
                 {['✨ Plan with intention', '🎯 Stay consistent', '🏆 Celebrbrate wins'].map((tag) => (
@@ -352,14 +349,14 @@ export default function HomePage() {
                 whileInView={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
                 viewport={{ once: true }}
-                className="bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 rounded-2xl p-8 border border-slate-200 dark:border-slate-700"
+                className="bg-slate-100 dark:bg-slate-800 rounded-2xl p-8 border border-slate-200 dark:border-slate-700"
               >
                 <div className="flex mb-4">
                   {[...Array(testimonial.rating)].map((_, i) => (
                     <Star key={i} className="w-5 h-5 text-yellow-500 fill-current" />
                   ))}
                 </div>
-                <p className="text-slate-700 dark:text-slate-300 mb-6 italic">"{testimonial.content}"</p>
+                <p className="text-slate-700 dark:text-slate-300 mb-6 italic">&ldquo;{testimonial.content}&rdquo;</p>
                 <div>
                   <div className="font-semibold text-slate-900 dark:text-white">{testimonial.name}</div>
                   <div className="text-sm text-slate-600 dark:text-slate-400">{testimonial.role}</div>
@@ -371,7 +368,7 @@ export default function HomePage() {
       </section>
 
       {/* CTA Section */}
-      <section className="relative py-20 px-6 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
+      <section className="relative py-20 px-6 bg-blue-600 text-white">
         <div className="absolute inset-0 bg-black/20"></div>
         <div className="relative mx-auto max-w-4xl text-center">
           <motion.div
@@ -381,7 +378,7 @@ export default function HomePage() {
             viewport={{ once: true }}
           >
             <h2 className="text-3xl md:text-4xl font-bold mb-6">Ready to transform your productivity?</h2>
-            <p className="text-xl mb-8 text-blue-100">Join thousands of professionals who've already mastered their focus.</p>
+            <p className="text-xl mb-8 text-blue-100">Join thousands of professionals who&apos;ve already mastered their focus.</p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
                 href="/auth/register"
@@ -401,7 +398,7 @@ export default function HomePage() {
       </section>
 
       {/* Help Section */}
-      <section className="relative py-16 px-6 bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm border-t border-slate-200 dark:border-slate-800">
+      <section className="relative py-16 px-6 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800">
         <div className="mx-auto max-w-5xl text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -434,14 +431,14 @@ export default function HomePage() {
       </section>
 
       {/* Enhanced Footer */}
-      <footer className="relative border-t border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-slate-950/50 backdrop-blur-sm py-12">
+      <footer className="relative border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 py-12">
         <div className="mx-auto max-w-6xl px-6">
           <div className="grid gap-8 md:grid-cols-4 mb-8">
             <div className="md:col-span-2">
               <h4 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">Daily Focus</h4>
               <p className="text-slate-600 dark:text-slate-400 mb-4">Transform your focus into achievement.</p>
               <div className="flex gap-3">
-                <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center text-white font-bold text-sm">DF</div>
+                <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-sm">DF</div>
               </div>
             </div>
 
