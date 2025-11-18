@@ -142,14 +142,14 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-gray-950">
+    <div className="min-h-screen bg-gradient-to-br from-white to-slate-50 dark:from-slate-900 dark:to-slate-950">
       <div className="mx-auto max-w-7xl space-y-8 px-4 py-8 sm:px-6 lg:px-8">
-        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="text-center">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-            {greetingText}, {session?.user?.name || "friend"}!
+        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="space-y-2">
+          <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-br from-slate-900 via-slate-800 to-slate-700 dark:from-white dark:via-slate-100 dark:to-slate-200 bg-clip-text text-transparent">
+            {greetingText}, {session?.user?.name || "friend"}
           </h1>
-          <p className="mx-auto mt-2 max-w-2xl text-lg text-gray-600 dark:text-gray-300">
-            Focus on what matters, let Daily Focus record your progress and track it every day.
+          <p className="mx-auto text-base text-slate-600 dark:text-slate-400">
+            Let&apos;s focus on what matters. Your progress is waiting.
           </p>
         </motion.div>
 
@@ -196,38 +196,54 @@ export default function DashboardPage() {
                   ? pluralize(Math.ceil(focusRemaining), "minute to reach goal", "minutes to reach goal")
                   : "Focus goal achieved for the week",
             },
-          ].map((card) => (
-            <div key={card.label} className="group rounded-xl border border-gray-200 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md dark:border-gray-800 dark:bg-gray-900">
-              <div className="mb-1 text-3xl font-semibold text-gray-900 dark:text-white">{card.value}</div>
-              <p className="text-sm text-gray-500 dark:text-gray-400">{card.helper}</p>
-              <h3 className="mt-4 text-sm font-semibold text-gray-700 dark:text-gray-200">{card.label}</h3>
-              <div className="mt-3 h-2 w-full overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
-                <div className={`h-2 rounded-full ${card.barColor}`} style={{ width: `${card.progress}%` }} />
+          ].map((card, idx) => (
+            <motion.div 
+              key={card.label} 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: idx * 0.05 }}
+              className="group rounded-2xl border border-slate-200/50 bg-white/80 backdrop-blur-sm p-6 shadow-sm transition hover:shadow-lg hover:-translate-y-1 dark:border-slate-700/50 dark:bg-slate-800/80"
+            >
+              <div className="mb-2 text-3xl font-bold text-slate-900 dark:text-white">{card.value}</div>
+              <p className="text-xs text-slate-500 dark:text-slate-400">{card.helper}</p>
+              <h3 className="mt-4 text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-300">{card.label}</h3>
+              <div className="mt-4 h-2 w-full overflow-hidden rounded-full bg-slate-200/50 dark:bg-slate-700/50">
+                <motion.div 
+                  className={`h-2 rounded-full ${card.barColor}`} 
+                  initial={{ width: 0 }}
+                  animate={{ width: `${card.progress}%` }}
+                  transition={{ duration: 1, delay: idx * 0.1 }}
+                />
               </div>
-            </div>
+            </motion.div>
           ))}
         </motion.section>
 
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
           <motion.section initial={{ opacity: 0, x: -18 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.08 }} className="lg:col-span-2">
-            <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm dark:border-gray-800 dark:bg-gray-900">
-              <div className="border-b border-gray-200 p-6 dark:border-gray-800">
+            <div className="overflow-hidden rounded-2xl border border-slate-200/50 bg-white/80 backdrop-blur-sm shadow-sm dark:border-slate-700/50 dark:bg-slate-800/80">
+              <div className="border-b border-slate-200/50 px-6 py-5 dark:border-slate-700/50">
                 <div className="flex items-center justify-between gap-3">
-                  <h3 className="text-xl font-bold text-gray-900 dark:text-white">Tasks Not Completed</h3>
-                  <span className="rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-sm font-medium text-amber-700 dark:border-amber-900/40 dark:bg-amber-900/20 dark:text-amber-300">
-                    {taskSummary.incomplete} task
+                  <div>
+                    <h3 className="text-xl font-bold text-slate-900 dark:text-white">Tasks to complete</h3>
+                    <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">Focus on what matters today</p>
+                  </div>
+                  <span className="rounded-xl border border-blue-200/50 bg-blue-50/50 px-3 py-1.5 text-sm font-semibold text-blue-700 dark:border-blue-400/30 dark:bg-blue-500/10 dark:text-blue-300">
+                    {taskSummary.incomplete} {taskSummary.incomplete === 1 ? 'task' : 'tasks'}
                   </span>
                 </div>
               </div>
               <div className="p-6">
                 {incompleteTasks.length === 0 ? (
                   <div className="grid place-items-center py-12 text-center">
-                    <div className="mb-3 h-14 w-14 rounded-full bg-emerald-100 dark:bg-emerald-900/30" />
-                    <h4 className="mb-1 text-lg font-semibold text-gray-900 dark:text-white">All Completed!</h4>
-                    <p className="text-gray-500 dark:text-gray-400">No tasks waiting. Take a break and relax.</p>
+                    <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-emerald-100 to-cyan-100 dark:from-emerald-900/30 dark:to-cyan-900/30">
+                      <span className="text-3xl">✨</span>
+                    </div>
+                    <h4 className="text-lg font-semibold text-slate-900 dark:text-white">All caught up!</h4>
+                    <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">No tasks waiting. Take a well-deserved break.</p>
                   </div>
                 ) : (
-                  <div className="space-y-4">
+                  <div className="space-y-3">
                     {incompleteTasks.map((task, index) => {
                       const urgency = getTaskUrgency(task.endDate);
                       return (
@@ -236,31 +252,31 @@ export default function DashboardPage() {
                           initial={{ opacity: 0, y: 14 }}
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ delay: index * 0.05 }}
-                          className="group rounded-lg border border-gray-200 bg-white p-4 transition hover:border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:hover:border-gray-600"
+                          className="group rounded-xl border border-slate-200/50 bg-white p-4 transition hover:bg-slate-50 hover:shadow-md dark:border-slate-700/50 dark:bg-slate-700/30 dark:hover:bg-slate-700/50"
                         >
                           <div className="flex items-center justify-between gap-4">
-                            <div className="flex-1">
+                            <div className="flex-1 min-w-0">
                               <div className="mb-2 flex items-center gap-3">
-                                <span className={`inline-block h-2.5 w-2.5 rounded-full ${toneDotMap[urgency.tone]}`} />
-                                <span className="font-medium text-gray-900 transition group-hover:text-blue-600 dark:text-white dark:group-hover:text-blue-400">
+                                <span className={`inline-block h-2.5 w-2.5 rounded-full flex-shrink-0 ${toneDotMap[urgency.tone]}`} />
+                                <span className="font-medium text-slate-900 dark:text-slate-100 truncate">
                                   {task.title}
                                 </span>
                               </div>
-                              <div className="flex flex-wrap items-center gap-3 text-sm">
-                                <span className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${toneBadgeMap[urgency.tone]}`}>
+                              <div className="flex flex-wrap items-center gap-2 text-xs">
+                                <span className={`inline-flex items-center rounded-full px-2 py-1 font-medium ${toneBadgeMap[urgency.tone]}`}>
                                   {urgency.label}
                                 </span>
                                 {task.endDate && (
-                                  <span className="text-gray-500 dark:text-gray-400">{formatRelativeDate(task.endDate)}</span>
+                                  <span className="text-slate-500 dark:text-slate-400">{formatRelativeDate(task.endDate)}</span>
                                 )}
                               </div>
                             </div>
                             <button
                               onClick={() => handleComplete(task.id)}
-                              className="rounded-xl bg-gray-900 px-4 py-2 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-black/90 focus:outline-none focus:ring-2 focus:ring-gray-900/20 dark:bg-white dark:text-gray-900 dark:hover:bg-white/90"
+                              className="flex-shrink-0 rounded-lg bg-gradient-to-r from-emerald-600 to-cyan-600 px-4 py-2 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:shadow-lg hover:shadow-emerald-500/30 focus:outline-none dark:from-emerald-500 dark:to-cyan-500"
                               aria-label={`Mark completed ${task.title}`}
                             >
-                              Complete
+                              Done
                             </button>
                           </div>
                         </motion.div>
@@ -273,10 +289,10 @@ export default function DashboardPage() {
           </motion.section>
 
           <motion.section initial={{ opacity: 0, x: 18 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.12 }}>
-            <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm dark:border-gray-800 dark:bg-gray-900">
-              <div className="border-b border-gray-200 p-6 dark:border-gray-800">
-                <h3 className="text-xl font-bold text-gray-900 dark:text-white">Pomodoro Timer</h3>
-                  <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Focus for 25 min, break for 5 min</p>
+            <div className="overflow-hidden rounded-2xl border border-slate-200/50 bg-white/80 backdrop-blur-sm shadow-sm dark:border-slate-700/50 dark:bg-slate-800/80">
+              <div className="border-b border-slate-200/50 px-6 py-5 dark:border-slate-700/50">
+                <h3 className="text-xl font-bold text-slate-900 dark:text-white">Focus Session</h3>
+                <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">25 min focus, 5 min break</p>
               </div>
               <div className="p-6">
                 <PomodoroTimer />

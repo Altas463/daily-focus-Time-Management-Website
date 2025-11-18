@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useMemo, useState } from "react";
 import { Droppable } from "@hello-pangea/dnd";
@@ -198,28 +198,28 @@ const TimeBlockingBoard = ({
   };
 
   return (
-    <section className="mt-10 space-y-6 rounded-3xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900">
+    <section className="mt-10 space-y-6 rounded-2xl border border-slate-200/50 bg-white/80 backdrop-blur-sm p-6 shadow-sm dark:border-slate-700/50 dark:bg-slate-800/80">
       <header className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
-          <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.3em] text-gray-500 dark:text-gray-400">
+          <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.3em] text-slate-500 dark:text-slate-400">
             <CalendarPlus className="h-4 w-4" aria-hidden />
             Time blocking
           </p>
-          <h2 className="mt-2 text-2xl font-semibold text-gray-900 dark:text-white">
-            Plan your deep work blocks
+          <h2 className="mt-3 text-2xl font-bold text-slate-900 dark:text-white">
+            Schedule your deep work
           </h2>
-          <p className="mt-1 text-sm text-gray-600 dark:text-gray-300">
-            Drag any task into a block to instantly schedule 30, 60, or 90 focused minutes.
+          <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
+            Drag tasks into blocks to schedule 30, 60, or 90 minutes of focused time.
           </p>
         </div>
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-          <label className="flex items-center gap-2 rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200">
-            <span className="font-medium">Date</span>
+          <label className="flex items-center gap-2 rounded-lg border border-slate-300 bg-slate-50 px-3 py-2 text-sm text-slate-700 dark:border-slate-600 dark:bg-slate-700/50 dark:text-slate-200">
+            <span className="font-medium text-xs uppercase tracking-wider">Date:</span>
             <input
               type="date"
               value={selectedDate}
               onChange={(event) => onSelectedDateChange(event.target.value)}
-              className="border-none bg-transparent text-gray-900 outline-none dark:text-gray-50"
+              className="border-none bg-transparent text-slate-900 outline-none dark:text-slate-50"
             />
           </label>
 
@@ -227,20 +227,20 @@ const TimeBlockingBoard = ({
             type="button"
             onClick={() => void downloadIcs()}
             disabled={!selectedDate || scheduledTasks.length === 0 || downloading}
-            className="inline-flex items-center gap-2 rounded-xl bg-gray-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-black disabled:cursor-not-allowed disabled:bg-gray-400 dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100"
+            className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-blue-600 to-cyan-600 px-4 py-2 text-sm font-semibold text-white transition hover:shadow-lg hover:shadow-blue-500/30 disabled:cursor-not-allowed disabled:from-slate-400 disabled:to-slate-400 dark:from-blue-500 dark:to-cyan-500"
           >
             <Download className="h-4 w-4" aria-hidden />
-            Add to Google Calendar
+            Export to Calendar
           </button>
         </div>
       </header>
 
       {statusMessage && (
         <div
-          className={`flex items-center justify-between rounded-xl border px-4 py-3 text-sm ${
+          className={`flex items-center justify-between rounded-lg border px-4 py-3 text-sm ${
             statusMessage.type === "success"
-              ? "border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-900/40 dark:bg-emerald-900/20 dark:text-emerald-200"
-              : "border-rose-200 bg-rose-50 text-rose-700 dark:border-rose-900/40 dark:bg-rose-900/20 dark:text-rose-200"
+              ? "border-emerald-200/50 bg-emerald-50/50 text-emerald-700 dark:border-emerald-400/20 dark:bg-emerald-500/10 dark:text-emerald-300"
+              : "border-rose-200/50 bg-rose-50/50 text-rose-700 dark:border-rose-400/20 dark:bg-rose-500/10 dark:text-rose-300"
           }`}
         >
           <span>{statusMessage.text}</span>
@@ -256,11 +256,11 @@ const TimeBlockingBoard = ({
         </div>
       )}
 
-      <div className="flex flex-wrap items-center gap-3 rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200">
+      <div className="flex flex-wrap items-center gap-3 rounded-lg border border-slate-200/50 bg-gradient-to-r from-blue-50/50 to-cyan-50/50 px-4 py-3 text-sm text-slate-700 dark:border-slate-700/50 dark:from-blue-500/10 dark:to-cyan-500/10 dark:text-slate-300">
         <Clock3 className="h-4 w-4" aria-hidden />
         <span>
           {scheduledTasks.length > 0
-            ? `${scheduledTasks.length} block${scheduledTasks.length > 1 ? "s" : ""} â€¢ ${totalMinutes} scheduled minutes`
+            ? `${scheduledTasks.length} block${scheduledTasks.length > 1 ? "s" : ""} • ${totalMinutes} min scheduled`
             : "No blocks scheduled yet"}
         </span>
       </div>
@@ -268,7 +268,7 @@ const TimeBlockingBoard = ({
       <div className="space-y-8">
         {blocksByHour.map(({ hourLabel, blocks }) => (
           <div key={hourLabel} className="space-y-3">
-            <p className="text-xs font-semibold uppercase tracking-[0.3em] text-gray-500 dark:text-gray-400">
+            <p className="text-xs font-bold uppercase tracking-[0.3em] text-slate-500 dark:text-slate-400">
               {hourLabel}
             </p>
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -281,28 +281,27 @@ const TimeBlockingBoard = ({
                       <div
                         ref={provided.innerRef}
                         {...provided.droppableProps}
-                        className={[
-                          "relative min-h-[120px] rounded-2xl border p-4 transition",
+                        className={`relative min-h-[120px] rounded-xl border p-4 transition ${
                           snapshot.isDraggingOver
-                            ? "border-blue-400 bg-blue-50/80 dark:border-blue-500/60 dark:bg-blue-500/10"
+                            ? "border-blue-400/60 bg-blue-50/60 shadow-lg shadow-blue-500/20 dark:border-blue-500/50 dark:bg-blue-500/20"
                             : assignedTask
-                              ? "border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800"
-                              : "border-dashed border-gray-300 bg-gray-50 dark:border-gray-700 dark:bg-gray-900",
-                        ].join(" ")}
+                              ? "border-slate-200/50 bg-white/80 backdrop-blur-sm shadow-sm dark:border-slate-700/50 dark:bg-slate-700/50"
+                              : "border-dashed border-slate-300/50 bg-slate-50/30 dark:border-slate-700/50 dark:bg-slate-800/30"
+                        }`}
                       >
-                        <div className="flex items-center justify-between gap-2 text-xs font-semibold uppercase tracking-[0.25em] text-gray-500 dark:text-gray-400">
+                        <div className="flex items-center justify-between gap-2 text-xs font-bold uppercase tracking-[0.25em] text-slate-500 dark:text-slate-400">
                           {block.windowLabel}
-                          <span>{block.duration}m</span>
+                          <span className="bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded font-semibold text-slate-600 dark:text-slate-300">{block.duration}m</span>
                         </div>
 
                         <div className="mt-3">
                           {assignedTask ? (
                             <>
-                              <p className="text-sm font-semibold text-gray-900 dark:text-white">
+                              <p className="text-sm font-semibold text-slate-900 dark:text-white">
                                 {assignedTask.title}
                               </p>
                               {assignedTask.description && (
-                                <p className="mt-1 text-xs text-gray-500 dark:text-gray-300 line-clamp-2">
+                                <p className="mt-1 text-xs text-slate-600 dark:text-slate-400 line-clamp-2">
                                   {assignedTask.description}
                                 </p>
                               )}
@@ -310,20 +309,20 @@ const TimeBlockingBoard = ({
                                 type="button"
                                 onClick={() => void onClearAssignment(assignedTask.id)}
                                 disabled={isPending}
-                                className="mt-4 inline-flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-1.5 text-xs font-medium text-gray-600 transition hover:border-gray-300 hover:text-gray-900 disabled:cursor-not-allowed disabled:opacity-60 dark:border-gray-700 dark:text-gray-300 dark:hover:border-gray-600"
+                                className="mt-4 inline-flex items-center gap-2 rounded-lg border border-slate-300/50 px-3 py-1.5 text-xs font-medium text-slate-700 transition hover:bg-slate-100 dark:border-slate-600/50 dark:text-slate-300 dark:hover:bg-slate-700/50"
                               >
                                 <Trash2 className="h-3.5 w-3.5" aria-hidden />
                                 Remove
                               </button>
                             </>
                           ) : (
-                            <p className="text-sm text-gray-500 dark:text-gray-400">
-                              Drop a task here to schedule this block.
+                            <p className="text-sm text-slate-500 dark:text-slate-400">
+                              Drop a task here
                             </p>
                           )}
                         </div>
                         {isPending && (
-                          <div className="absolute inset-0 flex items-center justify-center rounded-2xl bg-white/80 text-xs font-semibold uppercase tracking-[0.3em] text-gray-500 dark:bg-gray-900/80 dark:text-gray-300">
+                          <div className="absolute inset-0 flex items-center justify-center rounded-xl bg-white/80 text-xs font-semibold uppercase tracking-[0.3em] text-slate-500 dark:bg-slate-800/80 dark:text-slate-300">
                             Updating...
                           </div>
                         )}

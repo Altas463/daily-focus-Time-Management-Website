@@ -2,7 +2,7 @@
 
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #0f172a;
 }
 
 @theme inline {
@@ -14,8 +14,8 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #0f172a;
+    --foreground: #f1f5f9;
   }
 }
 
@@ -24,6 +24,7 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
 @layer utilities {
   .animate-fade-in {
     animation: fadeIn 0.3s ease-out forwards;
@@ -38,5 +39,33 @@ body {
       opacity: 1;
       transform: scale(1);
     }
+  }
+
+  .glass {
+    @apply backdrop-blur-xl bg-white/80 dark:bg-slate-900/80;
+  }
+
+  .glass-sm {
+    @apply backdrop-blur-lg bg-white/70 dark:bg-slate-800/70;
+  }
+
+  .gradient-primary {
+    @apply bg-gradient-to-br from-blue-600 via-blue-500 to-cyan-500;
+  }
+
+  .gradient-accent {
+    @apply bg-gradient-to-br from-purple-600 via-pink-500 to-rose-500;
+  }
+
+  .card-modern {
+    @apply rounded-2xl border border-slate-200/50 bg-white shadow-sm transition hover:shadow-lg hover:-translate-y-1 dark:border-slate-700/50 dark:bg-slate-800;
+  }
+
+  .card-hover {
+    @apply transition-all duration-300 hover:shadow-lg hover:-translate-y-1;
+  }
+
+  .text-balance-nowrap {
+    @apply text-balance;
   }
 }

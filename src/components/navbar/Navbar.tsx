@@ -32,40 +32,41 @@ export default function Navbar() {
 
   return (
     <nav
-      className={[
-        'fixed inset-x-0 top-0 z-50 border-b transition-colors duration-300',
+      className={`fixed inset-x-0 top-0 z-50 border-b transition-all duration-300 ${
         scrolled
-          ? 'bg-white dark:bg-gray-950 border-gray-200 dark:border-gray-800 shadow-sm'
-          : 'bg-white dark:bg-gray-950 border-transparent',
-      ].join(' ')}
+          ? 'bg-white/80 dark:bg-slate-950/80 border-slate-200/50 dark:border-slate-700/50 shadow-sm backdrop-blur-sm'
+          : 'bg-white/50 dark:bg-slate-950/50 border-transparent backdrop-blur-sm'
+      }`}
     >
       <div className="mx-auto max-w-7xl px-6">
         <div className="flex h-16 items-center justify-between">
-          {/* Brand (no icon) */}
-          <Link href="/" className="select-none text-lg font-semibold tracking-tight text-gray-900 transition hover:text-gray-600 dark:text-white dark:hover:text-gray-300">
+          <Link href="/" className="select-none text-lg font-bold bg-gradient-to-r from-blue-600 to-cyan-600 dark:from-blue-400 dark:to-cyan-400 bg-clip-text text-transparent transition hover:opacity-80">
             Daily Focus
           </Link>
 
-          {/* Links */}
-          <div className="hidden items-center gap-6 text-sm font-medium sm:flex">
+          <div className="hidden items-center gap-8 text-sm font-medium sm:flex">
             {links.map((l) => (
-              <Link key={l.href} href={l.href} className="group relative px-1 py-1 text-gray-600 transition hover:text-gray-900 dark:text-gray-300 dark:hover:text-white">
-                <span className={isActive(l.href) ? 'text-gray-900 dark:text-white' : ''}>
-                  {l.label}
-                </span>
+              <Link 
+                key={l.href} 
+                href={l.href} 
+                className={`group relative px-1 py-1 transition ${
+                  isActive(l.href)
+                    ? 'text-slate-900 dark:text-white'
+                    : 'text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white'
+                }`}
+              >
+                <span>{l.label}</span>
                 <span className={`nav-underline ${isActive(l.href) ? 'w-full' : ''}`} />
               </Link>
             ))}
           </div>
 
-          {/* (Optional) Mobile minimal menu placeholder - hidden for now to keep ultra-clean */}
           <div className="sm:hidden" />
         </div>
       </div>
 
-      {/* Scroll progress */}
       <div
-        className="pointer-events-none absolute bottom-0 left-0 h-[2px] w-0 bg-blue-500 transition-[width] duration-150 dark:bg-blue-400"
+        className="pointer-events-none absolute bottom-0 left-0 h-[2px] w-0 bg-gradient-to-r from-blue-500 via-cyan-500 to-transparent transition-[width] duration-150"
         style={{ width: `${progress}%` }}
         aria-hidden
       />
