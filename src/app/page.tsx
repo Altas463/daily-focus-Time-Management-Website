@@ -75,149 +75,145 @@ const stats = [
 
 export default function HomePage() {
   return (
-    <div className="relative min-h-screen bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-white overflow-hidden">
-      {/* Background decorative elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-cyan-500/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
+    <div className="relative min-h-screen" style={{ backgroundColor: 'var(--background)', color: 'var(--text-primary)' }}>
+      {/* Subtle background pattern */}
+      <div className="absolute inset-0 opacity-30">
+        <div className="absolute inset-0" style={{
+          backgroundImage: `radial-gradient(circle at 25% 25%, var(--cream) 0%, transparent 50%),
+                          radial-gradient(circle at 75% 75%, var(--sage) 0%, transparent 50%)`,
+        }}></div>
       </div>
 
       <Navbar />
 
       {/* Hero Section */}
-      <section className="relative px-6 pt-24 pb-16 md:pt-32 md:pb-24">
-        <div className="mx-auto max-w-7xl">
-          <div className="grid gap-12 lg:grid-cols-2 lg:gap-16 items-center">
-            {/* Left side - Content */}
-            <div className="relative z-10">
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, ease: "easeOut" }}
-                className="inline-flex items-center gap-2 px-4 py-2 mb-6 text-sm font-medium rounded-full bg-blue-50 dark:bg-blue-950/50 border border-blue-200 dark:border-blue-800"
-              >
-                <Sparkles className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-                <span className="text-blue-600 dark:text-blue-400 font-medium">Focus better. Finish smarter.</span>
-              </motion.div>
-
-              <motion.h1
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.1, ease: "easeOut" }}
-                className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight tracking-tight"
-              >
-                <span className="block">Transform your</span>
-                <span className="block text-blue-600 dark:text-blue-400">focus into achievement</span>
-              </motion.h1>
-
-              <motion.p
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
-                className="mt-6 text-lg md:text-xl text-slate-600 dark:text-slate-300 leading-relaxed max-w-2xl"
-              >
-                Daily Focus turns your intentions into accomplishments. Cut through the clutter, build sustainable habits, and watch your progress unfold day by day.
-              </motion.p>
-
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
-                className="mt-10 flex flex-col sm:flex-row gap-4"
-              >
-                <Link
-                  href="/auth/register"
-                  className="group relative px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-200 flex items-center justify-center gap-2"
-                >
-                  <span>Start for free</span>
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                </Link>
-
-                <Link
-                  href="/dashboard"
-                  className="px-8 py-4 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-semibold rounded-xl border-2 border-slate-200 dark:border-slate-700 hover:border-blue-300 dark:hover:border-blue-600 transform hover:-translate-y-1 transition-all duration-200 flex items-center justify-center gap-2"
-                >
-                  <span>View demo</span>
-                  <div className="w-2 h-2 rounded-full bg-blue-600 animate-pulse"></div>
-                </Link>
-              </motion.div>
-            </div>
-
-            {/* Right side - Enhanced Product Mockup */}
+      <section className="relative px-6 pt-32 pb-24 lg:pt-40">
+        <div className="mx-auto max-w-6xl">
+          <div className="text-center max-w-4xl mx-auto">
+            {/* Elegant tag */}
             <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
-              className="relative"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1, ease: "easeOut" }}
+              className="inline-block mb-8"
             >
-              <div className="relative bg-slate-100 dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-8 shadow-2xl">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full blur-2xl"></div>
-
-                <div className="text-sm font-medium text-slate-500 dark:text-slate-400 mb-6 flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
-                  Live Workspace Preview
-                </div>
-
-                <div className="space-y-3">
-                  <div className="bg-white dark:bg-slate-800 rounded-lg p-4 border border-slate-200 dark:border-slate-700 hover:shadow-lg transition-shadow">
-                    <div className="flex items-center gap-3 mb-2">
-                      <div className="w-8 h-8 rounded bg-blue-500 flex items-center justify-center text-white text-xs font-bold">K</div>
-                      <div className="text-sm font-semibold text-slate-900 dark:text-white">Kanban Board</div>
-                    </div>
-                    <div className="grid grid-cols-3 gap-2 mt-3">
-                      <div className="bg-blue-50 dark:bg-blue-950/30 rounded p-2 text-xs text-blue-700 dark:text-blue-300">To Do</div>
-                      <div className="bg-purple-50 dark:bg-purple-950/30 rounded p-2 text-xs text-purple-700 dark:text-purple-300">In Progress</div>
-                      <div className="bg-green-50 dark:bg-green-950/30 rounded p-2 text-xs text-green-700 dark:text-green-300">Done</div>
-                    </div>
-                  </div>
-
-                  <div className="bg-white dark:bg-slate-800 rounded-lg p-4 border border-slate-200 dark:border-slate-700 hover:shadow-lg transition-shadow">
-                    <div className="flex items-center gap-3 mb-2">
-                      <div className="w-8 h-8 rounded bg-green-500 flex items-center justify-center text-white text-xs font-bold">P</div>
-                      <div className="text-sm font-semibold text-slate-900 dark:text-white">Pomodoro Timer</div>
-                    </div>
-                    <div className="bg-green-50 dark:bg-green-950/30 rounded p-3 mt-3">
-                      <div className="text-2xl font-bold text-green-700 dark:text-green-300 text-center">25:00</div>
-                      <div className="text-xs text-green-600 dark:text-green-400 text-center mt-1">Focus Session</div>
-                    </div>
-                  </div>
-
-                  <div className="bg-white dark:bg-slate-800 rounded-lg p-4 border border-slate-200 dark:border-slate-700 hover:shadow-lg transition-shadow">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded bg-orange-500 flex items-center justify-center text-white text-xs font-bold">S</div>
-                      <div className="text-sm font-semibold text-slate-900 dark:text-white">15 Day Streak! 🔥</div>
-                    </div>
-                  </div>
+              <div className="px-6 py-3 rounded-full border" style={{
+                borderColor: 'var(--border)',
+                backgroundColor: 'var(--surface)',
+                color: 'var(--text-secondary)'
+              }}>
+                <div className="flex items-center gap-2 text-sm font-medium" style={{ fontFamily: 'var(--font-sans)' }}>
+                  <div className="w-2 h-2 rounded-full" style={{ backgroundColor: 'var(--accent)' }}></div>
+                  <span>Craft Your Productivity Symphony</span>
                 </div>
               </div>
+            </motion.div>
+
+            {/* Main headline */}
+            <motion.h1
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1, delay: 0.2, ease: "easeOut" }}
+              className="display-text text-5xl md:text-6xl lg:text-7xl mb-8 leading-tight"
+              style={{ color: 'var(--text-primary)' }}
+            >
+              Transform Your
+              <div className="block mt-2" style={{ color: 'var(--primary)' }}>
+                Daily Focus
+              </div>
+              Into Lasting
+              <div className="block mt-2" style={{ color: 'var(--accent)' }}>
+                Achievement
+              </div>
+            </motion.h1>
+
+            {/* Refined description */}
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1, delay: 0.4, ease: "easeOut" }}
+              className="text-xl md:text-2xl mb-12 leading-relaxed"
+              style={{ color: 'var(--text-secondary)', maxWidth: '600px', marginLeft: 'auto', marginRight: 'auto' }}
+            >
+              Where thoughtful design meets powerful productivity. Daily Focus transforms your workflow from chaos to clarity, one focused day at a time.
+            </motion.p>
+
+            {/* Elegant CTA buttons */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1, delay: 0.6, ease: "easeOut" }}
+              className="flex flex-col sm:flex-row gap-4 justify-center"
+            >
+              <Link
+                href="/auth/register"
+                className="group px-10 py-4 rounded-lg font-medium text-lg transition-all duration-300 transform hover:scale-105"
+                style={{
+                  backgroundColor: 'var(--primary)',
+                  color: 'white',
+                  boxShadow: 'var(--shadow-lg)'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = 'var(--primary-dark)';
+                  e.currentTarget.style.boxShadow = 'var(--shadow-xl)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = 'var(--primary)';
+                  e.currentTarget.style.boxShadow = 'var(--shadow-lg)';
+                }}
+              >
+                Begin Your Journey
+                <ArrowRight className="inline-block ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              </Link>
+
+              <Link
+                href="/dashboard"
+                className="group px-10 py-4 rounded-lg font-medium text-lg border-2 transition-all duration-300 transform hover:scale-105"
+                style={{
+                  borderColor: 'var(--border)',
+                  backgroundColor: 'var(--surface)',
+                  color: 'var(--text-primary)'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = 'var(--primary)';
+                  e.currentTarget.style.backgroundColor = 'var(--surface-secondary)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = 'var(--border)';
+                  e.currentTarget.style.backgroundColor = 'var(--surface)';
+                }}
+              >
+                Explore Gracefully
+                <div className="inline-block ml-2 w-2 h-2 rounded-full" style={{ backgroundColor: 'var(--accent)' }}></div>
+              </Link>
             </motion.div>
           </div>
         </div>
       </section>
 
-      {/* Stats Section */}
-      <section className="relative py-16 bg-white dark:bg-slate-900/50">
-        <div className="mx-auto max-w-7xl px-6">
+      {/* Subtle Stats Section */}
+      <section className="relative py-20 px-6">
+        <div className="mx-auto max-w-6xl">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
+            transition={{ duration: 1 }}
             viewport={{ once: true }}
-            className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center"
+            className="grid grid-cols-2 md:grid-cols-4 gap-12 text-center"
           >
             {stats.map((stat, index) => (
               <motion.div
                 key={stat.label}
                 initial={{ opacity: 0, scale: 0.9 }}
                 whileInView={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
+                transition={{ duration: 0.8, delay: index * 0.1 }}
                 viewport={{ once: true }}
                 className="space-y-2"
               >
-                <div className="text-3xl md:text-4xl font-bold text-blue-600 dark:text-blue-400">
+                <div className="display-text text-3xl md:text-4xl" style={{ color: 'var(--primary)' }}>
                   {stat.value}
                 </div>
-                <div className="text-sm text-slate-600 dark:text-slate-400">{stat.label}</div>
+                <div className="text-lg" style={{ color: 'var(--text-secondary)' }}>{stat.label}</div>
               </motion.div>
             ))}
           </motion.div>
@@ -225,40 +221,56 @@ export default function HomePage() {
       </section>
 
       {/* Features Section */}
-      <section className="relative py-20 px-6">
-        <div className="mx-auto max-w-7xl">
+      <section className="relative py-24 px-6" style={{ backgroundColor: 'var(--surface-secondary)' }}>
+        <div className="mx-auto max-w-6xl">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
+            transition={{ duration: 1 }}
             viewport={{ once: true }}
-            className="text-center mb-16"
+            className="text-center mb-20"
           >
-            <h2 className="text-3xl md:text-4xl font-bold">Why professionals choose Daily Focus</h2>
-            <p className="mt-4 text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">
-              Designed for ambitious individuals who value clarity, consistency, and meaningful progress over complexity.
+            <h2 className="display-text text-4xl md:text-5xl mb-6">
+              Where <span style={{ color: 'var(--primary)' }}>Thoughtfulness</span> Meets
+              <br />
+              <span style={{ color: 'var(--accent)' }}>Productivity</span>
+            </h2>
+            <p className="text-xl" style={{ color: 'var(--text-secondary)', maxWidth: '500px', marginLeft: 'auto', marginRight: 'auto' }}>
+              Every feature is crafted with intention, helping you achieve more while doing less.
             </p>
           </motion.div>
 
-          <div className="grid gap-8 md:grid-cols-3">
+          <div className="grid gap-12 md:grid-cols-3">
             {featureHighlights.map((feature, index) => {
               const Icon = feature.icon;
+              const colors = ['var(--warm)', 'var(--accent)', 'var(--primary)'];
               return (
                 <motion.div
                   key={feature.title}
-                  initial={{ opacity: 0, y: 30 }}
+                  initial={{ opacity: 0, y: 40 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: index * 0.1 }}
+                  transition={{ duration: 0.8, delay: index * 0.2 }}
                   viewport={{ once: true }}
-                  className="group relative"
+                  className="group"
                 >
-                  <div className="absolute inset-0 bg-slate-100 dark:bg-slate-800 rounded-2xl transform rotate-1 group-hover:rotate-2 transition-transform"></div>
-                  <div className="relative bg-white dark:bg-slate-900 rounded-2xl p-8 border border-slate-200 dark:border-slate-700 shadow-lg hover:shadow-xl transition-shadow">
-                    <div className={`inline-flex p-3 rounded-xl ${index === 0 ? 'bg-yellow-500' : index === 1 ? 'bg-green-500' : 'bg-purple-500'} mb-6`}>
-                      <Icon className="w-6 h-6 text-white" />
+                  <div className="relative p-8 rounded-2xl transition-all duration-300 hover:scale-105"
+                       style={{
+                         backgroundColor: 'var(--surface)',
+                         border: `1px solid var(--border)`,
+                         boxShadow: 'var(--shadow)'
+                       }}>
+                    {/* Icon with elegant background */}
+                    <div className="flex items-center justify-center w-16 h-16 rounded-full mb-6 transition-all duration-300 group-hover:scale-110"
+                         style={{ backgroundColor: colors[index] }}>
+                      <Icon className="w-8 h-8 text-white" />
                     </div>
-                    <h3 className="text-xl font-semibold mb-3">{feature.title}</h3>
-                    <p className="text-slate-600 dark:text-slate-300">{feature.description}</p>
+
+                    <h3 className="text-2xl font-semibold mb-4" style={{ color: 'var(--text-primary)' }}>
+                      {feature.title}
+                    </h3>
+                    <p className="text-lg leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+                      {feature.description}
+                    </p>
                   </div>
                 </motion.div>
               );
@@ -267,99 +279,64 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Features Grid Section */}
-      <section className="relative py-20 px-6 bg-blue-50 dark:bg-slate-900">
-        <div className="mx-auto max-w-7xl">
-          <div className="grid gap-16 lg:grid-cols-2 items-center">
-            <motion.div
-              initial={{ opacity: 0, x: -50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6 }}
-              viewport={{ once: true }}
-            >
-              <h2 className="text-3xl md:text-4xl font-bold mb-6">Everything you need to thrive</h2>
-              <p className="text-lg text-slate-600 dark:text-slate-300 mb-8 leading-relaxed">
-                Move seamlessly from planning to execution. Daily Focus keeps your priorities front and center,
-                highlights what&apos;s coming next, and celebrates your progress every single day.
-              </p>
-              <div className="flex flex-wrap gap-3">
-                {['✨ Plan with intention', '🎯 Stay consistent', '🏆 Celebrbrate wins'].map((tag) => (
-                  <span key={tag} className="px-4 py-2 bg-white dark:bg-slate-800 rounded-full text-sm font-medium border border-slate-200 dark:border-slate-700">
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            </motion.div>
-
-            <div className="grid gap-6">
-              {whatYouGet.map((item, index) => {
-                const Icon = item.icon;
-                return (
-                  <motion.div
-                    key={item.title}
-                    initial={{ opacity: 0, x: 50 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.6, delay: index * 0.1 }}
-                    viewport={{ once: true }}
-                    className="bg-white dark:bg-slate-900 rounded-xl p-6 border border-slate-200 dark:border-slate-700 hover:shadow-lg transition-shadow"
-                  >
-                    <div className="flex items-start gap-4">
-                      <div className="p-2 bg-blue-100 dark:bg-blue-950/30 rounded-lg">
-                        <Icon className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-                      </div>
-                      <div className="flex-1">
-                        <h3 className="font-semibold mb-2">{item.title}</h3>
-                        <p className="text-sm text-slate-600 dark:text-slate-300 mb-3">{item.description}</p>
-                        <div className="flex flex-wrap gap-2">
-                          {item.features.map((feature) => (
-                            <span key={feature} className="text-xs px-2 py-1 bg-slate-100 dark:bg-slate-800 rounded-md text-slate-600 dark:text-slate-400">
-                              {feature}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  </motion.div>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* Testimonials Section */}
-      <section className="relative py-20 px-6">
-        <div className="mx-auto max-w-7xl">
+      <section className="relative py-24 px-6">
+        <div className="mx-auto max-w-6xl">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
+            transition={{ duration: 1 }}
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">Loved by productive professionals</h2>
-            <p className="text-lg text-slate-600 dark:text-slate-300">See what our users are saying about Daily Focus</p>
+            <h2 className="display-text text-4xl md:text-5xl mb-6">
+              <span style={{ color: 'var(--primary)' }}>Voices</span> of
+              <br />
+              <span style={{ color: 'var(--accent)' }}>Transformation</span>
+            </h2>
+            <p className="text-xl" style={{ color: 'var(--text-secondary)' }}>
+              Real experiences from people who've changed their relationship with productivity
+            </p>
           </motion.div>
 
-          <div className="grid gap-8 md:grid-cols-2">
+          <div className="grid gap-12 md:grid-cols-2">
             {testimonials.map((testimonial, index) => (
               <motion.div
                 key={testimonial.name}
-                initial={{ opacity: 0, scale: 0.9 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: index * 0.3 }}
                 viewport={{ once: true }}
-                className="bg-slate-100 dark:bg-slate-800 rounded-2xl p-8 border border-slate-200 dark:border-slate-700"
+                className="relative"
               >
-                <div className="flex mb-4">
-                  {[...Array(testimonial.rating)].map((_, i) => (
-                    <Star key={i} className="w-5 h-5 text-yellow-500 fill-current" />
-                  ))}
-                </div>
-                <p className="text-slate-700 dark:text-slate-300 mb-6 italic">&ldquo;{testimonial.content}&rdquo;</p>
-                <div>
-                  <div className="font-semibold text-slate-900 dark:text-white">{testimonial.name}</div>
-                  <div className="text-sm text-slate-600 dark:text-slate-400">{testimonial.role}</div>
+                <div className="p-10 rounded-3xl transition-all duration-300 hover:scale-102"
+                     style={{
+                       backgroundColor: 'var(--surface)',
+                       border: `1px solid var(--border)`,
+                       boxShadow: 'var(--shadow-md)'
+                     }}>
+                  {/* Rating stars */}
+                  <div className="flex mb-6">
+                    {[...Array(testimonial.rating)].map((_, i) => (
+                      <Star key={i} className="w-5 h-5 mr-1" style={{ color: 'var(--warm)' }} fill="currentColor" />
+                    ))}
+                  </div>
+
+                  {/* Quote */}
+                  <p className="text-xl leading-relaxed mb-8 italic" style={{ color: 'var(--text-secondary)' }}>
+                    &ldquo;{testimonial.content}&rdquo;
+                  </p>
+
+                  {/* Author */}
+                  <div className="flex items-center">
+                    <div className="w-12 h-12 rounded-full mr-4" style={{ backgroundColor: 'var(--surface-secondary)' }}></div>
+                    <div>
+                      <div className="font-semibold text-lg" style={{ color: 'var(--text-primary)' }}>
+                        {testimonial.name}
+                      </div>
+                      <div style={{ color: 'var(--text-muted)' }}>{testimonial.role}</div>
+                    </div>
+                  </div>
                 </div>
               </motion.div>
             ))}
@@ -368,106 +345,79 @@ export default function HomePage() {
       </section>
 
       {/* CTA Section */}
-      <section className="relative py-20 px-6 bg-blue-600 text-white">
-        <div className="absolute inset-0 bg-black/20"></div>
-        <div className="relative mx-auto max-w-4xl text-center">
+      <section className="relative py-24 px-6 overflow-hidden" style={{ backgroundColor: 'var(--primary)' }}>
+        <div className="absolute inset-0 opacity-10">
+          <div style={{
+            backgroundImage: `radial-gradient(circle at 20% 80%, white 0%, transparent 50%),
+                            radial-gradient(circle at 80% 20%, white 0%, transparent 50%)`
+          }}></div>
+        </div>
+        <div className="relative mx-auto max-w-5xl text-center">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
+            transition={{ duration: 1 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-3xl md:text-4xl font-bold mb-6">Ready to transform your productivity?</h2>
-            <p className="text-xl mb-8 text-blue-100">Join thousands of professionals who&apos;ve already mastered their focus.</p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <h2 className="display-text text-4xl md:text-5xl mb-8 text-white">
+              Begin Your
+              <br />
+              Focus Journey
+              <br />
+              Today
+            </h2>
+            <p className="text-xl mb-12 text-white/90 max-w-2xl mx-auto">
+              Join thousands of professionals who&apos;ve transformed their relationship with productivity through thoughtful, intentional focus.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-6 justify-center">
               <Link
                 href="/auth/register"
-                className="px-8 py-4 bg-white text-blue-600 font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-200"
+                className="px-12 py-5 bg-white text-lg font-semibold rounded-xl transition-all duration-300 transform hover:scale-105 hover:shadow-2xl"
+                style={{ color: 'var(--primary)' }}
               >
-                Get started free
+                Start Your Free Trial
               </Link>
               <Link
                 href="/contact"
-                className="px-8 py-4 bg-transparent border-2 border-white text-white font-semibold rounded-xl hover:bg-white/10 transition-all duration-200"
+                className="px-12 py-5 border-2 border-white text-lg font-semibold rounded-xl text-white transition-all duration-300 transform hover:scale-105 hover:bg-white/10"
               >
-                Talk to sales
+                Learn More
               </Link>
             </div>
           </motion.div>
         </div>
       </section>
 
-      {/* Help Section */}
-      <section className="relative py-16 px-6 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800">
-        <div className="mx-auto max-w-5xl text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-          >
-            <h2 className="text-2xl md:text-3xl font-semibold mb-4">Have questions? We&apos;re here to help.</h2>
-            <p className="text-slate-600 dark:text-slate-300 mb-8 max-w-3xl mx-auto">
-              We believe in complete transparency. Learn how we protect your privacy, understand our service commitments,
-              and connect with our team whenever you need support.
+      {/* Elegant Footer */}
+      <footer className="relative py-16 px-6 border-t" style={{
+        borderColor: 'var(--border)',
+        backgroundColor: 'var(--surface-secondary)'
+      }}>
+        <div className="mx-auto max-w-6xl">
+          <div className="text-center mb-12">
+            <h3 className="display-text text-3xl mb-4" style={{ color: 'var(--text-primary)' }}>
+              Daily Focus
+            </h3>
+            <p className="text-lg" style={{ color: 'var(--text-secondary)' }}>
+              Where thoughtful design meets meaningful productivity
             </p>
-            <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-4">
-              {quickLinks.map((link) => {
-                const Icon = link.icon;
-                return (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    className="group flex items-center justify-center gap-2 px-4 py-3 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-blue-300 dark:hover:border-blue-600 hover:shadow-lg transition-all duration-200"
-                  >
-                    <span>{link.label}</span>
-                    <Icon className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                  </Link>
-                );
-              })}
-            </div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Enhanced Footer */}
-      <footer className="relative border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 py-12">
-        <div className="mx-auto max-w-6xl px-6">
-          <div className="grid gap-8 md:grid-cols-4 mb-8">
-            <div className="md:col-span-2">
-              <h4 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">Daily Focus</h4>
-              <p className="text-slate-600 dark:text-slate-400 mb-4">Transform your focus into achievement.</p>
-              <div className="flex gap-3">
-                <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-sm">DF</div>
-              </div>
-            </div>
-
-            <div>
-              <h5 className="font-semibold mb-4 text-slate-900 dark:text-white">Product</h5>
-              <ul className="space-y-2 text-sm">
-                <li><Link href="/features" className="text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400">Features</Link></li>
-                <li><Link href="/pricing" className="text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400">Pricing</Link></li>
-                <li><Link href="/integrations" className="text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400">Integrations</Link></li>
-              </ul>
-            </div>
-
-            <div>
-              <h5 className="font-semibold mb-4 text-slate-900 dark:text-white">Company</h5>
-              <ul className="space-y-2 text-sm">
-                <li><Link href="/about" className="text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400">About</Link></li>
-                <li><Link href="/blog" className="text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400">Blog</Link></li>
-                <li><Link href="/careers" className="text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400">Careers</Link></li>
-              </ul>
-            </div>
           </div>
 
-          <div className="border-t border-slate-200 dark:border-slate-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-            <div className="flex items-center gap-6 text-sm text-slate-600 dark:text-slate-400">
-              <Link href="/privacy" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Privacy</Link>
-              <Link href="/terms" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Terms</Link>
-              <Link href="/contact" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Contact</Link>
+          <div className="flex flex-col md:flex-row justify-between items-center">
+            <div className="flex flex-wrap justify-center md:justify-start gap-8 mb-8 md:mb-0">
+              <Link href="/privacy" className="transition-colors hover:scale-105" style={{ color: 'var(--text-muted)' }}>
+                Privacy
+              </Link>
+              <Link href="/terms" className="transition-colors hover:scale-105" style={{ color: 'var(--text-muted)' }}>
+                Terms
+              </Link>
+              <Link href="/contact" className="transition-colors hover:scale-105" style={{ color: 'var(--text-muted)' }}>
+                Contact
+              </Link>
             </div>
-            <p className="text-sm text-slate-500 dark:text-slate-500">© {new Date().getFullYear()} Daily Focus. All rights reserved.</p>
+            <div className="text-center" style={{ color: 'var(--text-muted)' }}>
+              <p>© {new Date().getFullYear()} Daily Focus. All rights reserved.</p>
+            </div>
           </div>
         </div>
       </footer>

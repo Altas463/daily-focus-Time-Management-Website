@@ -1,56 +1,123 @@
 @import "tailwindcss";
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&family=Crimson+Text:wght@400;600&family=Inter:wght@300;400;500;600;700&display=swap');
 
 :root {
-  --background: #ffffff;
-  --foreground: #0f172a;
-  --primary: #3b82f6;
-  --primary-dark: #2563eb;
-  --secondary: #64748b;
-  --accent: #06b6d4;
-  --muted: #f1f5f9;
-  --border: #e2e8f0;
-  --gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  --gradient-alt: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
+  /* Sophisticated color palette - Inspired by terracotta, sage, and cream */
+  --primary: #c45e28;
+  --primary-light: #d9763a;
+  --primary-dark: #a84c1e;
+
+  --secondary: #718096;
+  --accent: #48bb78;
+  --accent-light: #68d391;
+
+  --background: #faf7f2;
+  --surface: #ffffff;
+  --surface-secondary: #f5f0e8;
+
+  --text-primary: #2d3748;
+  --text-secondary: #4a5568;
+  --text-muted: #718096;
+
+  --border: #e2d5c7;
+  --border-light: #f0ead6;
+
+  --warm: #ed8936;
+  --sage: #68d391;
+  --cream: #faf7f2;
+  --stone: #9ca3af;
+
+  /* Shadow system */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  --shadow-xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-primary: var(--primary);
-  --color-primary-dark: var(--primary-dark);
-  --color-secondary: var(--secondary);
-  --color-accent: var(--accent);
-  --color-muted: var(--muted);
-  --color-border: var(--border);
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-body: 'Crimson Text', Georgia, serif;
   --font-sans: 'Inter', system-ui, sans-serif;
 }
 
+/* Dark mode - Warm and cozy */
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0f172a;
-    --foreground: #f8fafc;
-    --primary: #60a5fa;
-    --primary-dark: #3b82f6;
-    --secondary: #94a3b8;
-    --accent: #22d3ee;
-    --muted: #1e293b;
-    --border: #334155;
-    --gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    --gradient-alt: linear-gradient(135deg, #22d3ee 0%, #60a5fa 100%);
+    --primary: #d9763a;
+    --primary-light: #e08f4c;
+    --primary-dark: #c45e28;
+
+    --secondary: #a0aec0;
+    --accent: #68d391;
+
+    --background: #1a202c;
+    --surface: #2d3748;
+    --surface-secondary: #374151;
+
+    --text-primary: #f7fafc;
+    --text-secondary: #e2e8f0;
+    --text-muted: #cbd5e0;
+
+    --border: #4a5568;
+    --border-light: #374151;
   }
 }
 
 body {
   background: var(--background);
-  color: var(--foreground);
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  font-feature-settings: 'cv11', 'ss01';
-  font-variation-settings: 'opsz' 32;
-  line-height: 1.6;
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  line-height: 1.7;
+  font-size: 18px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* Typography scale */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--text-primary);
+}
+
+.display-text {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--surface-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border-radius: 6px;
+  border: 3px solid var(--surface-secondary);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-dark);
+}
+
+/* Selection */
+::selection {
+  background: var(--primary);
+  color: white;
+}
+
+/* Focus styles */
+.focus-visible:focus {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
 }
 
 /* Enhanced animations */
