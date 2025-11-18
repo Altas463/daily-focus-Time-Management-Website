@@ -3,7 +3,7 @@
 import Navbar from '@/components/navbar/Navbar';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { Check, Zap, Target, TrendingUp, Clock, BarChart3, ArrowRight, Sparkles, Star, Users } from 'lucide-react';
+import { Zap, Target, TrendingUp, ArrowRight, Star } from 'lucide-react';
 
 const featureHighlights = [
   {
@@ -23,33 +23,6 @@ const featureHighlights = [
   },
 ];
 
-const whatYouGet = [
-  {
-    title: 'Smart task organization',
-    description: 'Organize your work effortlessly with drag-and-drop boards that keep priorities clear and deadlines visible.',
-    icon: BarChart3,
-    features: ['Drag & Drop', 'Priority Labels', 'Deadline Tracking'],
-  },
-  {
-    title: 'Built-in focus timer',
-    description: 'Alternate between focused work sessions and refreshing breaks, while automatically tracking your progress.',
-    icon: Clock,
-    features: ['Pomodoro Technique', 'Session History', 'Custom Breaks'],
-  },
-  {
-    title: 'Actionable daily insights',
-    description: 'Get a clear picture of your productivity with streaks, upcoming deadlines, and balanced focus time—all in one dashboard.',
-    icon: TrendingUp,
-    features: ['Progress Analytics', 'Streak Tracking', 'Time Distribution'],
-  },
-];
-
-const quickLinks = [
-  { href: '/dashboard', label: 'Explore the dashboard', icon: ArrowRight },
-  { href: '/privacy', label: 'Read our privacy commitments', icon: Star },
-  { href: '/terms', label: 'Review terms of service', icon: Check },
-  { href: '/contact', label: 'Get in touch', icon: Users },
-];
 
 const testimonials = [
   {
@@ -61,7 +34,7 @@ const testimonials = [
   {
     name: 'Marcus Rodriguez',
     role: 'Software Developer',
-    content: 'The Pomodoro integration is brilliant. I\'ve doubled my code output while maintaining better work-life balance.',
+    content: 'The Pomodoro integration is brilliant. I&apos;ve doubled my code output while maintaining better work-life balance.',
     rating: 5,
   },
 ];
