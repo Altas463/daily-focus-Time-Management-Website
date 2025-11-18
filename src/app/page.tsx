@@ -268,7 +268,7 @@ export default function HomePage() {
               <span style={{ color: 'var(--accent)' }}>Transformation</span>
             </h2>
             <p className="text-xl" style={{ color: 'var(--text-secondary)' }}>
-              Real experiences from people who've changed their relationship with productivity
+              Real experiences from people who&apos;ve changed their relationship with productivity
             </p>
           </motion.div>
 
