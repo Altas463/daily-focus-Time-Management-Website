@@ -1,21 +1,44 @@
-﻿import BackToDashboardLink from "@/components/BackToDashboardLink";
+"use client";
+
+import BackToDashboardLink from "@/components/BackToDashboardLink";
+import Link from "next/link";
 
 const faqs = [
-  {
-    question: "How do I migrate tasks from another tool?",
-    answer:
-      "Export your tasks as CSV, then visit Dashboard > Tasks and use the import wizard in the top-right corner to map columns.",
-  },
-  {
-    question: "Where can I adjust timer defaults?",
-    answer:
-      "Head to Settings and update the Pomodoro defaults. Changes apply the next time you start a session.",
-  },
-  {
-    question: "Can I invite teammates?",
-    answer:
-      "Daily Focus for Teams is in beta. Join the waitlist from the Settings page and we will notify you when access opens.",
-  },
+ {
+   question: "How do I migrate tasks from another tool?",
+   answer:
+     "Export your tasks as CSV, then visit Dashboard > Tasks and use the import wizard in the top-right corner to map columns.",
+ },
+ {
+   question: "Where can I adjust timer defaults?",
+   answer: (
+     <>
+       Head to{" "}
+       <Link
+         href="/dashboard/settings"
+         className="font-semibold text-blue-600 underline decoration-blue-600/30 underline-offset-2 transition hover:decoration-blue-600 dark:text-blue-400 dark:decoration-blue-400/30 dark:hover:decoration-blue-400"
+       >
+         Settings
+       </Link>{" "}
+       and update the Pomodoro defaults. Changes apply the next time you start a session.
+     </>
+   ),
+ },
+ {
+   question: "Can I invite teammates?",
+   answer: (
+     <>
+       Daily Focus for Teams is in beta. Join the waitlist from the{" "}
+       <Link
+         href="/dashboard/settings"
+         className="font-semibold text-blue-600 underline decoration-blue-600/30 underline-offset-2 transition hover:decoration-blue-600 dark:text-blue-400 dark:decoration-blue-400/30 dark:hover:decoration-blue-400"
+       >
+         Settings
+       </Link>{" "}
+       page and we will notify you when access opens.
+     </>
+   ),
+ },
 ];
 
 export default function HelpPage() {
@@ -41,7 +64,7 @@ export default function HelpPage() {
           {faqs.map((item) => (
             <li key={item.question} className="rounded-2xl border border-gray-200 bg-gray-50/70 p-4 transition hover:border-gray-300 dark:border-gray-800 dark:bg-gray-900/60">
               <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">{item.question}</h3>
-              <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">{item.answer}</p>
+              <div className="mt-2 text-sm text-gray-600 dark:text-gray-300">{item.answer}</div>
             </li>
           ))}
         </ul>
