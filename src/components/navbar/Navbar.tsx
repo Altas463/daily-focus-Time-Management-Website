@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, ArrowRight, Sparkles } from 'lucide-react';
+import { Menu, X, ArrowRight, Target } from 'lucide-react';
 
 const navLinks = [
   { href: '/auth/login', label: 'Sign In' },
@@ -49,20 +49,26 @@ export default function Navbar() {
       <nav
         className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${
           scrolled
-            ? 'glass shadow-lg'
-            : 'bg-transparent'
+            ? 'shadow-sm'
+            : ''
         }`}
+        style={{
+          background: scrolled ? 'var(--surface)' : 'transparent',
+          borderBottom: scrolled ? '1px solid var(--border)' : 'none',
+        }}
       >
         <div className="mx-auto max-w-7xl px-6">
           <div className="flex h-16 items-center justify-between">
             {/* Logo */}
             <Link
               href="/"
-              className="flex items-center gap-2 group"
+              className="flex items-center gap-2.5 group"
             >
-              <div className="w-8 h-8 rounded-lg flex items-center justify-center transition-transform group-hover:scale-105"
-                   style={{ background: 'var(--gradient-primary)' }}>
-                <Sparkles className="w-4 h-4 text-white" />
+              <div
+                className="w-9 h-9 rounded-xl flex items-center justify-center transition-transform group-hover:scale-105"
+                style={{ background: 'var(--primary)' }}
+              >
+                <Target className="w-4.5 h-4.5 text-white" />
               </div>
               <span
                 className="text-lg font-bold tracking-tight transition-colors"
@@ -78,12 +84,10 @@ export default function Navbar() {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`relative px-4 py-2 text-sm font-medium rounded-lg transition-all ${
+                  className={`relative px-4 py-2 text-sm font-medium rounded-xl transition-all ${
                     link.primary
                       ? 'btn-primary'
-                      : isActive(link.href)
-                        ? ''
-                        : 'hover:bg-white/5'
+                      : ''
                   }`}
                   style={
                     link.primary
@@ -92,6 +96,9 @@ export default function Navbar() {
                           color: isActive(link.href)
                             ? 'var(--text-primary)'
                             : 'var(--text-secondary)',
+                          background: isActive(link.href)
+                            ? 'var(--surface-secondary)'
+                            : 'transparent',
                         }
                   }
                 >
@@ -120,7 +127,7 @@ export default function Navbar() {
             {/* Mobile Menu Button */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="flex items-center justify-center w-10 h-10 rounded-lg transition-colors md:hidden"
+              className="flex items-center justify-center w-10 h-10 rounded-xl transition-colors md:hidden"
               style={{
                 background: mobileMenuOpen ? 'var(--surface-secondary)' : 'transparent',
                 color: 'var(--text-primary)',
@@ -137,7 +144,7 @@ export default function Navbar() {
           className="absolute bottom-0 left-0 h-0.5 transition-all duration-150"
           style={{
             width: `${progress}%`,
-            background: 'var(--gradient-primary)',
+            background: 'var(--primary)',
           }}
           aria-hidden
         />
@@ -154,7 +161,7 @@ export default function Navbar() {
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
               className="fixed inset-0 z-40 md:hidden"
-              style={{ background: 'rgba(0, 0, 0, 0.5)', backdropFilter: 'blur(4px)' }}
+              style={{ background: 'rgba(45, 42, 38, 0.4)' }}
               onClick={() => setMobileMenuOpen(false)}
             />
 
@@ -164,12 +171,7 @@ export default function Navbar() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
-              className="fixed top-16 inset-x-4 z-50 rounded-2xl p-6 md:hidden"
-              style={{
-                background: 'var(--surface)',
-                border: '1px solid var(--border)',
-                boxShadow: 'var(--shadow-xl)',
-              }}
+              className="fixed top-16 inset-x-4 z-50 rounded-2xl p-6 md:hidden card"
             >
               <div className="space-y-2">
                 {navLinks.map((link, index) => (
@@ -222,7 +224,7 @@ export default function Navbar() {
               </div>
 
               {/* Extra info in mobile menu */}
-              <div className="mt-6 pt-6 border-t" style={{ borderColor: 'var(--border)' }}>
+              <div className="mt-6 pt-6" style={{ borderTop: '1px solid var(--border)' }}>
                 <p className="text-sm text-center" style={{ color: 'var(--text-muted)' }}>
                   Focus on what matters most
                 </p>

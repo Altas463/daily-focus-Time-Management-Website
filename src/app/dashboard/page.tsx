@@ -9,11 +9,11 @@ import {
   CheckCircle2,
   Clock,
   Timer,
-  Zap,
   TrendingUp,
   Calendar,
   ArrowRight,
-  Sparkles,
+  Target,
+  Zap,
 } from "lucide-react";
 import PomodoroTimer from "@/components/pomodoro/PomodoroTimer";
 import { getDaypartGreeting, formatRelativeDate, formatShortDate } from "@/utils/date";
@@ -39,10 +39,10 @@ type TaskStats = {
 };
 
 const toneBadgeMap: Record<TaskUrgency["tone"], { bg: string; text: string; dot: string }> = {
-  danger: { bg: "rgba(239, 68, 68, 0.1)", text: "#ef4444", dot: "#ef4444" },
-  warning: { bg: "rgba(249, 115, 22, 0.1)", text: "#f97316", dot: "#f97316" },
-  notice: { bg: "rgba(234, 179, 8, 0.1)", text: "#eab308", dot: "#eab308" },
-  success: { bg: "rgba(34, 197, 94, 0.1)", text: "#22c55e", dot: "#22c55e" },
+  danger: { bg: "rgba(224, 122, 95, 0.15)", text: "#c45d43", dot: "#e07a5f" },
+  warning: { bg: "rgba(244, 163, 147, 0.15)", text: "#c45d43", dot: "#f4a393" },
+  notice: { bg: "rgba(129, 178, 154, 0.15)", text: "#5a8a6f", dot: "#81b29a" },
+  success: { bg: "rgba(129, 178, 154, 0.2)", text: "#5a8a6f", dot: "#81b29a" },
   default: { bg: "var(--surface-secondary)", text: "var(--text-secondary)", dot: "var(--text-muted)" },
 };
 
@@ -50,13 +50,17 @@ const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    transition: { staggerChildren: 0.1 },
+    transition: { staggerChildren: 0.08, delayChildren: 0.1 },
   },
 };
 
 const itemVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0 },
+  hidden: { opacity: 0, y: 24 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.5, ease: [0.25, 0.1, 0.25, 1] },
+  },
 };
 
 export default function DashboardPage() {
@@ -137,38 +141,31 @@ export default function DashboardPage() {
   if (loading || status === "loading") {
     return (
       <div
-        className="grid min-h-screen place-items-center"
+        className="grid min-h-screen place-items-center grain"
         style={{ background: "var(--background)" }}
       >
         <div
-          className="rounded-2xl p-8 text-center"
-          style={{
-            background: "var(--surface)",
-            border: "1px solid var(--border)",
-          }}
+          className="card p-10 text-center"
         >
-          <div
-            className="mx-auto w-12 h-12 rounded-xl flex items-center justify-center mb-4"
-            style={{ background: "var(--gradient-primary)" }}
-          >
-            <Sparkles className="w-6 h-6 text-white animate-pulse" />
+          <div className="icon-box mx-auto mb-5">
+            <Target className="w-5 h-5" />
           </div>
           <div
-            className="h-1.5 w-48 overflow-hidden rounded-full mx-auto"
+            className="h-1 w-40 overflow-hidden rounded-full mx-auto"
             style={{ background: "var(--border)" }}
           >
             <motion.div
               className="h-full rounded-full"
-              style={{ background: "var(--gradient-primary)" }}
+              style={{ background: "var(--primary)" }}
               animate={{ x: ["-100%", "200%"] }}
-              transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+              transition={{ duration: 1.2, repeat: Infinity, ease: "easeInOut" }}
             />
           </div>
           <p
-            className="mt-4 text-sm font-medium"
+            className="mt-5 text-sm"
             style={{ color: "var(--text-secondary)" }}
           >
-            Loading your dashboard...
+            Preparing your workspace...
           </p>
         </div>
       </div>
@@ -182,7 +179,7 @@ export default function DashboardPage() {
       unit: streak === 1 ? "day" : "days",
       icon: Flame,
       progress: clamp((streak / 14) * 100, 0, 100),
-      color: "#f97316",
+      color: "var(--primary)",
       helper: streak >= 3 ? `Best: ${bestStreak} days` : `Last: ${formatShortDate(lastVisit)}`,
     },
     {
@@ -191,7 +188,7 @@ export default function DashboardPage() {
       unit: completedTodayCount === 1 ? "task" : "tasks",
       icon: CheckCircle2,
       progress: clamp((completedTodayCount / Math.max(taskSummary.total, 1)) * 100, 0, 100),
-      color: "#22c55e",
+      color: "var(--accent)",
       helper: `${taskSummary.total} total tracked`,
     },
     {
@@ -200,7 +197,7 @@ export default function DashboardPage() {
       unit: taskSummary.dueSoon === 1 ? "task" : "tasks",
       icon: Clock,
       progress: clamp((taskSummary.dueSoon / Math.max(taskSummary.incomplete, 1)) * 100, 0, 100),
-      color: "#eab308",
+      color: "var(--primary-light)",
       helper: `${taskSummary.overdue} overdue`,
     },
     {
@@ -209,7 +206,7 @@ export default function DashboardPage() {
       unit: pomodoroCount === 1 ? "session" : "sessions",
       icon: Timer,
       progress: pomodoroProgress,
-      color: "#6366f1",
+      color: "var(--secondary)",
       helper: pomodoroRemaining > 0 ? `${pomodoroRemaining} to goal` : "Goal reached!",
     },
     {
@@ -218,14 +215,14 @@ export default function DashboardPage() {
       unit: "",
       icon: Zap,
       progress: focusProgress,
-      color: "#8b5cf6",
+      color: "var(--secondary)",
       helper: focusRemaining > 0 ? `${Math.ceil(focusRemaining)}m to goal` : "Goal achieved!",
     },
   ];
 
   return (
     <div
-      className="min-h-screen"
+      className="min-h-screen grain"
       style={{ background: "var(--background)" }}
     >
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
@@ -236,29 +233,20 @@ export default function DashboardPage() {
           className="space-y-8"
         >
           {/* Header */}
-          <motion.div variants={itemVariants} className="flex flex-col gap-2">
-            <div className="flex items-center gap-3">
-              <div
-                className="w-12 h-12 rounded-xl flex items-center justify-center"
-                style={{ background: "var(--gradient-primary)" }}
-              >
-                <Sparkles className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <h1
-                  className="text-2xl font-bold tracking-tight sm:text-3xl"
-                  style={{ color: "var(--text-primary)" }}
-                >
-                  {greetingText}, {session?.user?.name?.split(" ")[0] || "friend"}!
-                </h1>
-                <p
-                  className="text-sm"
-                  style={{ color: "var(--text-secondary)" }}
-                >
-                  Focus on what matters. Track your progress every day.
-                </p>
-              </div>
-            </div>
+          <motion.div variants={itemVariants} className="space-y-2">
+            <div className="accent-line" />
+            <h1
+              className="display-text text-3xl lg:text-4xl"
+              style={{ color: "var(--text-primary)" }}
+            >
+              {greetingText}, <span style={{ color: "var(--primary)" }}>{session?.user?.name?.split(" ")[0] || "friend"}</span>
+            </h1>
+            <p
+              className="text-base"
+              style={{ color: "var(--text-secondary)" }}
+            >
+              Focus on what matters. Track your progress every day.
+            </p>
           </motion.div>
 
           {/* Stats Grid */}
@@ -272,16 +260,11 @@ export default function DashboardPage() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.05 }}
-                    className="group relative overflow-hidden rounded-2xl p-5 transition-all duration-300 hover:-translate-y-1"
-                    style={{
-                      background: "var(--surface)",
-                      border: "1px solid var(--border)",
-                    }}
+                    className="group card p-5 transition-all duration-300 hover:-translate-y-1"
                   >
                     {/* Icon */}
                     <div
-                      className="w-10 h-10 rounded-xl flex items-center justify-center mb-4 transition-transform group-hover:scale-110"
-                      style={{ background: `${card.color}15`, color: card.color }}
+                      className="icon-box mb-4 transition-transform group-hover:scale-105"
                     >
                       <Icon className="w-5 h-5" />
                     </div>
@@ -289,7 +272,7 @@ export default function DashboardPage() {
                     {/* Value */}
                     <div className="flex items-baseline gap-1.5">
                       <span
-                        className="text-2xl font-bold tracking-tight"
+                        className="display-text text-2xl"
                         style={{ color: "var(--text-primary)" }}
                       >
                         {card.value}
@@ -314,13 +297,13 @@ export default function DashboardPage() {
 
                     {/* Progress */}
                     <div
-                      className="mt-4 h-1.5 rounded-full overflow-hidden"
+                      className="mt-4 h-1 rounded-full overflow-hidden"
                       style={{ background: "var(--border)" }}
                     >
                       <motion.div
                         initial={{ width: 0 }}
                         animate={{ width: `${card.progress}%` }}
-                        transition={{ duration: 1, delay: 0.3 + index * 0.1, ease: "easeOut" }}
+                        transition={{ duration: 0.8, delay: 0.3 + index * 0.1, ease: "easeOut" }}
                         className="h-full rounded-full"
                         style={{ background: card.color }}
                       />
@@ -343,23 +326,14 @@ export default function DashboardPage() {
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
             {/* Tasks Section */}
             <motion.section variants={itemVariants} className="lg:col-span-2">
-              <div
-                className="rounded-2xl overflow-hidden"
-                style={{
-                  background: "var(--surface)",
-                  border: "1px solid var(--border)",
-                }}
-              >
+              <div className="card overflow-hidden">
                 {/* Header */}
                 <div
                   className="px-6 py-5 flex items-center justify-between"
                   style={{ borderBottom: "1px solid var(--border)" }}
                 >
                   <div className="flex items-center gap-3">
-                    <div
-                      className="w-10 h-10 rounded-xl flex items-center justify-center"
-                      style={{ background: "var(--primary-muted)", color: "var(--primary)" }}
-                    >
+                    <div className="icon-box">
                       <Calendar className="w-5 h-5" />
                     </div>
                     <div>
@@ -379,10 +353,10 @@ export default function DashboardPage() {
                   </div>
 
                   <span
-                    className="px-3 py-1.5 rounded-full text-sm font-semibold"
+                    className="px-3 py-1.5 rounded-full text-sm font-medium"
                     style={{
-                      background: taskSummary.incomplete > 0 ? "rgba(234, 179, 8, 0.1)" : "rgba(34, 197, 94, 0.1)",
-                      color: taskSummary.incomplete > 0 ? "#eab308" : "#22c55e",
+                      background: taskSummary.incomplete > 0 ? "var(--primary-muted)" : "rgba(129, 178, 154, 0.15)",
+                      color: taskSummary.incomplete > 0 ? "var(--primary)" : "var(--accent)",
                     }}
                   >
                     {taskSummary.incomplete > 0 ? `${taskSummary.incomplete} pending` : "All done!"}
@@ -395,9 +369,9 @@ export default function DashboardPage() {
                     <div className="text-center py-12">
                       <div
                         className="w-16 h-16 mx-auto rounded-2xl flex items-center justify-center mb-4"
-                        style={{ background: "rgba(34, 197, 94, 0.1)" }}
+                        style={{ background: "rgba(129, 178, 154, 0.15)" }}
                       >
-                        <CheckCircle2 className="w-8 h-8" style={{ color: "#22c55e" }} />
+                        <CheckCircle2 className="w-8 h-8" style={{ color: "var(--accent)" }} />
                       </div>
                       <h4
                         className="text-lg font-semibold mb-2"
@@ -432,7 +406,7 @@ export default function DashboardPage() {
                           >
                             {/* Status Dot */}
                             <div
-                              className="w-3 h-3 rounded-full flex-shrink-0"
+                              className="w-2.5 h-2.5 rounded-full flex-shrink-0"
                               style={{ background: toneStyle.dot }}
                             />
 
@@ -499,13 +473,7 @@ export default function DashboardPage() {
 
             {/* Pomodoro Section */}
             <motion.section variants={itemVariants}>
-              <div
-                className="rounded-2xl overflow-hidden"
-                style={{
-                  background: "var(--surface)",
-                  border: "1px solid var(--border)",
-                }}
-              >
+              <div className="card overflow-hidden">
                 {/* Header */}
                 <div
                   className="px-6 py-5"
@@ -513,8 +481,8 @@ export default function DashboardPage() {
                 >
                   <div className="flex items-center gap-3">
                     <div
-                      className="w-10 h-10 rounded-xl flex items-center justify-center"
-                      style={{ background: "rgba(99, 102, 241, 0.1)", color: "#6366f1" }}
+                      className="icon-box"
+                      style={{ background: "rgba(61, 90, 128, 0.1)", color: "var(--secondary)" }}
                     >
                       <Timer className="w-5 h-5" />
                     </div>
@@ -549,7 +517,7 @@ export default function DashboardPage() {
                   }}
                 >
                   <div className="flex items-center gap-2">
-                    <TrendingUp className="w-4 h-4" style={{ color: "var(--success)" }} />
+                    <TrendingUp className="w-4 h-4" style={{ color: "var(--accent)" }} />
                     <span
                       className="text-sm font-medium"
                       style={{ color: "var(--text-secondary)" }}

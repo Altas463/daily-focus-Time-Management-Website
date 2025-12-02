@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { jwtDecode } from "jwt-decode";
-import { ArrowRight, CheckCircle2, CircleAlert, Eye, EyeOff, Loader2, Lock, Mail, Rocket, Sparkles, UserRound } from "lucide-react";
+import { ArrowRight, CheckCircle2, CircleAlert, Eye, EyeOff, Loader2, Lock, Mail, Rocket, Target, UserRound } from "lucide-react";
 import { calculatePasswordStrength } from "@/utils/password";
 import { getMotivationTip } from "@/utils/motivation";
 
@@ -41,12 +41,12 @@ export default function RegisterPage() {
 
   const passwordStrengthLabel = ["Very Weak", "Weak", "Fair", "Good", "Strong", "Very Strong"];
   const passwordStrengthColors = [
-    "#ef4444", // Very Weak - red
-    "#f97316", // Weak - orange
-    "#eab308", // Fair - yellow
-    "#84cc16", // Good - lime
-    "#22c55e", // Strong - green
-    "#10b981", // Very Strong - emerald
+    "#c45d43", // Very Weak - primary dark
+    "#e07a5f", // Weak - primary
+    "#f4a393", // Fair - primary light
+    "#81b29a", // Good - accent
+    "#5a8a6f", // Strong - accent dark
+    "#3d5a80", // Very Strong - secondary
   ];
 
   const isPasswordMatching = confirmPassword.length > 0 && password === confirmPassword;
@@ -119,13 +119,13 @@ export default function RegisterPage() {
 
   return (
     <div
-      className="min-h-screen flex"
+      className="min-h-screen flex grain"
       style={{ background: "var(--background)" }}
     >
       {/* Left Panel - Branding */}
       <div
         className="hidden lg:flex lg:w-1/2 flex-col justify-between p-12 relative overflow-hidden"
-        style={{ background: "#10b981" }}
+        style={{ background: "var(--accent)" }}
       >
         {/* Background pattern */}
         <div
@@ -139,21 +139,23 @@ export default function RegisterPage() {
         <div className="relative z-10">
           <Link href="/" className="flex items-center gap-3">
             <div className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center">
-              <Sparkles className="w-6 h-6 text-white" />
+              <Target className="w-6 h-6 text-white" />
             </div>
             <span className="text-2xl font-bold text-white">Daily Focus</span>
           </Link>
         </div>
 
         <div className="relative z-10 space-y-6">
-          <motion.h1
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="text-4xl font-bold text-white leading-tight"
           >
-            Start your<br />productivity journey
-          </motion.h1>
+            <div className="accent-line mb-6" style={{ background: 'white', opacity: 0.5 }} />
+            <h1 className="display-text text-4xl text-white leading-tight">
+              Start your<br />productivity journey
+            </h1>
+          </motion.div>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -170,13 +172,13 @@ export default function RegisterPage() {
             className="space-y-4"
           >
             {[
-              { icon: "✓", text: "Track tasks & projects effortlessly" },
-              { icon: "✓", text: "Pomodoro timer for deep focus" },
-              { icon: "✓", text: "Detailed productivity insights" },
+              { text: "Track tasks & projects effortlessly" },
+              { text: "Pomodoro timer for deep focus" },
+              { text: "Detailed productivity insights" },
             ].map((item, i) => (
               <div key={i} className="flex items-center gap-3">
-                <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center text-white text-sm font-bold">
-                  {item.icon}
+                <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center">
+                  <CheckCircle2 className="w-4 h-4 text-white" />
                 </div>
                 <span className="text-white/90">{item.text}</span>
               </div>
@@ -200,9 +202,9 @@ export default function RegisterPage() {
           <div className="lg:hidden flex items-center justify-center gap-3 mb-8">
             <div
               className="w-10 h-10 rounded-xl flex items-center justify-center"
-              style={{ background: "#10b981" }}
+              style={{ background: "var(--accent)" }}
             >
-              <Sparkles className="w-5 h-5 text-white" />
+              <Target className="w-5 h-5 text-white" />
             </div>
             <span
               className="text-xl font-bold"
@@ -216,15 +218,15 @@ export default function RegisterPage() {
             <div
               className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold mb-4"
               style={{
-                background: "rgba(16, 185, 129, 0.1)",
-                color: "#10b981",
+                background: "rgba(129, 178, 154, 0.15)",
+                color: "var(--accent)",
               }}
             >
               <Rocket className="w-3.5 h-3.5" />
               Get started free
             </div>
             <h1
-              className="text-2xl font-bold mb-2"
+              className="display-text text-2xl mb-2"
               style={{ color: "var(--text-primary)" }}
             >
               Create your account
@@ -256,9 +258,9 @@ export default function RegisterPage() {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="John Doe"
-                  className="w-full pl-12 pr-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 outline-none"
+                  className="w-full pl-12 pr-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 outline-none focus:ring-2"
                   style={{
-                    background: "var(--surface-secondary)",
+                    background: "var(--surface)",
                     border: "1px solid var(--border)",
                     color: "var(--text-primary)",
                   }}
@@ -288,9 +290,9 @@ export default function RegisterPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="you@example.com"
-                  className="w-full pl-12 pr-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 outline-none"
+                  className="w-full pl-12 pr-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 outline-none focus:ring-2"
                   style={{
-                    background: "var(--surface-secondary)",
+                    background: "var(--surface)",
                     border: "1px solid var(--border)",
                     color: "var(--text-primary)",
                   }}
@@ -309,7 +311,7 @@ export default function RegisterPage() {
                   Password
                 </label>
                 {capsOnPw && (
-                  <span className="text-xs font-medium" style={{ color: "#f59e0b" }}>
+                  <span className="text-xs font-medium" style={{ color: "var(--primary)" }}>
                     Caps Lock is on
                   </span>
                 )}
@@ -326,9 +328,9 @@ export default function RegisterPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   onKeyUp={(e) => setCapsOnPw(e.getModifierState && e.getModifierState("CapsLock"))}
                   placeholder="Create a strong password"
-                  className="w-full pl-12 pr-12 py-3 rounded-xl text-sm font-medium transition-all duration-200 outline-none"
+                  className="w-full pl-12 pr-12 py-3 rounded-xl text-sm font-medium transition-all duration-200 outline-none focus:ring-2"
                   style={{
-                    background: "var(--surface-secondary)",
+                    background: "var(--surface)",
                     border: "1px solid var(--border)",
                     color: "var(--text-primary)",
                   }}
@@ -348,7 +350,7 @@ export default function RegisterPage() {
               {password && (
                 <div className="space-y-2">
                   <div
-                    className="h-1.5 rounded-full overflow-hidden"
+                    className="h-1 rounded-full overflow-hidden"
                     style={{ background: "var(--border)" }}
                   >
                     <motion.div
@@ -384,7 +386,7 @@ export default function RegisterPage() {
                   Confirm Password
                 </label>
                 {capsOnConfirm && (
-                  <span className="text-xs font-medium" style={{ color: "#f59e0b" }}>
+                  <span className="text-xs font-medium" style={{ color: "var(--primary)" }}>
                     Caps Lock is on
                   </span>
                 )}
@@ -396,8 +398,8 @@ export default function RegisterPage() {
                     color: confirmPassword.length === 0
                       ? "var(--text-muted)"
                       : isPasswordMatching
-                        ? "#22c55e"
-                        : "#ef4444"
+                        ? "var(--accent)"
+                        : "var(--primary)"
                   }}
                 />
                 <input
@@ -407,15 +409,15 @@ export default function RegisterPage() {
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   onKeyUp={(e) => setCapsOnConfirm(e.getModifierState && e.getModifierState("CapsLock"))}
                   placeholder="Confirm your password"
-                  className="w-full pl-12 pr-12 py-3 rounded-xl text-sm font-medium transition-all duration-200 outline-none"
+                  className="w-full pl-12 pr-12 py-3 rounded-xl text-sm font-medium transition-all duration-200 outline-none focus:ring-2"
                   style={{
-                    background: "var(--surface-secondary)",
+                    background: "var(--surface)",
                     border: `1px solid ${
                       confirmPassword.length === 0
                         ? "var(--border)"
                         : isPasswordMatching
-                          ? "rgba(34, 197, 94, 0.5)"
-                          : "rgba(239, 68, 68, 0.5)"
+                          ? "rgba(129, 178, 154, 0.5)"
+                          : "rgba(224, 122, 95, 0.5)"
                     }`,
                     color: "var(--text-primary)",
                   }}
@@ -438,7 +440,7 @@ export default function RegisterPage() {
                   animate={{ opacity: 1, y: 0 }}
                   className="flex items-center gap-2 text-xs font-medium"
                   style={{
-                    color: isPasswordMatching ? "#22c55e" : "#ef4444",
+                    color: isPasswordMatching ? "var(--accent)" : "var(--primary)",
                   }}
                 >
                   {isPasswordMatching ? (
@@ -466,11 +468,11 @@ export default function RegisterPage() {
               }}
             >
               By creating an account, you agree to our{" "}
-              <Link href="/terms" className="underline" style={{ color: "var(--primary)" }}>
+              <Link href="/terms" className="link-underline" style={{ color: "var(--primary)" }}>
                 Terms of Service
               </Link>{" "}
               and{" "}
-              <Link href="/privacy" className="underline" style={{ color: "var(--primary)" }}>
+              <Link href="/privacy" className="link-underline" style={{ color: "var(--primary)" }}>
                 Privacy Policy
               </Link>
             </div>
@@ -484,9 +486,9 @@ export default function RegisterPage() {
                   exit={{ opacity: 0, y: -10 }}
                   className="p-4 rounded-xl text-sm"
                   style={{
-                    background: "rgba(239, 68, 68, 0.1)",
-                    border: "1px solid rgba(239, 68, 68, 0.2)",
-                    color: "#ef4444",
+                    background: "rgba(224, 122, 95, 0.1)",
+                    border: "1px solid rgba(224, 122, 95, 0.2)",
+                    color: "var(--primary-dark)",
                   }}
                 >
                   {errorMessage}
@@ -502,7 +504,7 @@ export default function RegisterPage() {
               disabled={isLoading}
               className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl font-semibold transition-all duration-200 disabled:opacity-60"
               style={{
-                background: "#10b981",
+                background: "var(--accent)",
                 color: "white",
               }}
             >
@@ -524,12 +526,12 @@ export default function RegisterPage() {
           <div
             className="mt-6 p-4 rounded-xl"
             style={{
-              background: "rgba(16, 185, 129, 0.05)",
+              background: "rgba(129, 178, 154, 0.1)",
               border: "1px solid var(--border)",
             }}
           >
             <p className="text-xs" style={{ color: "var(--text-secondary)" }}>
-              <span className="font-semibold" style={{ color: "#10b981" }}>Tip:</span> {motivationTip}
+              <span className="font-semibold" style={{ color: "var(--accent)" }}>Tip:</span> {motivationTip}
             </p>
           </div>
 
@@ -538,7 +540,7 @@ export default function RegisterPage() {
             Already have an account?{" "}
             <Link
               href="/auth/login"
-              className="font-semibold"
+              className="font-semibold link-underline"
               style={{ color: "var(--primary)" }}
             >
               Sign In

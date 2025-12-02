@@ -10,9 +10,9 @@ import {
   Timer,
   BarChart3,
   BookOpen,
-  Sparkles,
-  Zap,
+  Target,
   ChevronRight,
+  Lightbulb,
 } from 'lucide-react';
 
 const groups = [
@@ -57,9 +57,9 @@ const Sidebar = () => {
         <Link href="/" className="flex items-center gap-3 px-3 mb-8 group">
           <div
             className="w-10 h-10 rounded-xl flex items-center justify-center transition-transform group-hover:scale-105"
-            style={{ background: 'var(--gradient-primary)' }}
+            style={{ background: 'var(--primary)' }}
           >
-            <Sparkles className="w-5 h-5 text-white" />
+            <Target className="w-5 h-5 text-white" />
           </div>
           <div>
             <h2
@@ -164,7 +164,7 @@ const Sidebar = () => {
         <div
           className="relative overflow-hidden rounded-2xl p-4"
           style={{
-            background: 'var(--gradient-primary)',
+            background: 'var(--primary)',
           }}
         >
           {/* Background pattern */}
@@ -179,7 +179,7 @@ const Sidebar = () => {
           <div className="relative">
             <div className="flex items-center gap-2 mb-3">
               <div className="w-8 h-8 rounded-lg bg-white/20 flex items-center justify-center">
-                <Zap className="w-4 h-4 text-white" />
+                <Lightbulb className="w-4 h-4 text-white" />
               </div>
               <span className="text-xs font-semibold uppercase tracking-wider text-white/90">
                 Pro Tip
@@ -225,7 +225,7 @@ const Sidebar = () => {
 
           {/* Progress bar */}
           <div
-            className="h-2 rounded-full overflow-hidden"
+            className="h-1.5 rounded-full overflow-hidden"
             style={{ background: 'var(--border)' }}
           >
             <motion.div
@@ -233,7 +233,7 @@ const Sidebar = () => {
               animate={{ width: '75%' }}
               transition={{ duration: 1, delay: 0.5, ease: 'easeOut' }}
               className="h-full rounded-full"
-              style={{ background: 'var(--gradient-primary)' }}
+              style={{ background: 'var(--primary)' }}
             />
           </div>
 
@@ -242,7 +242,7 @@ const Sidebar = () => {
             style={{ color: 'var(--text-secondary)' }}
           >
             <span>3 of 4 tasks done</span>
-            <span className="font-medium" style={{ color: 'var(--success)' }}>
+            <span className="font-medium" style={{ color: 'var(--accent)' }}>
               On track
             </span>
           </div>

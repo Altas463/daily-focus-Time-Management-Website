@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
-import { ArrowRight, Eye, EyeOff, Loader2, Lock, Mail, Sparkles } from "lucide-react";
+import { ArrowRight, Eye, EyeOff, Loader2, Lock, Mail, Target } from "lucide-react";
 import { getMotivationTip } from "@/utils/motivation";
 
 export default function LoginPage() {
@@ -67,7 +67,7 @@ export default function LoginPage() {
 
   return (
     <div
-      className="min-h-screen flex"
+      className="min-h-screen flex grain"
       style={{ background: "var(--background)" }}
     >
       {/* Left Panel - Branding */}
@@ -87,21 +87,23 @@ export default function LoginPage() {
         <div className="relative z-10">
           <Link href="/" className="flex items-center gap-3">
             <div className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center">
-              <Sparkles className="w-6 h-6 text-white" />
+              <Target className="w-6 h-6 text-white" />
             </div>
             <span className="text-2xl font-bold text-white">Daily Focus</span>
           </Link>
         </div>
 
         <div className="relative z-10 space-y-6">
-          <motion.h1
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="text-4xl font-bold text-white leading-tight"
           >
-            Focus on what<br />matters most
-          </motion.h1>
+            <div className="accent-line mb-6" style={{ background: 'white', opacity: 0.5 }} />
+            <h1 className="display-text text-4xl text-white leading-tight">
+              Focus on what<br />matters most
+            </h1>
+          </motion.div>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -118,14 +120,16 @@ export default function LoginPage() {
             className="flex items-center gap-4"
           >
             <div className="flex -space-x-3">
-              {[1, 2, 3, 4].map((i) => (
+              {['SC', 'MR', 'EW', 'JD'].map((initials, i) => (
                 <div
                   key={i}
-                  className="w-10 h-10 rounded-full border-2 border-white/50"
+                  className="w-10 h-10 rounded-full border-2 border-white/30 flex items-center justify-center text-xs font-semibold text-white"
                   style={{
-                    background: `linear-gradient(135deg, hsl(${i * 60}, 70%, 60%) 0%, hsl(${i * 60 + 30}, 70%, 50%) 100%)`,
+                    background: `hsl(${20 + i * 15}, 70%, ${45 + i * 5}%)`,
                   }}
-                />
+                >
+                  {initials}
+                </div>
               ))}
             </div>
             <p className="text-white/80 text-sm">
@@ -152,7 +156,7 @@ export default function LoginPage() {
               className="w-10 h-10 rounded-xl flex items-center justify-center"
               style={{ background: "var(--primary)" }}
             >
-              <Sparkles className="w-5 h-5 text-white" />
+              <Target className="w-5 h-5 text-white" />
             </div>
             <span
               className="text-xl font-bold"
@@ -164,7 +168,7 @@ export default function LoginPage() {
 
           <div className="text-center mb-8">
             <h1
-              className="text-2xl font-bold mb-2"
+              className="display-text text-2xl mb-2"
               style={{ color: "var(--text-primary)" }}
             >
               Welcome back
@@ -197,9 +201,9 @@ export default function LoginPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="you@example.com"
-                  className="w-full pl-12 pr-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 outline-none"
+                  className="w-full pl-12 pr-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 outline-none focus:ring-2"
                   style={{
-                    background: "var(--surface-secondary)",
+                    background: "var(--surface)",
                     border: "1px solid var(--border)",
                     color: "var(--text-primary)",
                   }}
@@ -218,7 +222,7 @@ export default function LoginPage() {
                   Password
                 </label>
                 {capsOn && (
-                  <span className="text-xs font-medium" style={{ color: "#f59e0b" }}>
+                  <span className="text-xs font-medium" style={{ color: "var(--primary)" }}>
                     Caps Lock is on
                   </span>
                 )}
@@ -235,9 +239,9 @@ export default function LoginPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   onKeyUp={onPasswordKeyUp}
                   placeholder="Enter your password"
-                  className="w-full pl-12 pr-12 py-3 rounded-xl text-sm font-medium transition-all duration-200 outline-none"
+                  className="w-full pl-12 pr-12 py-3 rounded-xl text-sm font-medium transition-all duration-200 outline-none focus:ring-2"
                   style={{
-                    background: "var(--surface-secondary)",
+                    background: "var(--surface)",
                     border: "1px solid var(--border)",
                     color: "var(--text-primary)",
                   }}
@@ -276,11 +280,11 @@ export default function LoginPage() {
               </label>
               <p className="text-xs" style={{ color: "var(--text-muted)" }}>
                 By signing in, you agree to our{" "}
-                <Link href="/terms" className="underline" style={{ color: "var(--primary)" }}>
+                <Link href="/terms" className="link-underline" style={{ color: "var(--primary)" }}>
                   Terms
                 </Link>{" "}
                 &{" "}
-                <Link href="/privacy" className="underline" style={{ color: "var(--primary)" }}>
+                <Link href="/privacy" className="link-underline" style={{ color: "var(--primary)" }}>
                   Privacy Policy
                 </Link>
               </p>
@@ -295,9 +299,9 @@ export default function LoginPage() {
                   exit={{ opacity: 0, y: -10 }}
                   className="p-4 rounded-xl text-sm"
                   style={{
-                    background: "rgba(239, 68, 68, 0.1)",
-                    border: "1px solid rgba(239, 68, 68, 0.2)",
-                    color: "#ef4444",
+                    background: "rgba(224, 122, 95, 0.1)",
+                    border: "1px solid rgba(224, 122, 95, 0.2)",
+                    color: "var(--primary-dark)",
                   }}
                 >
                   {errorMessage}
@@ -311,11 +315,7 @@ export default function LoginPage() {
               whileTap={{ scale: 0.99 }}
               type="submit"
               disabled={isLoading}
-              className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl font-semibold transition-all duration-200 disabled:opacity-60"
-              style={{
-                background: "var(--primary)",
-                color: "white",
-              }}
+              className="btn-primary w-full flex items-center justify-center gap-2 py-3.5"
             >
               {isLoading ? (
                 <>
@@ -347,12 +347,7 @@ export default function LoginPage() {
             onClick={handleGoogleSignIn}
             disabled={isLoading}
             type="button"
-            className="w-full flex items-center justify-center gap-3 py-3.5 rounded-xl font-semibold transition-all duration-200 disabled:opacity-60"
-            style={{
-              background: "var(--surface-secondary)",
-              border: "1px solid var(--border)",
-              color: "var(--text-primary)",
-            }}
+            className="btn-secondary w-full flex items-center justify-center gap-3 py-3.5"
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24">
               <path
@@ -393,7 +388,7 @@ export default function LoginPage() {
             Don&apos;t have an account?{" "}
             <Link
               href="/auth/register"
-              className="font-semibold"
+              className="font-semibold link-underline"
               style={{ color: "var(--primary)" }}
             >
               Sign Up
