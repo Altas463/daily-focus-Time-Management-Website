@@ -1,13 +1,10 @@
 'use client';
-
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { jwtDecode } from "jwt-decode";
-import { ArrowRight, CheckCircle2, CircleAlert, Eye, EyeOff, Loader2, Lock, Mail, ShieldCheck, Sparkles, UserRound } from "lucide-react";
-import AuthPageShell from "@/components/auth/AuthPageShell";
-import { useSpotlightStage } from "@/hooks/useSpotlightStage";
+import { ArrowRight, CheckCircle2, CircleAlert, Eye, EyeOff, Loader2, Lock, Mail, Rocket, Sparkles, UserRound } from "lucide-react";
 import { calculatePasswordStrength } from "@/utils/password";
 import { getMotivationTip } from "@/utils/motivation";
 
@@ -30,8 +27,11 @@ export default function RegisterPage() {
   const [capsOnPw, setCapsOnPw] = useState(false);
   const [capsOnConfirm, setCapsOnConfirm] = useState(false);
   const router = useRouter();
-  const { stageRef, handleMouseMove } = useSpotlightStage();
-  const motivationTip = useMemo(() => getMotivationTip(new Date().setHours(0, 0, 0, 0) + 1), []);
+
+  const motivationTip = useMemo(
+    () => getMotivationTip(new Date().setHours(0, 0, 0, 0) + 1),
+    []
+  );
 
   useEffect(() => {
     const { score, maxScore } = calculatePasswordStrength(password, { includeLowercase: true });
@@ -40,23 +40,17 @@ export default function RegisterPage() {
   }, [password]);
 
   const passwordStrengthLabel = ["Very Weak", "Weak", "Fair", "Good", "Strong", "Very Strong"];
-  const passwordStrengthClass =
-    [
-      "bg-rose-500",
-      "bg-orange-400",
-      "bg-amber-400",
-      "bg-lime-400",
-      "bg-emerald-500",
-      "bg-teal-500",
-    ][passwordScore] || "bg-gray-300";
+  const passwordStrengthColors = [
+    "#ef4444", // Very Weak - red
+    "#f97316", // Weak - orange
+    "#eab308", // Fair - yellow
+    "#84cc16", // Good - lime
+    "#22c55e", // Strong - green
+    "#10b981", // Very Strong - emerald
+  ];
+
   const isPasswordMatching = confirmPassword.length > 0 && password === confirmPassword;
   const ConfirmIcon = confirmPassword.length === 0 ? Lock : isPasswordMatching ? CheckCircle2 : CircleAlert;
-  const confirmIconTone =
-    confirmPassword.length === 0
-      ? "text-gray-400 dark:text-gray-500"
-      : isPasswordMatching
-        ? "text-emerald-500 dark:text-emerald-400"
-        : "text-red-500 dark:text-red-400";
 
   const validateInput = () => {
     if (!name || !email || !password || !confirmPassword) {
@@ -107,101 +101,188 @@ export default function RegisterPage() {
       if (typeof window !== "undefined") {
         localStorage.setItem("token", token);
         try {
-           const decoded: JwtPayload = jwtDecode(token);
-           localStorage.setItem("name", decoded.name || "User");
-         } catch (error) {
-           console.error("Unable to decode token:", error);
-         }
-        }
-
-        setIsLoading(false);
-        router.push("/auth/login");
+          const decoded: JwtPayload = jwtDecode(token);
+          localStorage.setItem("name", decoded.name || "User");
         } catch (error) {
-        console.error("Connection error:", error);
-        setErrorMessage("Unable to connect to server");
-        setIsLoading(false);
+          console.error("Unable to decode token:", error);
         }
+      }
+
+      setIsLoading(false);
+      router.push("/auth/login");
+    } catch (error) {
+      console.error("Connection error:", error);
+      setErrorMessage("Unable to connect to server");
+      setIsLoading(false);
+    }
   };
 
   return (
-    <AuthPageShell
-      stageRef={stageRef}
-      onMouseMove={handleMouseMove}
-      variant="emerald"
-      hero={
-        <>
-          <motion.div
-            initial={{ opacity: 0, y: 18 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="inline-flex items-center gap-2 rounded-full bg-emerald-500/90 px-4 py-2 text-sm font-semibold text-white shadow-lg"
-          >
-            <Sparkles className="h-4 w-4" aria-hidden />
-            <span>Unlock Your Potential</span>
-          </motion.div>
-          <motion.h2
+    <div
+      className="min-h-screen flex"
+      style={{ background: "var(--background)" }}
+    >
+      {/* Left Panel - Branding */}
+      <div
+        className="hidden lg:flex lg:w-1/2 flex-col justify-between p-12 relative overflow-hidden"
+        style={{ background: "linear-gradient(135deg, #10b981 0%, #059669 50%, #047857 100%)" }}
+      >
+        {/* Background pattern */}
+        <div
+          className="absolute inset-0 opacity-10"
+          style={{
+            backgroundImage: `radial-gradient(circle at 2px 2px, white 1px, transparent 0)`,
+            backgroundSize: '32px 32px',
+          }}
+        />
+
+        {/* Gradient orbs */}
+        <div className="absolute top-20 -left-20 w-72 h-72 bg-white/20 rounded-full blur-3xl" />
+        <div className="absolute bottom-20 -right-20 w-96 h-96 bg-white/10 rounded-full blur-3xl" />
+
+        <div className="relative z-10">
+          <Link href="/" className="flex items-center gap-3">
+            <div className="w-12 h-12 rounded-xl bg-white/20 backdrop-blur flex items-center justify-center">
+              <Sparkles className="w-6 h-6 text-white" />
+            </div>
+            <span className="text-2xl font-bold text-white">Daily Focus</span>
+          </Link>
+        </div>
+
+        <div className="relative z-10 space-y-6">
+          <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.08, duration: 0.6 }}
-            className="text-4xl font-semibold tracking-tight text-gray-900 dark:text-white"
+            transition={{ delay: 0.2 }}
+            className="text-4xl font-bold text-white leading-tight"
           >
-            Start Your Focus Journey
-          </motion.h2>
+            Start your<br />productivity journey
+          </motion.h1>
           <motion.p
-            initial={{ opacity: 0, y: 24 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.16, duration: 0.6 }}
-            className="mt-6 max-w-md text-base text-gray-600 dark:text-gray-300"
+            transition={{ delay: 0.3 }}
+            className="text-lg text-white/80 max-w-md"
           >
-            Create a Daily Focus account to organize tasks, set goals and progress faster every day.
+            Join thousands of users who have transformed their daily routines with Daily Focus.
           </motion.p>
-        </>
-      }
-    >
-      <div>
-          <div className="mb-10 flex flex-col items-center gap-3 text-center">
-             <div className="inline-flex items-center gap-2 rounded-full border border-emerald-200/60 bg-emerald-50/80 px-3 py-1 text-xs font-semibold text-emerald-700 shadow-sm dark:border-emerald-500/30 dark:bg-emerald-500/10 dark:text-emerald-200">
-               <ShieldCheck className="h-4 w-4" aria-hidden />
-               <span>Safe & Fast</span>
-             </div>
-             <h1 className="text-3xl font-bold text-gray-900 dark:text-white sm:text-4xl">
-               Create Account
-             </h1>
-             <p className="max-w-sm text-sm text-gray-600 dark:text-gray-300">
-               Takes just a few minutes to get started and boost productivity.
-             </p>
-           </div>
 
-          <form onSubmit={handleRegister} className="space-y-6" noValidate>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+            className="space-y-4"
+          >
+            {[
+              { icon: "✓", text: "Track tasks & projects effortlessly" },
+              { icon: "✓", text: "Pomodoro timer for deep focus" },
+              { icon: "✓", text: "Detailed productivity insights" },
+            ].map((item, i) => (
+              <div key={i} className="flex items-center gap-3">
+                <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center text-white text-sm font-bold">
+                  {item.icon}
+                </div>
+                <span className="text-white/90">{item.text}</span>
+              </div>
+            ))}
+          </motion.div>
+        </div>
+
+        <div className="relative z-10 text-white/60 text-sm">
+          &copy; {new Date().getFullYear()} Daily Focus. All rights reserved.
+        </div>
+      </div>
+
+      {/* Right Panel - Form */}
+      <div className="flex-1 flex items-center justify-center p-8 overflow-y-auto">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="w-full max-w-md"
+        >
+          {/* Mobile Logo */}
+          <div className="lg:hidden flex items-center justify-center gap-3 mb-8">
+            <div
+              className="w-10 h-10 rounded-xl flex items-center justify-center"
+              style={{ background: "linear-gradient(135deg, #10b981 0%, #059669 100%)" }}
+            >
+              <Sparkles className="w-5 h-5 text-white" />
+            </div>
+            <span
+              className="text-xl font-bold"
+              style={{ color: "var(--text-primary)" }}
+            >
+              Daily Focus
+            </span>
+          </div>
+
+          <div className="text-center mb-8">
+            <div
+              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold mb-4"
+              style={{
+                background: "rgba(16, 185, 129, 0.1)",
+                color: "#10b981",
+              }}
+            >
+              <Rocket className="w-3.5 h-3.5" />
+              Get started free
+            </div>
+            <h1
+              className="text-2xl font-bold mb-2"
+              style={{ color: "var(--text-primary)" }}
+            >
+              Create your account
+            </h1>
+            <p style={{ color: "var(--text-secondary)" }}>
+              Start your productivity journey today
+            </p>
+          </div>
+
+          <form onSubmit={handleRegister} className="space-y-4" noValidate>
+            {/* Name field */}
             <div className="space-y-2">
-               <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
-                 Name
-               </label>
+              <label
+                htmlFor="name"
+                className="block text-sm font-medium"
+                style={{ color: "var(--text-primary)" }}
+              >
+                Full Name
+              </label>
               <div className="relative">
                 <UserRound
-                  className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 dark:text-gray-500"
-                  aria-hidden
+                  className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5"
+                  style={{ color: "var(--text-muted)" }}
                 />
                 <input
                   id="name"
                   type="text"
                   autoComplete="name"
                   value={name}
-                  onChange={(event) => setName(event.target.value)}
+                  onChange={(e) => setName(e.target.value)}
                   placeholder="John Doe"
-                  className="w-full rounded-lg border border-gray-200 bg-white px-4 py-3 pl-12 text-sm font-medium text-gray-900 placeholder:text-gray-400 transition focus:border-gray-400 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:border-gray-800 dark:bg-gray-900 dark:text-white dark:placeholder:text-gray-500 dark:focus:border-gray-600 dark:focus:ring-gray-800/40"
+                  className="w-full pl-12 pr-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 outline-none"
+                  style={{
+                    background: "var(--surface-secondary)",
+                    border: "1px solid var(--border)",
+                    color: "var(--text-primary)",
+                  }}
                 />
               </div>
             </div>
 
+            {/* Email field */}
             <div className="space-y-2">
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium"
+                style={{ color: "var(--text-primary)" }}
+              >
                 Email
               </label>
               <div className="relative">
                 <Mail
-                  className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 dark:text-gray-500"
-                  aria-hidden
+                  className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5"
+                  style={{ color: "var(--text-muted)" }}
                 />
                 <input
                   id="email"
@@ -209,174 +290,266 @@ export default function RegisterPage() {
                   inputMode="email"
                   autoComplete="email"
                   value={email}
-                  onChange={(event) => setEmail(event.target.value)}
+                  onChange={(e) => setEmail(e.target.value)}
                   placeholder="you@example.com"
-                  className="w-full rounded-lg border border-gray-200 bg-white px-4 py-3 pl-12 text-sm font-medium text-gray-900 placeholder:text-gray-400 transition focus:border-gray-400 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:border-gray-800 dark:bg-gray-900 dark:text-white dark:placeholder:text-gray-500 dark:focus:border-gray-600 dark:focus:ring-gray-800/40"
+                  className="w-full pl-12 pr-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 outline-none"
+                  style={{
+                    background: "var(--surface-secondary)",
+                    border: "1px solid var(--border)",
+                    color: "var(--text-primary)",
+                  }}
                 />
               </div>
             </div>
 
+            {/* Password field */}
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
-                    Password
-                  </label>
-                  {capsOnPw && (
-                    <span className="text-xs font-medium text-amber-600 dark:text-amber-400">
-                      Caps Lock is on
-                    </span>
-                  )}
+                <label
+                  htmlFor="password"
+                  className="block text-sm font-medium"
+                  style={{ color: "var(--text-primary)" }}
+                >
+                  Password
+                </label>
+                {capsOnPw && (
+                  <span className="text-xs font-medium" style={{ color: "#f59e0b" }}>
+                    Caps Lock is on
+                  </span>
+                )}
               </div>
               <div className="relative">
                 <Lock
-                  className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 dark:text-gray-500"
-                  aria-hidden
+                  className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5"
+                  style={{ color: "var(--text-muted)" }}
                 />
                 <input
                   id="password"
                   type={showPassword ? "text" : "password"}
                   value={password}
-                  onChange={(event) => setPassword(event.target.value)}
-                  onKeyUp={(event) => setCapsOnPw(event.getModifierState && event.getModifierState("CapsLock"))}
-                  placeholder="Enter password"
-                  className="w-full rounded-lg border border-gray-200 bg-white px-4 py-3 pl-12 pr-12 text-sm font-medium text-gray-900 placeholder:text-gray-400 transition focus:border-gray-400 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:border-gray-800 dark:bg-gray-900 dark:text-white dark:placeholder:text-gray-500 dark:focus:border-gray-600 dark:focus:ring-gray-800/40"
+                  onChange={(e) => setPassword(e.target.value)}
+                  onKeyUp={(e) => setCapsOnPw(e.getModifierState && e.getModifierState("CapsLock"))}
+                  placeholder="Create a strong password"
+                  className="w-full pl-12 pr-12 py-3 rounded-xl text-sm font-medium transition-all duration-200 outline-none"
+                  style={{
+                    background: "var(--surface-secondary)",
+                    border: "1px solid var(--border)",
+                    color: "var(--text-primary)",
+                  }}
                 />
                 <button
                   type="button"
-                  onClick={() => setShowPassword((value) => !value)}
-                  className="absolute inset-y-0 right-0 flex items-center px-4 text-gray-500 transition hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                  onClick={() => setShowPassword((v) => !v)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 p-1"
+                  style={{ color: "var(--text-muted)" }}
                   aria-label={showPassword ? "Hide password" : "Show password"}
                 >
-                  {showPassword ? (
-                    <EyeOff className="h-4 w-4" aria-hidden />
-                  ) : (
-                    <Eye className="h-4 w-4" aria-hidden />
-                  )}
-                  <span className="sr-only">{showPassword ? "Hide password" : "Show password"}</span>
+                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
               </div>
 
+              {/* Password strength indicator */}
               {password && (
                 <div className="space-y-2">
-                  <div className="h-2 w-full overflow-hidden rounded-full bg-gray-200 dark:bg-white/10">
-                    <div
-                      className={`h-2 rounded-full transition-all duration-300 ${passwordStrengthClass}`}
-                      style={{ width: passwordMax ? `${(passwordScore / passwordMax) * 100}%` : "0%" }}
+                  <div
+                    className="h-1.5 rounded-full overflow-hidden"
+                    style={{ background: "var(--border)" }}
+                  >
+                    <motion.div
+                      className="h-full rounded-full"
+                      initial={{ width: 0 }}
+                      animate={{
+                        width: passwordMax ? `${(passwordScore / passwordMax) * 100}%` : "0%",
+                      }}
+                      style={{ background: passwordStrengthColors[passwordScore] }}
+                      transition={{ duration: 0.3 }}
                     />
                   </div>
-                  <div className="flex flex-col gap-1 text-xs text-gray-500 dark:text-gray-400 sm:flex-row sm:items-center sm:justify-between">
-                    <span>
-                      Strength:{" "}
-                      <span className="font-medium text-gray-700 dark:text-gray-300">
-                        {passwordStrengthLabel[passwordScore] || ""}
-                      </span>
+                  <div className="flex items-center justify-between text-xs">
+                    <span style={{ color: passwordStrengthColors[passwordScore] }}>
+                      {passwordStrengthLabel[passwordScore] || ""}
                     </span>
-                    <span>Tip: 8+ chars, uppercase/lowercase, numbers, special characters</span>
+                    <span style={{ color: "var(--text-muted)" }}>
+                      Min 8 characters
+                    </span>
                   </div>
                 </div>
               )}
             </div>
 
+            {/* Confirm Password field */}
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
-                    Confirm Password
-                  </label>
-                  {capsOnConfirm && (
-                    <span className="text-xs font-medium text-amber-600 dark:text-amber-400">
-                      Caps Lock is on
-                    </span>
-                  )}
+                <label
+                  htmlFor="confirmPassword"
+                  className="block text-sm font-medium"
+                  style={{ color: "var(--text-primary)" }}
+                >
+                  Confirm Password
+                </label>
+                {capsOnConfirm && (
+                  <span className="text-xs font-medium" style={{ color: "#f59e0b" }}>
+                    Caps Lock is on
+                  </span>
+                )}
               </div>
               <div className="relative">
                 <ConfirmIcon
-                  className={`pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 ${confirmIconTone}`}
-                  aria-hidden
+                  className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5"
+                  style={{
+                    color: confirmPassword.length === 0
+                      ? "var(--text-muted)"
+                      : isPasswordMatching
+                        ? "#22c55e"
+                        : "#ef4444"
+                  }}
                 />
                 <input
                   id="confirmPassword"
                   type={showConfirmPassword ? "text" : "password"}
                   value={confirmPassword}
-                  onChange={(event) => setConfirmPassword(event.target.value)}
-                  onKeyUp={(event) => setCapsOnConfirm(event.getModifierState && event.getModifierState("CapsLock"))}
-                  placeholder="Confirm password"
-                  className="w-full rounded-lg border border-gray-200 bg-white px-4 py-3 pl-12 pr-12 text-sm font-medium text-gray-900 placeholder:text-gray-400 transition focus:border-gray-400 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:border-gray-800 dark:bg-gray-900 dark:text-white dark:placeholder:text-gray-500 dark:focus:border-gray-600 dark:focus:ring-gray-800/40"
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  onKeyUp={(e) => setCapsOnConfirm(e.getModifierState && e.getModifierState("CapsLock"))}
+                  placeholder="Confirm your password"
+                  className="w-full pl-12 pr-12 py-3 rounded-xl text-sm font-medium transition-all duration-200 outline-none"
+                  style={{
+                    background: "var(--surface-secondary)",
+                    border: `1px solid ${
+                      confirmPassword.length === 0
+                        ? "var(--border)"
+                        : isPasswordMatching
+                          ? "rgba(34, 197, 94, 0.5)"
+                          : "rgba(239, 68, 68, 0.5)"
+                    }`,
+                    color: "var(--text-primary)",
+                  }}
                 />
                 <button
                   type="button"
-                  onClick={() => setShowConfirmPassword((value) => !value)}
-                  className="absolute inset-y-0 right-0 flex items-center px-4 text-gray-500 transition hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                  onClick={() => setShowConfirmPassword((v) => !v)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 p-1"
+                  style={{ color: "var(--text-muted)" }}
                   aria-label={showConfirmPassword ? "Hide password" : "Show password"}
                 >
-                  {showConfirmPassword ? (
-                    <EyeOff className="h-4 w-4" aria-hidden />
-                  ) : (
-                    <Eye className="h-4 w-4" aria-hidden />
-                  )}
-                  <span className="sr-only">{showConfirmPassword ? "Hide password" : "Show password"}</span>
+                  {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
               </div>
+
+              {/* Password match indicator */}
               {confirmPassword && (
-                <div
-                  className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-medium ${
-                    isPasswordMatching
-                      ? "bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-300"
-                      : "bg-red-50 text-red-600 dark:bg-red-900/30 dark:text-red-300"
-                  }`}
+                <motion.div
+                  initial={{ opacity: 0, y: -5 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="flex items-center gap-2 text-xs font-medium"
+                  style={{
+                    color: isPasswordMatching ? "#22c55e" : "#ef4444",
+                  }}
                 >
                   {isPasswordMatching ? (
-                    <CheckCircle2 className="h-3.5 w-3.5" aria-hidden />
+                    <>
+                      <CheckCircle2 className="w-3.5 h-3.5" />
+                      Passwords match
+                    </>
                   ) : (
-                    <CircleAlert className="h-3.5 w-3.5" aria-hidden />
+                    <>
+                      <CircleAlert className="w-3.5 h-3.5" />
+                      Passwords do not match
+                    </>
                   )}
-                  <span>{isPasswordMatching ? "Passwords match" : "Passwords do not match"}</span>
-                </div>
+                </motion.div>
               )}
             </div>
 
+            {/* Terms */}
+            <div
+              className="p-4 rounded-xl text-xs"
+              style={{
+                background: "var(--surface-secondary)",
+                border: "1px solid var(--border)",
+                color: "var(--text-muted)",
+              }}
+            >
+              By creating an account, you agree to our{" "}
+              <Link href="/terms" className="underline" style={{ color: "var(--primary)" }}>
+                Terms of Service
+              </Link>{" "}
+              and{" "}
+              <Link href="/privacy" className="underline" style={{ color: "var(--primary)" }}>
+                Privacy Policy
+              </Link>
+            </div>
+
+            {/* Error message */}
             <AnimatePresence>
               {errorMessage && (
                 <motion.div
-                  initial={{ opacity: 0, y: -6 }}
+                  initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -6 }}
-                  className="rounded-2xl border border-red-200/70 bg-red-50/80 px-4 py-3 text-sm text-red-700 shadow-sm dark:border-red-900/40 dark:bg-red-900/20 dark:text-red-200"
+                  exit={{ opacity: 0, y: -10 }}
+                  className="p-4 rounded-xl text-sm"
+                  style={{
+                    background: "rgba(239, 68, 68, 0.1)",
+                    border: "1px solid rgba(239, 68, 68, 0.2)",
+                    color: "#ef4444",
+                  }}
                 >
                   {errorMessage}
                 </motion.div>
               )}
             </AnimatePresence>
 
-            <button
+            {/* Submit button */}
+            <motion.button
+              whileHover={{ scale: 1.01 }}
+              whileTap={{ scale: 0.99 }}
               type="submit"
               disabled={isLoading}
-              className="group inline-flex w-full items-center justify-center gap-2 rounded-lg bg-gray-900 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-gray-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600 disabled:opacity-60 dark:bg-white dark:text-gray-900"
+              className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl font-semibold transition-all duration-200 disabled:opacity-60"
+              style={{
+                background: "linear-gradient(135deg, #10b981 0%, #059669 100%)",
+                color: "white",
+              }}
             >
               {isLoading ? (
-                  <>
-                    <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
-                    Creating account...
-                  </>
-                ) : (
-                  <>
-                    Create Account
-                    <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" aria-hidden />
-                  </>
-                )}
-            </button>
+                <>
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                  Creating account...
+                </>
+              ) : (
+                <>
+                  Create Account
+                  <ArrowRight className="w-5 h-5" />
+                </>
+              )}
+            </motion.button>
           </form>
 
-          <div className="mt-8 rounded-lg border border-dashed border-gray-200 bg-gray-50 px-4 py-3 text-xs text-gray-600 dark:border-gray-800 dark:bg-gray-900/60 dark:text-gray-400">
-             Tip: {motivationTip}
-           </div>
+          {/* Tip */}
+          <div
+            className="mt-6 p-4 rounded-xl"
+            style={{
+              background: "rgba(16, 185, 129, 0.05)",
+              border: "1px solid var(--border)",
+            }}
+          >
+            <p className="text-xs" style={{ color: "var(--text-secondary)" }}>
+              <span className="font-semibold" style={{ color: "#10b981" }}>Tip:</span> {motivationTip}
+            </p>
+          </div>
 
-           <p className="mt-6 text-center text-sm text-gray-600 dark:text-gray-400">
-             Already have an account?{" "}
-             <Link href="/auth/login" className="font-semibold text-gray-900 underline-offset-4 hover:underline dark:text-white">
-               Sign In
-             </Link>
-           </p>
-        </div>
-    </AuthPageShell>
+          {/* Sign in link */}
+          <p className="mt-6 text-center text-sm" style={{ color: "var(--text-secondary)" }}>
+            Already have an account?{" "}
+            <Link
+              href="/auth/login"
+              className="font-semibold"
+              style={{ color: "var(--primary)" }}
+            >
+              Sign In
+            </Link>
+          </p>
+        </motion.div>
+      </div>
+    </div>
   );
 }

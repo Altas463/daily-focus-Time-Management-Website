@@ -4,6 +4,17 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
+import {
+  Flame,
+  CheckCircle2,
+  Clock,
+  Timer,
+  Zap,
+  TrendingUp,
+  Calendar,
+  ArrowRight,
+  Sparkles,
+} from "lucide-react";
 import PomodoroTimer from "@/components/pomodoro/PomodoroTimer";
 import { getDaypartGreeting, formatRelativeDate, formatShortDate } from "@/utils/date";
 import { getTaskUrgency, summarizeTasks, TaskUrgency } from "@/utils/tasks";
@@ -27,20 +38,25 @@ type TaskStats = {
   completedTodayCount?: number;
 };
 
-const toneBadgeMap: Record<TaskUrgency["tone"], string> = {
-  danger: "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300",
-  warning: "bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300",
-  notice: "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300",
-  success: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300",
-  default: "bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300",
+const toneBadgeMap: Record<TaskUrgency["tone"], { bg: string; text: string; dot: string }> = {
+  danger: { bg: "rgba(239, 68, 68, 0.1)", text: "#ef4444", dot: "#ef4444" },
+  warning: { bg: "rgba(249, 115, 22, 0.1)", text: "#f97316", dot: "#f97316" },
+  notice: { bg: "rgba(234, 179, 8, 0.1)", text: "#eab308", dot: "#eab308" },
+  success: { bg: "rgba(34, 197, 94, 0.1)", text: "#22c55e", dot: "#22c55e" },
+  default: { bg: "var(--surface-secondary)", text: "var(--text-secondary)", dot: "var(--text-muted)" },
 };
 
-const toneDotMap: Record<TaskUrgency["tone"], string> = {
-  danger: "bg-red-500",
-  warning: "bg-orange-500",
-  notice: "bg-yellow-500",
-  success: "bg-green-500",
-  default: "bg-gray-400",
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.1 },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0 },
 };
 
 export default function DashboardPage() {
@@ -120,174 +136,439 @@ export default function DashboardPage() {
 
   if (loading || status === "loading") {
     return (
-      <div className="grid min-h-screen place-items-center bg-white dark:bg-gray-950">
-        <div className="rounded-xl border border-gray-200 bg-white p-6 text-gray-700 shadow-sm dark:border-gray-800 dark:bg-gray-900 dark:text-gray-300">
-           <div className="h-1 w-56 overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
-             <div className="h-1 w-1/3 animate-[load_1.2s_ease_infinite] rounded-full bg-blue-500 dark:bg-blue-400" />
-           </div>
-           <p className="mt-3 text-sm">Loading dashboard...</p>
-         </div>
-        <style jsx>{`
-          @keyframes load {
-            0% {
-              transform: translateX(-100%);
-            }
-            100% {
-              transform: translateX(300%);
-            }
-          }
-        `}</style>
+      <div
+        className="grid min-h-screen place-items-center"
+        style={{ background: "var(--background)" }}
+      >
+        <div
+          className="rounded-2xl p-8 text-center"
+          style={{
+            background: "var(--surface)",
+            border: "1px solid var(--border)",
+          }}
+        >
+          <div
+            className="mx-auto w-12 h-12 rounded-xl flex items-center justify-center mb-4"
+            style={{ background: "var(--gradient-primary)" }}
+          >
+            <Sparkles className="w-6 h-6 text-white animate-pulse" />
+          </div>
+          <div
+            className="h-1.5 w-48 overflow-hidden rounded-full mx-auto"
+            style={{ background: "var(--border)" }}
+          >
+            <motion.div
+              className="h-full rounded-full"
+              style={{ background: "var(--gradient-primary)" }}
+              animate={{ x: ["-100%", "200%"] }}
+              transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+            />
+          </div>
+          <p
+            className="mt-4 text-sm font-medium"
+            style={{ color: "var(--text-secondary)" }}
+          >
+            Loading your dashboard...
+          </p>
+        </div>
       </div>
     );
   }
 
-  return (
-    <div className="min-h-screen bg-gray-100 dark:bg-gray-950">
-      <div className="mx-auto max-w-7xl space-y-8 px-4 py-8 sm:px-6 lg:px-8">
-        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="text-center">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-            {greetingText}, {session?.user?.name || "friend"}!
-          </h1>
-          <p className="mx-auto mt-2 max-w-2xl text-lg text-gray-600 dark:text-gray-300">
-            Focus on what matters, let Daily Focus record your progress and track it every day.
-          </p>
-        </motion.div>
+  const statsCards = [
+    {
+      label: "Focus Streak",
+      value: streak,
+      unit: streak === 1 ? "day" : "days",
+      icon: Flame,
+      progress: clamp((streak / 14) * 100, 0, 100),
+      color: "#f97316",
+      helper: streak >= 3 ? `Best: ${bestStreak} days` : `Last: ${formatShortDate(lastVisit)}`,
+    },
+    {
+      label: "Completed Today",
+      value: completedTodayCount,
+      unit: completedTodayCount === 1 ? "task" : "tasks",
+      icon: CheckCircle2,
+      progress: clamp((completedTodayCount / Math.max(taskSummary.total, 1)) * 100, 0, 100),
+      color: "#22c55e",
+      helper: `${taskSummary.total} total tracked`,
+    },
+    {
+      label: "Due Soon",
+      value: taskSummary.dueSoon,
+      unit: taskSummary.dueSoon === 1 ? "task" : "tasks",
+      icon: Clock,
+      progress: clamp((taskSummary.dueSoon / Math.max(taskSummary.incomplete, 1)) * 100, 0, 100),
+      color: "#eab308",
+      helper: `${taskSummary.overdue} overdue`,
+    },
+    {
+      label: "Pomodoro Sessions",
+      value: pomodoroCount,
+      unit: pomodoroCount === 1 ? "session" : "sessions",
+      icon: Timer,
+      progress: pomodoroProgress,
+      color: "#6366f1",
+      helper: pomodoroRemaining > 0 ? `${pomodoroRemaining} to goal` : "Goal reached!",
+    },
+    {
+      label: "Focus Time",
+      value: formatDuration(focusTimeMinutes),
+      unit: "",
+      icon: Zap,
+      progress: focusProgress,
+      color: "#8b5cf6",
+      helper: focusRemaining > 0 ? `${Math.ceil(focusRemaining)}m to goal` : "Goal achieved!",
+    },
+  ];
 
-        <motion.section initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.05 }} className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-5">
-          {[
-            {
-              label: "Focus streak",
-              value: pluralize(streak, "day", "days"),
-              progress: clamp((streak / 14) * 100, 0, 100),
-              barColor: "bg-slate-900",
-              helper: streak >= 3 ? `Best streak ${bestStreak} days` : `Last check-in ${formatShortDate(lastVisit)}`,
-            },
-            {
-              label: "Tasks completed today",
-              value: completedTodayCount,
-              progress: clamp((completedTodayCount / Math.max(taskSummary.total, 1)) * 100, 0, 100),
-              barColor: "bg-emerald-600",
-              helper: pluralize(taskSummary.total, "task tracked", "tasks tracked"),
-            },
-            {
-              label: "Tasks due soon",
-              value: taskSummary.dueSoon,
-              progress: clamp((taskSummary.dueSoon / Math.max(taskSummary.incomplete, 1)) * 100, 0, 100),
-              barColor: "bg-amber-500",
-              helper: pluralize(taskSummary.overdue, "task overdue", "tasks overdue"),
-            },
-            {
-              label: "Pomodoro sessions",
-              value: pomodoroCount,
-              progress: pomodoroProgress,
-              barColor: "bg-blue-600",
-              helper:
-                pomodoroRemaining > 0
-                  ? pluralize(pomodoroRemaining, "session to reach goal", "sessions to reach goal")
-                  : "Goal completed for this week",
-            },
-            {
-              label: "Focus time",
-              value: formatDuration(focusTimeMinutes),
-              progress: focusProgress,
-              barColor: "bg-purple-600",
-              helper:
-                focusRemaining > 0
-                  ? pluralize(Math.ceil(focusRemaining), "minute to reach goal", "minutes to reach goal")
-                  : "Focus goal achieved for the week",
-            },
-          ].map((card) => (
-            <div key={card.label} className="group rounded-xl border border-gray-200 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md dark:border-gray-800 dark:bg-gray-900">
-              <div className="mb-1 text-3xl font-semibold text-gray-900 dark:text-white">{card.value}</div>
-              <p className="text-sm text-gray-500 dark:text-gray-400">{card.helper}</p>
-              <h3 className="mt-4 text-sm font-semibold text-gray-700 dark:text-gray-200">{card.label}</h3>
-              <div className="mt-3 h-2 w-full overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
-                <div className={`h-2 rounded-full ${card.barColor}`} style={{ width: `${card.progress}%` }} />
+  return (
+    <div
+      className="min-h-screen"
+      style={{ background: "var(--background)" }}
+    >
+      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          className="space-y-8"
+        >
+          {/* Header */}
+          <motion.div variants={itemVariants} className="flex flex-col gap-2">
+            <div className="flex items-center gap-3">
+              <div
+                className="w-12 h-12 rounded-xl flex items-center justify-center"
+                style={{ background: "var(--gradient-primary)" }}
+              >
+                <Sparkles className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <h1
+                  className="text-2xl font-bold tracking-tight sm:text-3xl"
+                  style={{ color: "var(--text-primary)" }}
+                >
+                  {greetingText}, {session?.user?.name?.split(" ")[0] || "friend"}!
+                </h1>
+                <p
+                  className="text-sm"
+                  style={{ color: "var(--text-secondary)" }}
+                >
+                  Focus on what matters. Track your progress every day.
+                </p>
               </div>
             </div>
-          ))}
-        </motion.section>
+          </motion.div>
 
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
-          <motion.section initial={{ opacity: 0, x: -18 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.08 }} className="lg:col-span-2">
-            <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm dark:border-gray-800 dark:bg-gray-900">
-              <div className="border-b border-gray-200 p-6 dark:border-gray-800">
-                <div className="flex items-center justify-between gap-3">
-                  <h3 className="text-xl font-bold text-gray-900 dark:text-white">Tasks Not Completed</h3>
-                  <span className="rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-sm font-medium text-amber-700 dark:border-amber-900/40 dark:bg-amber-900/20 dark:text-amber-300">
-                    {taskSummary.incomplete} task
+          {/* Stats Grid */}
+          <motion.section variants={itemVariants}>
+            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
+              {statsCards.map((card, index) => {
+                const Icon = card.icon;
+                return (
+                  <motion.div
+                    key={card.label}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.05 }}
+                    className="group relative overflow-hidden rounded-2xl p-5 transition-all duration-300 hover:-translate-y-1"
+                    style={{
+                      background: "var(--surface)",
+                      border: "1px solid var(--border)",
+                    }}
+                  >
+                    {/* Icon */}
+                    <div
+                      className="w-10 h-10 rounded-xl flex items-center justify-center mb-4 transition-transform group-hover:scale-110"
+                      style={{ background: `${card.color}15`, color: card.color }}
+                    >
+                      <Icon className="w-5 h-5" />
+                    </div>
+
+                    {/* Value */}
+                    <div className="flex items-baseline gap-1.5">
+                      <span
+                        className="text-2xl font-bold tracking-tight"
+                        style={{ color: "var(--text-primary)" }}
+                      >
+                        {card.value}
+                      </span>
+                      {card.unit && (
+                        <span
+                          className="text-sm font-medium"
+                          style={{ color: "var(--text-muted)" }}
+                        >
+                          {card.unit}
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Label */}
+                    <p
+                      className="text-sm font-medium mt-1"
+                      style={{ color: "var(--text-secondary)" }}
+                    >
+                      {card.label}
+                    </p>
+
+                    {/* Progress */}
+                    <div
+                      className="mt-4 h-1.5 rounded-full overflow-hidden"
+                      style={{ background: "var(--border)" }}
+                    >
+                      <motion.div
+                        initial={{ width: 0 }}
+                        animate={{ width: `${card.progress}%` }}
+                        transition={{ duration: 1, delay: 0.3 + index * 0.1, ease: "easeOut" }}
+                        className="h-full rounded-full"
+                        style={{ background: card.color }}
+                      />
+                    </div>
+
+                    {/* Helper */}
+                    <p
+                      className="text-xs mt-2"
+                      style={{ color: "var(--text-muted)" }}
+                    >
+                      {card.helper}
+                    </p>
+                  </motion.div>
+                );
+              })}
+            </div>
+          </motion.section>
+
+          {/* Main Content Grid */}
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+            {/* Tasks Section */}
+            <motion.section variants={itemVariants} className="lg:col-span-2">
+              <div
+                className="rounded-2xl overflow-hidden"
+                style={{
+                  background: "var(--surface)",
+                  border: "1px solid var(--border)",
+                }}
+              >
+                {/* Header */}
+                <div
+                  className="px-6 py-5 flex items-center justify-between"
+                  style={{ borderBottom: "1px solid var(--border)" }}
+                >
+                  <div className="flex items-center gap-3">
+                    <div
+                      className="w-10 h-10 rounded-xl flex items-center justify-center"
+                      style={{ background: "var(--primary-muted)", color: "var(--primary)" }}
+                    >
+                      <Calendar className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <h3
+                        className="text-lg font-semibold"
+                        style={{ color: "var(--text-primary)" }}
+                      >
+                        Pending Tasks
+                      </h3>
+                      <p
+                        className="text-sm"
+                        style={{ color: "var(--text-muted)" }}
+                      >
+                        {incompleteTasks.length} {incompleteTasks.length === 1 ? "task" : "tasks"} remaining
+                      </p>
+                    </div>
+                  </div>
+
+                  <span
+                    className="px-3 py-1.5 rounded-full text-sm font-semibold"
+                    style={{
+                      background: taskSummary.incomplete > 0 ? "rgba(234, 179, 8, 0.1)" : "rgba(34, 197, 94, 0.1)",
+                      color: taskSummary.incomplete > 0 ? "#eab308" : "#22c55e",
+                    }}
+                  >
+                    {taskSummary.incomplete > 0 ? `${taskSummary.incomplete} pending` : "All done!"}
                   </span>
                 </div>
-              </div>
-              <div className="p-6">
-                {incompleteTasks.length === 0 ? (
-                  <div className="grid place-items-center py-12 text-center">
-                    <div className="mb-3 h-14 w-14 rounded-full bg-emerald-100 dark:bg-emerald-900/30" />
-                    <h4 className="mb-1 text-lg font-semibold text-gray-900 dark:text-white">All Completed!</h4>
-                    <p className="text-gray-500 dark:text-gray-400">No tasks waiting. Take a break and relax.</p>
-                  </div>
-                ) : (
-                  <div className="space-y-4">
-                    {incompleteTasks.map((task, index) => {
-                      const urgency = getTaskUrgency(task.endDate);
-                      return (
-                        <motion.div
-                          key={task.id}
-                          initial={{ opacity: 0, y: 14 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: index * 0.05 }}
-                          className="group rounded-lg border border-gray-200 bg-white p-4 transition hover:border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:hover:border-gray-600"
-                        >
-                          <div className="flex items-center justify-between gap-4">
-                            <div className="flex-1">
-                              <div className="mb-2 flex items-center gap-3">
-                                <span className={`inline-block h-2.5 w-2.5 rounded-full ${toneDotMap[urgency.tone]}`} />
-                                <span className="font-medium text-gray-900 transition group-hover:text-blue-600 dark:text-white dark:group-hover:text-blue-400">
-                                  {task.title}
-                                </span>
-                              </div>
-                              <div className="flex flex-wrap items-center gap-3 text-sm">
-                                <span className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${toneBadgeMap[urgency.tone]}`}>
+
+                {/* Content */}
+                <div className="p-6">
+                  {incompleteTasks.length === 0 ? (
+                    <div className="text-center py-12">
+                      <div
+                        className="w-16 h-16 mx-auto rounded-2xl flex items-center justify-center mb-4"
+                        style={{ background: "rgba(34, 197, 94, 0.1)" }}
+                      >
+                        <CheckCircle2 className="w-8 h-8" style={{ color: "#22c55e" }} />
+                      </div>
+                      <h4
+                        className="text-lg font-semibold mb-2"
+                        style={{ color: "var(--text-primary)" }}
+                      >
+                        All Tasks Completed!
+                      </h4>
+                      <p
+                        className="text-sm"
+                        style={{ color: "var(--text-secondary)" }}
+                      >
+                        Great work! Take a well-deserved break.
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      {incompleteTasks.slice(0, 5).map((task, index) => {
+                        const urgency = getTaskUrgency(task.endDate);
+                        const toneStyle = toneBadgeMap[urgency.tone];
+
+                        return (
+                          <motion.div
+                            key={task.id}
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: index * 0.05 }}
+                            className="group flex items-center gap-4 p-4 rounded-xl transition-all duration-200"
+                            style={{
+                              background: "var(--surface-secondary)",
+                              border: "1px solid var(--border)",
+                            }}
+                          >
+                            {/* Status Dot */}
+                            <div
+                              className="w-3 h-3 rounded-full flex-shrink-0"
+                              style={{ background: toneStyle.dot }}
+                            />
+
+                            {/* Task Info */}
+                            <div className="flex-1 min-w-0">
+                              <p
+                                className="font-medium truncate"
+                                style={{ color: "var(--text-primary)" }}
+                              >
+                                {task.title}
+                              </p>
+                              <div className="flex items-center gap-3 mt-1">
+                                <span
+                                  className="text-xs font-medium px-2 py-0.5 rounded-full"
+                                  style={{ background: toneStyle.bg, color: toneStyle.text }}
+                                >
                                   {urgency.label}
                                 </span>
                                 {task.endDate && (
-                                  <span className="text-gray-500 dark:text-gray-400">{formatRelativeDate(task.endDate)}</span>
+                                  <span
+                                    className="text-xs"
+                                    style={{ color: "var(--text-muted)" }}
+                                  >
+                                    {formatRelativeDate(task.endDate)}
+                                  </span>
                                 )}
                               </div>
                             </div>
+
+                            {/* Complete Button */}
                             <button
                               onClick={() => handleComplete(task.id)}
-                              className="rounded-xl bg-gray-900 px-4 py-2 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-black/90 focus:outline-none focus:ring-2 focus:ring-gray-900/20 dark:bg-white dark:text-gray-900 dark:hover:bg-white/90"
-                              aria-label={`Mark completed ${task.title}`}
+                              className="flex-shrink-0 px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-200 hover:-translate-y-0.5"
+                              style={{
+                                background: "var(--primary)",
+                                color: "white",
+                              }}
+                              aria-label={`Mark ${task.title} as completed`}
                             >
-                              Complete
+                              Done
                             </button>
-                          </div>
-                        </motion.div>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
-            </div>
-          </motion.section>
+                          </motion.div>
+                        );
+                      })}
 
-          <motion.section initial={{ opacity: 0, x: 18 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.12 }}>
-            <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm dark:border-gray-800 dark:bg-gray-900">
-              <div className="border-b border-gray-200 p-6 dark:border-gray-800">
-                <h3 className="text-xl font-bold text-gray-900 dark:text-white">Pomodoro Timer</h3>
-                  <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Focus for 25 min, break for 5 min</p>
+                      {incompleteTasks.length > 5 && (
+                        <button
+                          onClick={() => router.push("/dashboard/tasks")}
+                          className="w-full flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-semibold transition-colors"
+                          style={{
+                            color: "var(--primary)",
+                            background: "var(--primary-muted)",
+                          }}
+                        >
+                          View all {incompleteTasks.length} tasks
+                          <ArrowRight className="w-4 h-4" />
+                        </button>
+                      )}
+                    </div>
+                  )}
+                </div>
               </div>
-              <div className="p-6">
-                <PomodoroTimer />
+            </motion.section>
+
+            {/* Pomodoro Section */}
+            <motion.section variants={itemVariants}>
+              <div
+                className="rounded-2xl overflow-hidden"
+                style={{
+                  background: "var(--surface)",
+                  border: "1px solid var(--border)",
+                }}
+              >
+                {/* Header */}
+                <div
+                  className="px-6 py-5"
+                  style={{ borderBottom: "1px solid var(--border)" }}
+                >
+                  <div className="flex items-center gap-3">
+                    <div
+                      className="w-10 h-10 rounded-xl flex items-center justify-center"
+                      style={{ background: "rgba(99, 102, 241, 0.1)", color: "#6366f1" }}
+                    >
+                      <Timer className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <h3
+                        className="text-lg font-semibold"
+                        style={{ color: "var(--text-primary)" }}
+                      >
+                        Pomodoro Timer
+                      </h3>
+                      <p
+                        className="text-sm"
+                        style={{ color: "var(--text-muted)" }}
+                      >
+                        25 min focus, 5 min break
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Timer */}
+                <div className="p-6">
+                  <PomodoroTimer />
+                </div>
+
+                {/* Quick Stats */}
+                <div
+                  className="px-6 py-4 flex items-center justify-between"
+                  style={{
+                    background: "var(--surface-secondary)",
+                    borderTop: "1px solid var(--border)",
+                  }}
+                >
+                  <div className="flex items-center gap-2">
+                    <TrendingUp className="w-4 h-4" style={{ color: "var(--success)" }} />
+                    <span
+                      className="text-sm font-medium"
+                      style={{ color: "var(--text-secondary)" }}
+                    >
+                      {pomodoroCount} sessions today
+                    </span>
+                  </div>
+                  <span
+                    className="text-sm font-semibold"
+                    style={{ color: "var(--primary)" }}
+                  >
+                    {formatDuration(focusTimeMinutes)}
+                  </span>
+                </div>
               </div>
-            </div>
-          </motion.section>
-        </div>
+            </motion.section>
+          </div>
+        </motion.div>
       </div>
     </div>
   );
 }
-
-
-

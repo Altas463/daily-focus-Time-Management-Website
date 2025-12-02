@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Play, Pause, RotateCcw, Coffee, Brain, Settings2 } from "lucide-react";
 import { usePomodoro } from "@/hooks/usePomodoro";
 import PomodoroSettings from "./PomodoroSettings";
 
@@ -25,6 +27,7 @@ export default function PomodoroTimer({
 }: PomodoroTimerProps) {
   const [workMinutes, setWorkMinutes] = useState(25);
   const [breakMinutes, setBreakMinutes] = useState(5);
+  const [showSettings, setShowSettings] = useState(false);
 
   const {
     secondsLeft,
@@ -65,132 +68,239 @@ export default function PomodoroTimer({
   const totalSeconds = mode === "work" ? workMinutes * 60 : breakMinutes * 60;
   const progressPercent = totalSeconds === 0 ? 0 : ((totalSeconds - secondsLeft) / totalSeconds) * 100;
 
-  const containerClasses = focusMode
-    ? "flex w-full max-w-xl flex-col items-center gap-10"
-    : "mx-auto flex w-full max-w-lg flex-col items-center gap-8";
+  // Circle calculations
+  const size = focusMode ? 280 : 200;
+  const strokeWidth = focusMode ? 10 : 8;
+  const radius = (size - strokeWidth) / 2;
+  const circumference = 2 * Math.PI * radius;
+  const strokeDashoffset = ((100 - progressPercent) / 100) * circumference;
 
-  const modeCardClasses = focusMode
-    ? "inline-flex items-center gap-3 rounded-2xl border border-white/10 bg-white/10 px-6 py-4 text-white shadow-lg shadow-blue-500/10 backdrop-blur"
-    : "inline-flex items-center gap-3 rounded-lg border border-gray-200 bg-gray-100 px-6 py-3 text-gray-900 dark:border-gray-700 dark:bg-gray-800 dark:text-white";
-
-  const headerTextClasses = focusMode ? "text-3xl font-semibold" : "text-lg font-semibold";
-  const descriptionTextClasses = focusMode ? "text-xs text-slate-200/70" : "text-xs text-gray-500 dark:text-gray-400";
-  const timerShellClasses = focusMode
-    ? "relative mx-auto mb-6 h-64 w-64 sm:h-72 sm:w-72"
-    : "relative mx-auto mb-6 h-56 w-56 sm:h-64 sm:w-64";
-
-  const baseStrokeColor = focusMode ? "rgba(255,255,255,0.18)" : "#E2E8F0";
-  const progressStrokeColor = focusMode
-    ? mode === "work"
-      ? "rgba(56,189,248,0.9)"
-      : "rgba(251,191,36,0.9)"
-    : mode === "work"
-      ? "#2563EB"
-      : "#F59E0B";
+  const primaryColor = mode === "work" ? "#6366f1" : "#f59e0b";
+  const secondaryColor = mode === "work" ? "rgba(99, 102, 241, 0.15)" : "rgba(245, 158, 11, 0.15)";
 
   return (
-    <div className={containerClasses}>
-      {!focusMode && (
-        <PomodoroSettings
-          workMinutes={workMinutes}
-          breakMinutes={breakMinutes}
-          onWorkMinutesChange={handleWorkMinutesChange}
-          onBreakMinutesChange={handleBreakMinutesChange}
-        />
-      )}
-
-      <div className="text-center">
-        <div className={modeCardClasses}>
+    <div className={`flex flex-col items-center ${focusMode ? "gap-10" : "gap-6"}`}>
+      {/* Mode indicator */}
+      <div className="flex items-center gap-3">
+        <motion.div
+          key={mode}
+          initial={{ scale: 0.8, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          className="flex items-center gap-3 px-4 py-2 rounded-full"
+          style={{
+            background: secondaryColor,
+          }}
+        >
           <div
-            className={`flex h-9 w-9 items-center justify-center rounded-xl text-sm font-semibold text-white ${
-              mode === "work" ? "bg-emerald-500" : "bg-amber-500"
-            }`}
+            className="w-8 h-8 rounded-lg flex items-center justify-center"
+            style={{ background: primaryColor }}
           >
-            {mode === "work" ? "W" : "B"}
+            {mode === "work" ? (
+              <Brain className="w-4 h-4 text-white" />
+            ) : (
+              <Coffee className="w-4 h-4 text-white" />
+            )}
           </div>
-          <div className="text-left">
-            <p className={headerTextClasses}>{mode === "work" ? "Focus" : "Break"}</p>
-            <p className={descriptionTextClasses}>
-              {mode === "work"
-                ? "Work through one clear objective during this block."
-                : "Step away for a short reset to prepare for the next session."}
+          <div>
+            <p
+              className={`font-semibold ${focusMode ? "text-white" : ""}`}
+              style={{ color: focusMode ? "white" : "var(--text-primary)" }}
+            >
+              {mode === "work" ? "Focus Time" : "Break Time"}
+            </p>
+            <p
+              className="text-xs"
+              style={{ color: focusMode ? "rgba(255,255,255,0.7)" : "var(--text-muted)" }}
+            >
+              {mode === "work" ? `${workMinutes} min session` : `${breakMinutes} min break`}
             </p>
           </div>
-        </div>
+        </motion.div>
+
+        {!focusMode && (
+          <button
+            onClick={() => setShowSettings(!showSettings)}
+            className="w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-200"
+            style={{
+              background: showSettings ? "var(--primary-muted)" : "var(--surface-secondary)",
+              color: showSettings ? "var(--primary)" : "var(--text-muted)",
+            }}
+            aria-label="Settings"
+          >
+            <Settings2 className="w-4 h-4" />
+          </button>
+        )}
       </div>
 
-      <div className={`w-full ${focusMode ? "max-w-xl" : "max-w-sm"}`}>
-        <div className={timerShellClasses}>
-          <svg
-            className="h-full w-full -rotate-90"
-            viewBox="0 0 120 120"
-            role="progressbar"
-            aria-valuemin={0}
-            aria-valuemax={100}
-            aria-valuenow={Math.floor(progressPercent)}
-            aria-label="Progress timer"
+      {/* Settings Panel */}
+      <AnimatePresence>
+        {showSettings && !focusMode && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            className="w-full overflow-hidden"
           >
-            <circle cx="60" cy="60" r="54" stroke={baseStrokeColor} strokeWidth="8" fill="none" />
-            <circle
-              cx="60"
-              cy="60"
-              r="54"
-              stroke={progressStrokeColor}
-              strokeWidth="8"
-              fill="none"
-              strokeDasharray={2 * Math.PI * 54}
-              strokeDashoffset={((100 - progressPercent) / 100) * 2 * Math.PI * 54}
-              strokeLinecap="round"
-              style={{ transition: "stroke-dashoffset 0.8s ease-out" }}
+            <PomodoroSettings
+              workMinutes={workMinutes}
+              breakMinutes={breakMinutes}
+              onWorkMinutesChange={handleWorkMinutesChange}
+              onBreakMinutesChange={handleBreakMinutesChange}
             />
-          </svg>
-          <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <span className={`font-mono text-4xl font-bold ${focusMode ? "text-white" : "text-gray-900 dark:text-white"}`}>
-              {formatTime(secondsLeft)}
-            </span>
-            <span className={`text-xs ${focusMode ? "text-slate-200/70" : "text-gray-500 dark:text-gray-400"}`}>
-              {Math.floor(progressPercent)}% complete
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Timer Circle */}
+      <div className="relative" style={{ width: size, height: size }}>
+        {/* Glow effect */}
+        {isRunning && (
+          <motion.div
+            className="absolute inset-0 rounded-full"
+            style={{
+              background: `radial-gradient(circle, ${primaryColor}20 0%, transparent 70%)`,
+              filter: "blur(20px)",
+            }}
+            animate={{ scale: [1, 1.1, 1] }}
+            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+          />
+        )}
+
+        {/* SVG Circle */}
+        <svg
+          className="w-full h-full -rotate-90"
+          viewBox={`0 0 ${size} ${size}`}
+          role="progressbar"
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-valuenow={Math.floor(progressPercent)}
+          aria-label="Timer progress"
+        >
+          {/* Background circle */}
+          <circle
+            cx={size / 2}
+            cy={size / 2}
+            r={radius}
+            stroke={focusMode ? "rgba(255,255,255,0.1)" : "var(--border)"}
+            strokeWidth={strokeWidth}
+            fill="none"
+          />
+
+          {/* Progress circle */}
+          <motion.circle
+            cx={size / 2}
+            cy={size / 2}
+            r={radius}
+            stroke={primaryColor}
+            strokeWidth={strokeWidth}
+            fill="none"
+            strokeLinecap="round"
+            strokeDasharray={circumference}
+            initial={{ strokeDashoffset: circumference }}
+            animate={{ strokeDashoffset }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
+            style={{
+              filter: isRunning ? `drop-shadow(0 0 8px ${primaryColor})` : "none",
+            }}
+          />
+        </svg>
+
+        {/* Center content */}
+        <div className="absolute inset-0 flex flex-col items-center justify-center">
+          <motion.span
+            key={secondsLeft}
+            initial={{ scale: 1.05 }}
+            animate={{ scale: 1 }}
+            className={`font-mono font-bold tracking-tight ${
+              focusMode ? "text-5xl text-white" : "text-4xl"
+            }`}
+            style={{ color: focusMode ? "white" : "var(--text-primary)" }}
+          >
+            {formatTime(secondsLeft)}
+          </motion.span>
+
+          <div className="flex items-center gap-1.5 mt-2">
+            <span
+              className={`w-1.5 h-1.5 rounded-full ${isRunning ? "animate-pulse" : ""}`}
+              style={{ background: isRunning ? "#22c55e" : "var(--text-muted)" }}
+            />
+            <span
+              className="text-xs font-medium"
+              style={{ color: focusMode ? "rgba(255,255,255,0.6)" : "var(--text-muted)" }}
+            >
+              {isRunning ? "In progress" : "Ready"}
             </span>
           </div>
         </div>
       </div>
 
-      <div className={`flex w-full gap-4 ${focusMode ? "max-w-md" : "max-w-sm"}`}>
-        <button
+      {/* Progress text */}
+      <div
+        className="text-sm font-medium"
+        style={{ color: focusMode ? "rgba(255,255,255,0.7)" : "var(--text-secondary)" }}
+      >
+        {Math.floor(progressPercent)}% complete
+      </div>
+
+      {/* Control buttons */}
+      <div className={`flex gap-3 ${focusMode ? "w-full max-w-md" : "w-full"}`}>
+        <motion.button
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
           onClick={isRunning ? pause : start}
-          className={[
-            "inline-flex flex-1 items-center justify-center rounded-lg px-6 py-4 text-base font-semibold transition focus:outline-none focus:ring-2",
-            focusMode
-              ? "bg-white/90 text-slate-900 hover:bg-white focus:ring-blue-200/40"
-              : "bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-300",
-          ].join(" ")}
+          className="flex-1 flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl font-semibold transition-all duration-200"
+          style={{
+            background: focusMode ? "white" : "var(--primary)",
+            color: focusMode ? "#1e1e1e" : "white",
+          }}
           aria-label={isRunning ? "Pause timer" : "Start timer"}
         >
-          {isRunning ? "Pause" : "Start"}
-        </button>
+          {isRunning ? (
+            <>
+              <Pause className="w-5 h-5" />
+              Pause
+            </>
+          ) : (
+            <>
+              <Play className="w-5 h-5" />
+              Start
+            </>
+          )}
+        </motion.button>
 
-        <button
+        <motion.button
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
           onClick={reset}
-          className={[
-            "inline-flex flex-1 items-center justify-center rounded-lg border px-6 py-4 text-base font-semibold transition focus:outline-none focus:ring-2 focus:ring-gray-300",
-            focusMode
-              ? "border-white/20 bg-white/5 text-white hover:bg-white/10 focus:ring-blue-200/40"
-              : "border-gray-300 bg-white text-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700",
-          ].join(" ")}
+          className="flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl font-semibold transition-all duration-200"
+          style={{
+            background: focusMode ? "rgba(255,255,255,0.1)" : "var(--surface-secondary)",
+            color: focusMode ? "white" : "var(--text-secondary)",
+            border: focusMode ? "1px solid rgba(255,255,255,0.2)" : "1px solid var(--border)",
+          }}
           aria-label="Reset timer"
         >
+          <RotateCcw className="w-5 h-5" />
           Reset
-        </button>
+        </motion.button>
       </div>
 
+      {/* Status indicator */}
       {!focusMode && (
-        <div className="text-center text-sm text-gray-600 dark:text-gray-400">
-          <div className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-gray-100 px-4 py-2 dark:border-gray-700 dark:bg-gray-800">
-            <span className={`h-2 w-2 rounded-full ${isRunning ? "bg-green-500 animate-pulse" : "bg-gray-400"}`} />
-            <span>
-              {isRunning ? "Running" : "Stopped"} - {mode === "work" ? `${workMinutes} minute focus` : `${breakMinutes} minute break`}
-            </span>
-          </div>
+        <div
+          className="flex items-center gap-2 px-4 py-2 rounded-full text-sm"
+          style={{
+            background: "var(--surface-secondary)",
+            border: "1px solid var(--border)",
+          }}
+        >
+          <span
+            className={`w-2 h-2 rounded-full ${isRunning ? "animate-pulse" : ""}`}
+            style={{ background: isRunning ? "#22c55e" : "var(--text-muted)" }}
+          />
+          <span style={{ color: "var(--text-secondary)" }}>
+            {isRunning ? "Timer running" : "Timer paused"}
+          </span>
         </div>
       )}
     </div>
