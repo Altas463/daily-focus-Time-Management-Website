@@ -24,37 +24,31 @@ const features = [
     title: 'Smart Task Management',
     description: 'Organize tasks with intelligent prioritization and deadline tracking that adapts to your workflow.',
     icon: Target,
-    gradient: 'from-violet-500 to-purple-500',
   },
   {
     title: 'Pomodoro Focus Timer',
     description: 'Stay in the zone with customizable focus sessions and strategic breaks for peak productivity.',
     icon: Timer,
-    gradient: 'from-cyan-500 to-blue-500',
   },
   {
     title: 'Progress Analytics',
     description: 'Visualize your productivity patterns with detailed charts and actionable insights.',
     icon: BarChart3,
-    gradient: 'from-emerald-500 to-teal-500',
   },
   {
     title: 'Focus Streaks',
     description: 'Build momentum with daily streaks and achievements that keep you motivated.',
     icon: Flame,
-    gradient: 'from-orange-500 to-red-500',
   },
   {
     title: 'Smart Reminders',
     description: 'Never miss a deadline with intelligent notifications delivered at the right time.',
     icon: Clock,
-    gradient: 'from-pink-500 to-rose-500',
   },
   {
     title: 'Deep Work Mode',
     description: 'Ambient soundscapes and distraction blockers for uninterrupted focus sessions.',
     icon: Brain,
-    gradient: 'from-indigo-500 to-violet-500',
   },
 ];
 
@@ -118,13 +112,8 @@ export default function HomePage() {
 
       {/* Hero Section */}
       <section className="relative overflow-hidden pt-32 pb-20 lg:pt-40 lg:pb-32">
-        {/* Background effects */}
-        <div className="absolute inset-0 mesh-gradient" />
+        {/* Background pattern */}
         <div className="absolute inset-0 dot-pattern opacity-30" />
-
-        {/* Animated gradient orbs */}
-        <div className="absolute top-20 left-1/4 w-96 h-96 bg-primary/20 rounded-full blur-3xl animate-pulse-soft" />
-        <div className="absolute bottom-20 right-1/4 w-80 h-80 bg-violet-500/15 rounded-full blur-3xl animate-pulse-soft" style={{ animationDelay: '1s' }} />
 
         <div className="relative mx-auto max-w-7xl px-6">
           <div className="grid-hero">
@@ -140,7 +129,8 @@ export default function HomePage() {
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.2 }}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass"
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-full"
+                style={{ background: 'var(--surface-secondary)', border: '1px solid var(--border)' }}
               >
                 <Sparkles className="w-4 h-4" style={{ color: 'var(--primary)' }} />
                 <span className="text-sm font-medium" style={{ color: 'var(--text-secondary)' }}>
@@ -152,7 +142,7 @@ export default function HomePage() {
               <h1 className="display-text text-5xl lg:text-7xl">
                 <span style={{ color: 'var(--text-primary)' }}>Focus on</span>
                 <br />
-                <span className="gradient-text">what matters</span>
+                <span style={{ color: 'var(--primary)' }}>what matters</span>
                 <br />
                 <span style={{ color: 'var(--text-primary)' }}>most</span>
               </h1>
@@ -220,7 +210,7 @@ export default function HomePage() {
                   className="card-interactive p-6 text-center"
                   style={{ animationDelay: `${index * 0.1}s` }}
                 >
-                  <div className="display-text text-4xl font-bold gradient-text mb-2">
+                  <div className="display-text text-4xl font-bold mb-2" style={{ color: 'var(--primary)' }}>
                     {stat.value}
                   </div>
                   <div className="text-sm font-medium" style={{ color: 'var(--text-muted)' }}>
@@ -252,7 +242,7 @@ export default function HomePage() {
             <h2 className="display-text text-4xl lg:text-5xl mb-6">
               Everything you need to
               <br />
-              <span className="gradient-text">stay productive</span>
+              <span style={{ color: 'var(--primary)' }}>stay productive</span>
             </h2>
             <p className="text-xl max-w-2xl mx-auto" style={{ color: 'var(--text-secondary)' }}>
               Powerful features designed to help you focus, track progress, and achieve your goals.
@@ -266,7 +256,7 @@ export default function HomePage() {
             viewport={{ once: true }}
             className="grid-features"
           >
-            {features.map((feature, index) => {
+            {features.map((feature) => {
               const Icon = feature.icon;
               return (
                 <motion.div
@@ -274,8 +264,11 @@ export default function HomePage() {
                   variants={itemVariants}
                   className="card-interactive group p-6"
                 >
-                  <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${feature.gradient} flex items-center justify-center mb-5 group-hover:scale-110 transition-transform`}>
-                    <Icon className="w-6 h-6 text-white" />
+                  <div
+                    className="w-12 h-12 rounded-xl flex items-center justify-center mb-5 group-hover:scale-110 transition-transform"
+                    style={{ background: 'var(--primary)', color: 'white' }}
+                  >
+                    <Icon className="w-6 h-6" />
                   </div>
 
                   <h3 className="text-xl font-semibold mb-3" style={{ color: 'var(--text-primary)' }}>
@@ -308,7 +301,7 @@ export default function HomePage() {
             <h2 className="display-text text-4xl lg:text-5xl mb-6">
               Get started in
               <br />
-              <span className="gradient-text">three simple steps</span>
+              <span style={{ color: 'var(--primary)' }}>three simple steps</span>
             </h2>
           </motion.div>
 
@@ -346,7 +339,7 @@ export default function HomePage() {
 
       {/* Testimonials Section */}
       <section className="py-24 relative" style={{ background: 'var(--surface)' }}>
-        <div className="absolute inset-0 mesh-gradient opacity-50" />
+        <div className="absolute inset-0 dot-pattern opacity-20" />
 
         <div className="relative mx-auto max-w-7xl px-6">
           <motion.div
@@ -363,7 +356,7 @@ export default function HomePage() {
             <h2 className="display-text text-4xl lg:text-5xl mb-6">
               Loved by
               <br />
-              <span className="gradient-text">productive people</span>
+              <span style={{ color: 'var(--primary)' }}>productive people</span>
             </h2>
           </motion.div>
 
@@ -374,7 +367,7 @@ export default function HomePage() {
             viewport={{ once: true }}
             className="grid-testimonials"
           >
-            {testimonials.map((testimonial, index) => (
+            {testimonials.map((testimonial) => (
               <motion.div
                 key={testimonial.name}
                 variants={itemVariants}
@@ -411,7 +404,7 @@ export default function HomePage() {
 
       {/* CTA Section */}
       <section className="py-24 relative overflow-hidden">
-        <div className="absolute inset-0" style={{ background: 'var(--gradient-primary)', opacity: 0.9 }} />
+        <div className="absolute inset-0" style={{ background: 'var(--primary)' }} />
         <div className="absolute inset-0 dot-pattern opacity-10" />
 
         <div className="relative mx-auto max-w-4xl px-6 text-center">

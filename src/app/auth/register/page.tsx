@@ -125,7 +125,7 @@ export default function RegisterPage() {
       {/* Left Panel - Branding */}
       <div
         className="hidden lg:flex lg:w-1/2 flex-col justify-between p-12 relative overflow-hidden"
-        style={{ background: "linear-gradient(135deg, #10b981 0%, #059669 50%, #047857 100%)" }}
+        style={{ background: "#10b981" }}
       >
         {/* Background pattern */}
         <div
@@ -136,13 +136,9 @@ export default function RegisterPage() {
           }}
         />
 
-        {/* Gradient orbs */}
-        <div className="absolute top-20 -left-20 w-72 h-72 bg-white/20 rounded-full blur-3xl" />
-        <div className="absolute bottom-20 -right-20 w-96 h-96 bg-white/10 rounded-full blur-3xl" />
-
         <div className="relative z-10">
           <Link href="/" className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-xl bg-white/20 backdrop-blur flex items-center justify-center">
+            <div className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center">
               <Sparkles className="w-6 h-6 text-white" />
             </div>
             <span className="text-2xl font-bold text-white">Daily Focus</span>
@@ -204,7 +200,7 @@ export default function RegisterPage() {
           <div className="lg:hidden flex items-center justify-center gap-3 mb-8">
             <div
               className="w-10 h-10 rounded-xl flex items-center justify-center"
-              style={{ background: "linear-gradient(135deg, #10b981 0%, #059669 100%)" }}
+              style={{ background: "#10b981" }}
             >
               <Sparkles className="w-5 h-5 text-white" />
             </div>
@@ -506,7 +502,7 @@ export default function RegisterPage() {
               disabled={isLoading}
               className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl font-semibold transition-all duration-200 disabled:opacity-60"
               style={{
-                background: "linear-gradient(135deg, #10b981 0%, #059669 100%)",
+                background: "#10b981",
                 color: "white",
               }}
             >

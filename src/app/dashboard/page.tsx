@@ -19,7 +19,7 @@ import PomodoroTimer from "@/components/pomodoro/PomodoroTimer";
 import { getDaypartGreeting, formatRelativeDate, formatShortDate } from "@/utils/date";
 import { getTaskUrgency, summarizeTasks, TaskUrgency } from "@/utils/tasks";
 import { getFocusTimeProgress, getPomodoroProgress } from "@/utils/pomodoro";
-import { clamp, formatDuration, pluralize } from "@/utils/format";
+import { clamp, formatDuration } from "@/utils/format";
 import { useDailyStreak } from "@/hooks/useDailyStreak";
 
 type Task = {
