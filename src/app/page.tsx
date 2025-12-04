@@ -2,7 +2,6 @@
 
 import Navbar from '@/components/navbar/Navbar';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
 import {
   ArrowRight,
   Target,
@@ -14,7 +13,7 @@ import {
   Brain,
   Flame,
   Quote,
-  ArrowUpRight
+  ArrowUpRight,
 } from 'lucide-react';
 
 const features = [
@@ -81,398 +80,224 @@ const stats = [
   { value: '4.9', label: 'Rating' },
 ];
 
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.08,
-      delayChildren: 0.1,
-    },
-  },
-};
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 24 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.6,
-      ease: [0.25, 0.1, 0.25, 1],
-    },
-  },
-};
-
 export default function HomePage() {
   return (
-    <div className="min-h-screen grain" style={{ background: 'var(--background)' }}>
+    <div className="min-h-screen bg-background text-foreground">
       <Navbar />
 
-      {/* Hero Section - Editorial Style */}
-      <section className="relative pt-32 pb-24 lg:pt-40 lg:pb-32">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <div className="grid-hero">
+      {/* Hero Section */}
+      <section className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden">
+        <div className="container mx-auto px-6">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
             {/* Left Column - Main Content */}
-            <motion.div
-              initial={{ opacity: 0, y: 32 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, ease: [0.25, 0.1, 0.25, 1] }}
-              className="space-y-8"
-            >
-              {/* Accent line */}
-              <div className="accent-line" />
+            <div className="space-y-8">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 text-blue-700 text-sm font-medium border border-blue-100">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+                </span>
+                v2.0 is now live
+              </div>
 
-              {/* Headline */}
-              <h1 className="display-text text-5xl lg:text-6xl xl:text-7xl">
-                <span style={{ color: 'var(--text-primary)' }}>Focus on</span>
-                <br />
-                <span style={{ color: 'var(--primary)' }}>what matters</span>
+              <h1 className="text-5xl lg:text-7xl font-bold tracking-tight text-slate-900 leading-[1.1]">
+                Focus on <br />
+                <span className="text-blue-600">what matters</span>
               </h1>
 
-              {/* Subheadline */}
-              <p
-                className="text-lg lg:text-xl max-w-md leading-relaxed"
-                style={{ color: 'var(--text-secondary)' }}
-              >
+              <p className="text-xl text-slate-600 max-w-lg leading-relaxed">
                 The productivity platform that helps you achieve more with less stress.
                 Simple, beautiful, effective.
               </p>
 
-              {/* CTA Buttons */}
-              <div className="flex flex-col sm:flex-row gap-4 pt-4">
-                <Link href="/auth/register" className="btn-primary inline-flex items-center justify-center gap-2">
+              <div className="flex flex-col sm:flex-row gap-4 pt-2">
+                <Link href="/auth/register" className="btn-primary inline-flex items-center justify-center gap-2 text-lg px-8 py-4 h-auto">
                   Start for Free
-                  <ArrowRight className="w-4 h-4" />
+                  <ArrowRight className="w-5 h-5" />
                 </Link>
 
                 <Link
                   href="/dashboard"
-                  className="btn-secondary inline-flex items-center justify-center gap-2"
+                  className="btn-secondary inline-flex items-center justify-center gap-2 text-lg px-8 py-4 h-auto"
                 >
                   Explore Demo
                 </Link>
               </div>
 
-              {/* Social proof - Minimal */}
-              <div className="flex items-center gap-4 pt-6">
-                <div className="flex -space-x-2">
-                  {['JD', 'AK', 'MR', 'SC'].map((initials, i) => (
-                    <div
-                      key={i}
-                      className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold text-white border-2"
-                      style={{
-                        background: `hsl(${20 + i * 15}, 70%, ${55 + i * 5}%)`,
-                        borderColor: 'var(--background)',
-                        zIndex: 4 - i
-                      }}
-                    >
-                      {initials}
+              <div className="flex items-center gap-6 pt-8 border-t border-slate-100">
+                <div className="flex -space-x-3">
+                  {[1, 2, 3, 4].map((i) => (
+                    <div key={i} className="w-10 h-10 rounded-full border-2 border-white bg-slate-200 flex items-center justify-center text-xs font-bold text-slate-600">
+                      U{i}
                     </div>
                   ))}
                 </div>
-                <div className="flex items-center gap-1.5">
-                  <div className="flex">
+                <div className="space-y-1">
+                  <div className="flex gap-1">
                     {[...Array(5)].map((_, i) => (
-                      <Star key={i} className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                      <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
                     ))}
                   </div>
-                  <span className="text-sm" style={{ color: 'var(--text-muted)' }}>
-                    Loved by 50,000+ users
-                  </span>
+                  <p className="text-sm text-slate-500 font-medium">Loved by 50,000+ users</p>
                 </div>
               </div>
-            </motion.div>
+            </div>
 
-            {/* Right Column - Stats Grid */}
-            <motion.div
-              initial={{ opacity: 0, y: 32 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
-              className="grid grid-cols-2 gap-4"
-            >
-              {stats.map((stat, index) => (
-                <motion.div
-                  key={stat.label}
-                  initial={{ opacity: 0, scale: 0.96 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.5, delay: 0.3 + index * 0.1 }}
-                  className="card p-6 text-center"
-                >
-                  <div
-                    className="display-text text-3xl lg:text-4xl mb-1"
-                    style={{ color: 'var(--primary)' }}
-                  >
-                    {stat.value}
+            {/* Right Column - Visual/Stats */}
+            <div className="relative">
+              <div className="absolute -inset-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-3xl -z-10 transform rotate-2"></div>
+              <div className="bg-white border border-slate-200 rounded-2xl shadow-xl p-8 grid grid-cols-2 gap-6">
+                {stats.map((stat) => (
+                  <div key={stat.label} className="p-6 bg-slate-50 rounded-xl border border-slate-100 text-center hover:border-blue-100 transition-colors">
+                    <div className="text-4xl font-bold text-blue-600 mb-2">{stat.value}</div>
+                    <div className="text-sm font-medium text-slate-600">{stat.label}</div>
                   </div>
-                  <div className="text-sm font-medium" style={{ color: 'var(--text-muted)' }}>
-                    {stat.label}
-                  </div>
-                </motion.div>
-              ))}
-            </motion.div>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Features Section - Clean Grid */}
-      <section className="py-24 lg:py-32" style={{ background: 'var(--surface)' }}>
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 32 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-            className="max-w-2xl mb-16"
-          >
-            <div className="accent-line mb-6" />
-            <h2 className="display-text text-3xl lg:text-4xl mb-4">
-              Everything you need,
-              <br />
-              <span style={{ color: 'var(--primary)' }}>nothing you don&apos;t</span>
+      {/* Features Section */}
+      <section className="py-24 bg-slate-50 border-y border-slate-200">
+        <div className="container mx-auto px-6">
+          <div className="max-w-3xl mx-auto text-center mb-20">
+            <h2 className="text-3xl lg:text-4xl font-bold text-slate-900 mb-6">
+              Everything you need, nothing you don&apos;t
             </h2>
-            <p className="text-lg" style={{ color: 'var(--text-secondary)' }}>
+            <p className="text-xl text-slate-600">
               Powerful features designed with intention. No bloat, no distractions.
             </p>
-          </motion.div>
+          </div>
 
-          <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            className="grid-features"
-          >
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {features.map((feature) => {
               const Icon = feature.icon;
               return (
-                <motion.div
+                <div
                   key={feature.title}
-                  variants={itemVariants}
-                  className="group p-6 rounded-2xl transition-all duration-300 hover:bg-white/50"
-                  style={{ border: '1px solid transparent' }}
-                  whileHover={{ borderColor: 'var(--border)' }}
+                  className="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1"
                 >
-                  <div
-                    className="icon-box mb-5 transition-transform duration-300 group-hover:scale-105"
-                  >
-                    <Icon className="w-5 h-5" />
+                  <div className="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center mb-6 text-blue-600">
+                    <Icon className="w-6 h-6" />
                   </div>
-
-                  <h3
-                    className="text-lg font-semibold mb-2"
-                    style={{ color: 'var(--text-primary)' }}
-                  >
-                    {feature.title}
-                  </h3>
-                  <p className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
-                    {feature.description}
-                  </p>
-                </motion.div>
+                  <h3 className="text-xl font-bold text-slate-900 mb-3">{feature.title}</h3>
+                  <p className="text-slate-600 leading-relaxed">{feature.description}</p>
+                </div>
               );
             })}
-          </motion.div>
+          </div>
         </div>
       </section>
 
-      {/* How it Works - Editorial Numbers */}
-      <section className="py-24 lg:py-32">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 32 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-            className="max-w-2xl mb-20"
-          >
-            <div className="accent-line mb-6" />
-            <h2 className="display-text text-3xl lg:text-4xl mb-4">
-              Simple by design
-            </h2>
-            <p className="text-lg" style={{ color: 'var(--text-secondary)' }}>
-              Get started in three steps. No learning curve.
-            </p>
-          </motion.div>
+      {/* How it Works */}
+      <section className="py-24">
+        <div className="container mx-auto px-6">
+          <div className="max-w-3xl mb-16">
+            <h2 className="text-3xl lg:text-4xl font-bold text-slate-900 mb-6">Simple by design</h2>
+            <p className="text-xl text-slate-600">Get started in three steps. No learning curve.</p>
+          </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 lg:gap-16">
+          <div className="grid md:grid-cols-3 gap-12">
             {[
               { step: '01', title: 'Create Tasks', desc: 'Add your tasks with priorities and deadlines. Keep it simple.' },
               { step: '02', title: 'Start Focusing', desc: 'Use the Pomodoro timer to work in focused intervals.' },
               { step: '03', title: 'Track Progress', desc: 'Review your analytics and celebrate your wins.' },
-            ].map((item, index) => (
-              <motion.div
-                key={item.step}
-                initial={{ opacity: 0, y: 32 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.15 }}
-                viewport={{ once: true }}
-                className="relative"
-              >
-                <div
-                  className="editorial-heading text-7xl lg:text-8xl mb-4"
-                  style={{ color: 'var(--primary)', opacity: 0.15 }}
-                >
+            ].map((item) => (
+              <div key={item.step} className="relative pl-8 border-l-2 border-slate-100 hover:border-blue-500 transition-colors duration-300">
+                <div className="text-6xl font-bold text-slate-100 absolute -top-4 left-6 -z-10 select-none">
                   {item.step}
                 </div>
-                <h3
-                  className="text-xl font-semibold mb-3"
-                  style={{ color: 'var(--text-primary)' }}
-                >
-                  {item.title}
-                </h3>
-                <p style={{ color: 'var(--text-secondary)' }}>
-                  {item.desc}
-                </p>
-              </motion.div>
+                <h3 className="text-2xl font-bold text-slate-900 mb-3 mt-2">{item.title}</h3>
+                <p className="text-slate-600">{item.desc}</p>
+              </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Testimonials - Editorial Style */}
-      <section className="py-24 lg:py-32" style={{ background: 'var(--surface-secondary)' }}>
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 32 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-            className="max-w-2xl mb-16"
-          >
-            <div className="accent-line mb-6" />
-            <h2 className="display-text text-3xl lg:text-4xl mb-4">
-              Loved by
-              <br />
-              <span style={{ color: 'var(--primary)' }}>thoughtful people</span>
-            </h2>
-          </motion.div>
+      {/* Testimonials */}
+      <section className="py-24 bg-slate-900 text-white">
+        <div className="container mx-auto px-6">
+          <div className="max-w-3xl mx-auto text-center mb-16">
+            <h2 className="text-3xl lg:text-4xl font-bold mb-6">Loved by thoughtful people</h2>
+          </div>
 
-          <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            className="grid-testimonials"
-          >
+          <div className="grid md:grid-cols-3 gap-8">
             {testimonials.map((testimonial) => (
-              <motion.div
-                key={testimonial.name}
-                variants={itemVariants}
-                className="card p-8"
-              >
-                <Quote
-                  className="w-8 h-8 mb-6"
-                  style={{ color: 'var(--primary)', opacity: 0.3 }}
-                />
-
-                <p
-                  className="text-lg mb-8 leading-relaxed"
-                  style={{ color: 'var(--text-secondary)' }}
-                >
-                  {testimonial.content}
+              <div key={testimonial.name} className="bg-slate-800 p-8 rounded-2xl border border-slate-700">
+                <Quote className="w-8 h-8 text-blue-400 mb-6 opacity-50" />
+                <p className="text-lg text-slate-300 mb-8 leading-relaxed">
+                  &quot;{testimonial.content}&quot;
                 </p>
-
                 <div className="flex items-center gap-4">
-                  <div
-                    className="w-11 h-11 rounded-xl flex items-center justify-center text-sm font-semibold text-white"
-                    style={{ background: 'var(--primary)' }}
-                  >
+                  <div className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center font-bold text-sm">
                     {testimonial.avatar}
                   </div>
                   <div>
-                    <div className="font-semibold" style={{ color: 'var(--text-primary)' }}>
-                      {testimonial.name}
-                    </div>
-                    <div className="text-sm" style={{ color: 'var(--text-muted)' }}>
-                      {testimonial.role}, {testimonial.company}
-                    </div>
+                    <div className="font-bold">{testimonial.name}</div>
+                    <div className="text-sm text-slate-400">{testimonial.role}, {testimonial.company}</div>
                   </div>
                 </div>
-              </motion.div>
+              </div>
             ))}
-          </motion.div>
+          </div>
         </div>
       </section>
 
-      {/* CTA Section - Warm, Inviting */}
-      <section className="py-24 lg:py-32">
-        <div className="mx-auto max-w-4xl px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 32 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-            className="card p-12 lg:p-16 text-center"
-            style={{ background: 'var(--primary)', border: 'none' }}
-          >
-            <h2 className="display-text text-3xl lg:text-4xl text-white mb-4">
-              Ready to focus?
-            </h2>
-            <p className="text-lg text-white/80 max-w-md mx-auto mb-8">
-              Join thousands who have discovered the power of intentional work. Start free today.
-            </p>
-
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+      {/* CTA */}
+      <section className="py-24">
+        <div className="container mx-auto px-6">
+          <div className="bg-blue-600 rounded-3xl p-12 lg:p-20 text-center text-white relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-full h-full opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
+            <div className="relative z-10 max-w-2xl mx-auto">
+              <h2 className="text-3xl lg:text-5xl font-bold mb-6">Ready to focus?</h2>
+              <p className="text-xl text-blue-100 mb-10">
+                Join thousands who have discovered the power of intentional work. Start free today.
+              </p>
               <Link
                 href="/auth/register"
-                className="inline-flex items-center justify-center gap-2 px-8 py-4 text-base font-semibold rounded-xl transition-all bg-white hover:bg-gray-50"
-                style={{ color: 'var(--primary)' }}
+                className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white text-blue-600 font-bold rounded-xl hover:bg-blue-50 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1"
               >
                 Get Started Free
-                <ArrowUpRight className="w-4 h-4" />
+                <ArrowUpRight className="w-5 h-5" />
               </Link>
             </div>
-          </motion.div>
+          </div>
         </div>
       </section>
 
-      {/* Footer - Minimal */}
-      <footer
-        className="py-16 border-t"
-        style={{ borderColor: 'var(--border)', background: 'var(--background)' }}
-      >
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
-            {/* Brand */}
-            <div className="md:col-span-1">
-              <h3
-                className="text-xl font-bold mb-4"
-                style={{ color: 'var(--text-primary)' }}
-              >
-                Daily Focus
-              </h3>
-              <p className="text-sm mb-6" style={{ color: 'var(--text-secondary)' }}>
+      {/* Footer */}
+      <footer className="py-16 border-t border-slate-200 bg-slate-50">
+        <div className="container mx-auto px-6">
+          <div className="grid md:grid-cols-4 gap-12 mb-12">
+            <div className="col-span-1">
+              <div className="flex items-center gap-2 mb-4">
+                <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                  <Target className="w-4 h-4 text-white" />
+                </div>
+                <span className="text-xl font-bold text-slate-900">Daily Focus</span>
+              </div>
+              <p className="text-slate-500 text-sm mb-6">
                 Simple productivity for thoughtful people.
               </p>
               <div className="flex items-center gap-2">
-                <div className="status-dot online" />
-                <span className="text-sm" style={{ color: 'var(--text-muted)' }}>
-                  All systems operational
-                </span>
+                <div className="w-2 h-2 rounded-full bg-green-500"></div>
+                <span className="text-sm text-slate-500">All systems operational</span>
               </div>
             </div>
 
-            {/* Links */}
             {[
               { title: 'Product', links: ['Features', 'Pricing', 'Changelog'] },
               { title: 'Resources', links: ['Blog', 'Help Center', 'API'] },
               { title: 'Company', links: ['About', 'Privacy', 'Terms'] },
             ].map((section) => (
               <div key={section.title}>
-                <h4
-                  className="font-semibold mb-4 text-sm"
-                  style={{ color: 'var(--text-primary)' }}
-                >
-                  {section.title}
-                </h4>
+                <h4 className="font-bold text-slate-900 mb-4">{section.title}</h4>
                 <ul className="space-y-3">
                   {section.links.map((link) => (
                     <li key={link}>
-                      <Link
-                        href={`/${link.toLowerCase().replace(' ', '-')}`}
-                        className="text-sm transition-colors hover:opacity-70"
-                        style={{ color: 'var(--text-muted)' }}
-                      >
+                      <Link href="#" className="text-slate-500 hover:text-blue-600 transition-colors text-sm">
                         {link}
                       </Link>
                     </li>
@@ -482,14 +307,12 @@ export default function HomePage() {
             ))}
           </div>
 
-          <div className="divider" />
-
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-sm" style={{ color: 'var(--text-muted)' }}>
+          <div className="border-t border-slate-200 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+            <p className="text-sm text-slate-500">
               © {new Date().getFullYear()} Daily Focus. All rights reserved.
             </p>
-            <div className="flex items-center gap-1 text-sm" style={{ color: 'var(--text-muted)' }}>
-              Made with <CheckCircle2 className="w-3.5 h-3.5 mx-1" style={{ color: 'var(--accent)' }} /> for focused work
+            <div className="flex items-center gap-1 text-sm text-slate-500">
+              Made with <CheckCircle2 className="w-4 h-4 text-blue-600 mx-1" /> for focused work
             </div>
           </div>
         </div>

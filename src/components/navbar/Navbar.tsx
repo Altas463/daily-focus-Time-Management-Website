@@ -49,13 +49,9 @@ export default function Navbar() {
       <nav
         className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${
           scrolled
-            ? 'shadow-sm'
-            : ''
+            ? 'bg-white/90 backdrop-blur-md border-b border-slate-200 shadow-sm'
+            : 'bg-transparent border-b border-transparent'
         }`}
-        style={{
-          background: scrolled ? 'var(--surface)' : 'transparent',
-          borderBottom: scrolled ? '1px solid var(--border)' : 'none',
-        }}
       >
         <div className="mx-auto max-w-7xl px-6">
           <div className="flex h-16 items-center justify-between">
@@ -64,16 +60,10 @@ export default function Navbar() {
               href="/"
               className="flex items-center gap-2.5 group"
             >
-              <div
-                className="w-9 h-9 rounded-xl flex items-center justify-center transition-transform group-hover:scale-105"
-                style={{ background: 'var(--primary)' }}
-              >
-                <Target className="w-4.5 h-4.5 text-white" />
+              <div className="w-9 h-9 rounded-lg bg-blue-600 flex items-center justify-center transition-transform group-hover:scale-105 shadow-sm">
+                <Target className="w-5 h-5 text-white" />
               </div>
-              <span
-                className="text-lg font-bold tracking-tight transition-colors"
-                style={{ color: 'var(--text-primary)' }}
-              >
+              <span className={`text-lg font-bold tracking-tight transition-colors ${scrolled ? 'text-slate-900' : 'text-slate-900'}`}>
                 Daily Focus
               </span>
             </Link>
@@ -84,23 +74,13 @@ export default function Navbar() {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`relative px-4 py-2 text-sm font-medium rounded-xl transition-all ${
+                  className={`relative px-4 py-2 text-sm font-medium rounded-lg transition-all ${
                     link.primary
-                      ? 'btn-primary'
-                      : ''
+                      ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-sm hover:shadow'
+                      : isActive(link.href)
+                        ? 'bg-slate-100 text-slate-900'
+                        : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
                   }`}
-                  style={
-                    link.primary
-                      ? {}
-                      : {
-                          color: isActive(link.href)
-                            ? 'var(--text-primary)'
-                            : 'var(--text-secondary)',
-                          background: isActive(link.href)
-                            ? 'var(--surface-secondary)'
-                            : 'transparent',
-                        }
-                  }
                 >
                   {link.primary ? (
                     <span className="flex items-center gap-2">
@@ -113,8 +93,7 @@ export default function Navbar() {
                       {isActive(link.href) && (
                         <motion.div
                           layoutId="navbar-indicator"
-                          className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full"
-                          style={{ background: 'var(--primary)' }}
+                          className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-blue-600"
                           transition={{ type: 'spring', stiffness: 380, damping: 30 }}
                         />
                       )}
@@ -127,11 +106,9 @@ export default function Navbar() {
             {/* Mobile Menu Button */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="flex items-center justify-center w-10 h-10 rounded-xl transition-colors md:hidden"
-              style={{
-                background: mobileMenuOpen ? 'var(--surface-secondary)' : 'transparent',
-                color: 'var(--text-primary)',
-              }}
+              className={`flex items-center justify-center w-10 h-10 rounded-lg transition-colors md:hidden ${
+                mobileMenuOpen ? 'bg-slate-100 text-slate-900' : 'text-slate-600 hover:bg-slate-50'
+              }`}
               aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
             >
               {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -141,11 +118,8 @@ export default function Navbar() {
 
         {/* Scroll Progress */}
         <div
-          className="absolute bottom-0 left-0 h-0.5 transition-all duration-150"
-          style={{
-            width: `${progress}%`,
-            background: 'var(--primary)',
-          }}
+          className="absolute bottom-0 left-0 h-0.5 bg-blue-600 transition-all duration-150"
+          style={{ width: `${progress}%` }}
           aria-hidden
         />
       </nav>
@@ -160,8 +134,7 @@ export default function Navbar() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
-              className="fixed inset-0 z-40 md:hidden"
-              style={{ background: 'rgba(45, 42, 38, 0.4)' }}
+              className="fixed inset-0 z-40 md:hidden bg-slate-900/50 backdrop-blur-sm"
               onClick={() => setMobileMenuOpen(false)}
             />
 
@@ -171,7 +144,7 @@ export default function Navbar() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
-              className="fixed top-16 inset-x-4 z-50 rounded-2xl p-6 md:hidden card"
+              className="fixed top-20 inset-x-4 z-50 rounded-xl bg-white p-6 md:hidden shadow-xl border border-slate-200"
             >
               <div className="space-y-2">
                 {navLinks.map((link, index) => (
@@ -184,23 +157,13 @@ export default function Navbar() {
                     <Link
                       href={link.href}
                       onClick={() => setMobileMenuOpen(false)}
-                      className={`flex items-center justify-between w-full px-4 py-3 rounded-xl text-base font-medium transition-all ${
+                      className={`flex items-center justify-between w-full px-4 py-3 rounded-lg text-base font-medium transition-all ${
                         link.primary
-                          ? 'btn-primary justify-center'
-                          : ''
+                          ? 'bg-blue-600 text-white justify-center shadow-md'
+                          : isActive(link.href)
+                            ? 'bg-slate-50 text-slate-900'
+                            : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
                       }`}
-                      style={
-                        link.primary
-                          ? {}
-                          : {
-                              color: isActive(link.href)
-                                ? 'var(--text-primary)'
-                                : 'var(--text-secondary)',
-                              background: isActive(link.href)
-                                ? 'var(--surface-secondary)'
-                                : 'transparent',
-                            }
-                      }
                     >
                       {link.primary ? (
                         <span className="flex items-center gap-2">
@@ -211,10 +174,7 @@ export default function Navbar() {
                         <>
                           <span>{link.label}</span>
                           {isActive(link.href) && (
-                            <div
-                              className="w-2 h-2 rounded-full"
-                              style={{ background: 'var(--primary)' }}
-                            />
+                            <div className="w-2 h-2 rounded-full bg-blue-600" />
                           )}
                         </>
                       )}
@@ -224,8 +184,8 @@ export default function Navbar() {
               </div>
 
               {/* Extra info in mobile menu */}
-              <div className="mt-6 pt-6" style={{ borderTop: '1px solid var(--border)' }}>
-                <p className="text-sm text-center" style={{ color: 'var(--text-muted)' }}>
+              <div className="mt-6 pt-6 border-t border-slate-100">
+                <p className="text-sm text-center text-slate-400">
                   Focus on what matters most
                 </p>
               </div>

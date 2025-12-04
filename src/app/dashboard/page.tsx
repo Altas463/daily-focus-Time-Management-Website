@@ -39,11 +39,11 @@ type TaskStats = {
 };
 
 const toneBadgeMap: Record<TaskUrgency["tone"], { bg: string; text: string; dot: string }> = {
-  danger: { bg: "rgba(224, 122, 95, 0.15)", text: "#c45d43", dot: "#e07a5f" },
-  warning: { bg: "rgba(244, 163, 147, 0.15)", text: "#c45d43", dot: "#f4a393" },
-  notice: { bg: "rgba(129, 178, 154, 0.15)", text: "#5a8a6f", dot: "#81b29a" },
-  success: { bg: "rgba(129, 178, 154, 0.2)", text: "#5a8a6f", dot: "#81b29a" },
-  default: { bg: "var(--surface-secondary)", text: "var(--text-secondary)", dot: "var(--text-muted)" },
+  danger: { bg: "bg-red-50", text: "text-red-700", dot: "bg-red-500" },
+  warning: { bg: "bg-orange-50", text: "text-orange-700", dot: "bg-orange-500" },
+  notice: { bg: "bg-blue-50", text: "text-blue-700", dot: "bg-blue-500" },
+  success: { bg: "bg-green-50", text: "text-green-700", dot: "bg-green-500" },
+  default: { bg: "bg-slate-100", text: "text-slate-600", dot: "bg-slate-400" },
 };
 
 const containerVariants = {
@@ -140,31 +140,19 @@ export default function DashboardPage() {
 
   if (loading || status === "loading") {
     return (
-      <div
-        className="grid min-h-screen place-items-center grain"
-        style={{ background: "var(--background)" }}
-      >
-        <div
-          className="card p-10 text-center"
-        >
-          <div className="icon-box mx-auto mb-5">
-            <Target className="w-5 h-5" />
+      <div className="grid min-h-screen place-items-center bg-slate-50">
+        <div className="bg-white p-10 rounded-2xl shadow-sm border border-slate-200 text-center">
+          <div className="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center mx-auto mb-5 text-blue-600">
+            <Target className="w-6 h-6" />
           </div>
-          <div
-            className="h-1 w-40 overflow-hidden rounded-full mx-auto"
-            style={{ background: "var(--border)" }}
-          >
+          <div className="h-1 w-40 overflow-hidden rounded-full mx-auto bg-slate-100">
             <motion.div
-              className="h-full rounded-full"
-              style={{ background: "var(--primary)" }}
+              className="h-full rounded-full bg-blue-600"
               animate={{ x: ["-100%", "200%"] }}
               transition={{ duration: 1.2, repeat: Infinity, ease: "easeInOut" }}
             />
           </div>
-          <p
-            className="mt-5 text-sm"
-            style={{ color: "var(--text-secondary)" }}
-          >
+          <p className="mt-5 text-sm text-slate-500">
             Preparing your workspace...
           </p>
         </div>
@@ -179,7 +167,7 @@ export default function DashboardPage() {
       unit: streak === 1 ? "day" : "days",
       icon: Flame,
       progress: clamp((streak / 14) * 100, 0, 100),
-      color: "var(--primary)",
+      color: "bg-blue-600",
       helper: streak >= 3 ? `Best: ${bestStreak} days` : `Last: ${formatShortDate(lastVisit)}`,
     },
     {
@@ -188,7 +176,7 @@ export default function DashboardPage() {
       unit: completedTodayCount === 1 ? "task" : "tasks",
       icon: CheckCircle2,
       progress: clamp((completedTodayCount / Math.max(taskSummary.total, 1)) * 100, 0, 100),
-      color: "var(--accent)",
+      color: "bg-green-500",
       helper: `${taskSummary.total} total tracked`,
     },
     {
@@ -197,7 +185,7 @@ export default function DashboardPage() {
       unit: taskSummary.dueSoon === 1 ? "task" : "tasks",
       icon: Clock,
       progress: clamp((taskSummary.dueSoon / Math.max(taskSummary.incomplete, 1)) * 100, 0, 100),
-      color: "var(--primary-light)",
+      color: "bg-orange-400",
       helper: `${taskSummary.overdue} overdue`,
     },
     {
@@ -206,7 +194,7 @@ export default function DashboardPage() {
       unit: pomodoroCount === 1 ? "session" : "sessions",
       icon: Timer,
       progress: pomodoroProgress,
-      color: "var(--secondary)",
+      color: "bg-indigo-500",
       helper: pomodoroRemaining > 0 ? `${pomodoroRemaining} to goal` : "Goal reached!",
     },
     {
@@ -215,16 +203,13 @@ export default function DashboardPage() {
       unit: "",
       icon: Zap,
       progress: focusProgress,
-      color: "var(--secondary)",
+      color: "bg-indigo-500",
       helper: focusRemaining > 0 ? `${Math.ceil(focusRemaining)}m to goal` : "Goal achieved!",
     },
   ];
 
   return (
-    <div
-      className="min-h-screen grain"
-      style={{ background: "var(--background)" }}
-    >
+    <div className="min-h-screen bg-slate-50">
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         <motion.div
           variants={containerVariants}
@@ -234,17 +219,10 @@ export default function DashboardPage() {
         >
           {/* Header */}
           <motion.div variants={itemVariants} className="space-y-2">
-            <div className="accent-line" />
-            <h1
-              className="display-text text-3xl lg:text-4xl"
-              style={{ color: "var(--text-primary)" }}
-            >
-              {greetingText}, <span style={{ color: "var(--primary)" }}>{session?.user?.name?.split(" ")[0] || "friend"}</span>
+            <h1 className="text-3xl lg:text-4xl font-bold tracking-tight text-slate-900">
+              {greetingText}, <span className="text-blue-600">{session?.user?.name?.split(" ")[0] || "friend"}</span>
             </h1>
-            <p
-              className="text-base"
-              style={{ color: "var(--text-secondary)" }}
-            >
+            <p className="text-base text-slate-500">
               Focus on what matters. Track your progress every day.
             </p>
           </motion.div>
@@ -260,60 +238,42 @@ export default function DashboardPage() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.05 }}
-                    className="group card p-5 transition-all duration-300 hover:-translate-y-1"
+                    className="group bg-white p-5 rounded-xl border border-slate-200 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md"
                   >
                     {/* Icon */}
-                    <div
-                      className="icon-box mb-4 transition-transform group-hover:scale-105"
-                    >
+                    <div className="w-10 h-10 rounded-lg bg-slate-50 flex items-center justify-center mb-4 text-slate-600 group-hover:bg-blue-50 group-hover:text-blue-600 transition-colors">
                       <Icon className="w-5 h-5" />
                     </div>
 
                     {/* Value */}
                     <div className="flex items-baseline gap-1.5">
-                      <span
-                        className="display-text text-2xl"
-                        style={{ color: "var(--text-primary)" }}
-                      >
+                      <span className="text-2xl font-bold text-slate-900">
                         {card.value}
                       </span>
                       {card.unit && (
-                        <span
-                          className="text-sm font-medium"
-                          style={{ color: "var(--text-muted)" }}
-                        >
+                        <span className="text-sm font-medium text-slate-500">
                           {card.unit}
                         </span>
                       )}
                     </div>
 
                     {/* Label */}
-                    <p
-                      className="text-sm font-medium mt-1"
-                      style={{ color: "var(--text-secondary)" }}
-                    >
+                    <p className="text-sm font-medium mt-1 text-slate-600">
                       {card.label}
                     </p>
 
                     {/* Progress */}
-                    <div
-                      className="mt-4 h-1 rounded-full overflow-hidden"
-                      style={{ background: "var(--border)" }}
-                    >
+                    <div className="mt-4 h-1 rounded-full overflow-hidden bg-slate-100">
                       <motion.div
                         initial={{ width: 0 }}
                         animate={{ width: `${card.progress}%` }}
                         transition={{ duration: 0.8, delay: 0.3 + index * 0.1, ease: "easeOut" }}
-                        className="h-full rounded-full"
-                        style={{ background: card.color }}
+                        className={`h-full rounded-full ${card.color}`}
                       />
                     </div>
 
                     {/* Helper */}
-                    <p
-                      className="text-xs mt-2"
-                      style={{ color: "var(--text-muted)" }}
-                    >
+                    <p className="text-xs mt-2 text-slate-400">
                       {card.helper}
                     </p>
                   </motion.div>
@@ -326,39 +286,28 @@ export default function DashboardPage() {
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
             {/* Tasks Section */}
             <motion.section variants={itemVariants} className="lg:col-span-2">
-              <div className="card overflow-hidden">
+              <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
                 {/* Header */}
-                <div
-                  className="px-6 py-5 flex items-center justify-between"
-                  style={{ borderBottom: "1px solid var(--border)" }}
-                >
+                <div className="px-6 py-5 flex items-center justify-between border-b border-slate-100">
                   <div className="flex items-center gap-3">
-                    <div className="icon-box">
+                    <div className="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center text-blue-600">
                       <Calendar className="w-5 h-5" />
                     </div>
                     <div>
-                      <h3
-                        className="text-lg font-semibold"
-                        style={{ color: "var(--text-primary)" }}
-                      >
+                      <h3 className="text-lg font-bold text-slate-900">
                         Pending Tasks
                       </h3>
-                      <p
-                        className="text-sm"
-                        style={{ color: "var(--text-muted)" }}
-                      >
+                      <p className="text-sm text-slate-500">
                         {incompleteTasks.length} {incompleteTasks.length === 1 ? "task" : "tasks"} remaining
                       </p>
                     </div>
                   </div>
 
-                  <span
-                    className="px-3 py-1.5 rounded-full text-sm font-medium"
-                    style={{
-                      background: taskSummary.incomplete > 0 ? "var(--primary-muted)" : "rgba(129, 178, 154, 0.15)",
-                      color: taskSummary.incomplete > 0 ? "var(--primary)" : "var(--accent)",
-                    }}
-                  >
+                  <span className={`px-3 py-1.5 rounded-full text-sm font-bold ${
+                    taskSummary.incomplete > 0 
+                      ? "bg-blue-50 text-blue-700" 
+                      : "bg-green-50 text-green-700"
+                  }`}>
                     {taskSummary.incomplete > 0 ? `${taskSummary.incomplete} pending` : "All done!"}
                   </span>
                 </div>
@@ -367,22 +316,13 @@ export default function DashboardPage() {
                 <div className="p-6">
                   {incompleteTasks.length === 0 ? (
                     <div className="text-center py-12">
-                      <div
-                        className="w-16 h-16 mx-auto rounded-2xl flex items-center justify-center mb-4"
-                        style={{ background: "rgba(129, 178, 154, 0.15)" }}
-                      >
-                        <CheckCircle2 className="w-8 h-8" style={{ color: "var(--accent)" }} />
+                      <div className="w-16 h-16 mx-auto rounded-2xl bg-green-50 flex items-center justify-center mb-4 text-green-600">
+                        <CheckCircle2 className="w-8 h-8" />
                       </div>
-                      <h4
-                        className="text-lg font-semibold mb-2"
-                        style={{ color: "var(--text-primary)" }}
-                      >
+                      <h4 className="text-lg font-bold text-slate-900 mb-2">
                         All Tasks Completed!
                       </h4>
-                      <p
-                        className="text-sm"
-                        style={{ color: "var(--text-secondary)" }}
-                      >
+                      <p className="text-sm text-slate-500">
                         Great work! Take a well-deserved break.
                       </p>
                     </div>
@@ -398,38 +338,22 @@ export default function DashboardPage() {
                             initial={{ opacity: 0, x: -20 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ delay: index * 0.05 }}
-                            className="group flex items-center gap-4 p-4 rounded-xl transition-all duration-200"
-                            style={{
-                              background: "var(--surface-secondary)",
-                              border: "1px solid var(--border)",
-                            }}
+                            className="group flex items-center gap-4 p-4 rounded-lg bg-slate-50 border border-slate-200 transition-all duration-200 hover:bg-white hover:shadow-sm hover:border-blue-200"
                           >
                             {/* Status Dot */}
-                            <div
-                              className="w-2.5 h-2.5 rounded-full flex-shrink-0"
-                              style={{ background: toneStyle.dot }}
-                            />
+                            <div className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${toneStyle.dot}`} />
 
                             {/* Task Info */}
                             <div className="flex-1 min-w-0">
-                              <p
-                                className="font-medium truncate"
-                                style={{ color: "var(--text-primary)" }}
-                              >
+                              <p className="font-medium truncate text-slate-900 group-hover:text-blue-700 transition-colors">
                                 {task.title}
                               </p>
                               <div className="flex items-center gap-3 mt-1">
-                                <span
-                                  className="text-xs font-medium px-2 py-0.5 rounded-full"
-                                  style={{ background: toneStyle.bg, color: toneStyle.text }}
-                                >
+                                <span className={`text-xs font-bold px-2 py-0.5 rounded-md ${toneStyle.bg} ${toneStyle.text}`}>
                                   {urgency.label}
                                 </span>
                                 {task.endDate && (
-                                  <span
-                                    className="text-xs"
-                                    style={{ color: "var(--text-muted)" }}
-                                  >
+                                  <span className="text-xs text-slate-500">
                                     {formatRelativeDate(task.endDate)}
                                   </span>
                                 )}
@@ -439,11 +363,7 @@ export default function DashboardPage() {
                             {/* Complete Button */}
                             <button
                               onClick={() => handleComplete(task.id)}
-                              className="flex-shrink-0 px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-200 hover:-translate-y-0.5"
-                              style={{
-                                background: "var(--primary)",
-                                color: "white",
-                              }}
+                              className="flex-shrink-0 px-4 py-2 rounded-lg text-sm font-bold bg-white text-slate-600 border border-slate-200 shadow-sm transition-all duration-200 hover:bg-blue-600 hover:text-white hover:border-blue-600 hover:-translate-y-0.5"
                               aria-label={`Mark ${task.title} as completed`}
                             >
                               Done
@@ -455,11 +375,7 @@ export default function DashboardPage() {
                       {incompleteTasks.length > 5 && (
                         <button
                           onClick={() => router.push("/dashboard/tasks")}
-                          className="w-full flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-semibold transition-colors"
-                          style={{
-                            color: "var(--primary)",
-                            background: "var(--primary-muted)",
-                          }}
+                          className="w-full flex items-center justify-center gap-2 py-3 rounded-lg text-sm font-bold text-blue-600 bg-blue-50 hover:bg-blue-100 transition-colors"
                         >
                           View all {incompleteTasks.length} tasks
                           <ArrowRight className="w-4 h-4" />
@@ -473,30 +389,18 @@ export default function DashboardPage() {
 
             {/* Pomodoro Section */}
             <motion.section variants={itemVariants}>
-              <div className="card overflow-hidden">
+              <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
                 {/* Header */}
-                <div
-                  className="px-6 py-5"
-                  style={{ borderBottom: "1px solid var(--border)" }}
-                >
+                <div className="px-6 py-5 border-b border-slate-100">
                   <div className="flex items-center gap-3">
-                    <div
-                      className="icon-box"
-                      style={{ background: "rgba(61, 90, 128, 0.1)", color: "var(--secondary)" }}
-                    >
+                    <div className="w-10 h-10 rounded-lg bg-indigo-50 flex items-center justify-center text-indigo-600">
                       <Timer className="w-5 h-5" />
                     </div>
                     <div>
-                      <h3
-                        className="text-lg font-semibold"
-                        style={{ color: "var(--text-primary)" }}
-                      >
+                      <h3 className="text-lg font-bold text-slate-900">
                         Pomodoro Timer
                       </h3>
-                      <p
-                        className="text-sm"
-                        style={{ color: "var(--text-muted)" }}
-                      >
+                      <p className="text-sm text-slate-500">
                         25 min focus, 5 min break
                       </p>
                     </div>
@@ -509,26 +413,14 @@ export default function DashboardPage() {
                 </div>
 
                 {/* Quick Stats */}
-                <div
-                  className="px-6 py-4 flex items-center justify-between"
-                  style={{
-                    background: "var(--surface-secondary)",
-                    borderTop: "1px solid var(--border)",
-                  }}
-                >
+                <div className="px-6 py-4 flex items-center justify-between bg-slate-50 border-t border-slate-100">
                   <div className="flex items-center gap-2">
-                    <TrendingUp className="w-4 h-4" style={{ color: "var(--accent)" }} />
-                    <span
-                      className="text-sm font-medium"
-                      style={{ color: "var(--text-secondary)" }}
-                    >
+                    <TrendingUp className="w-4 h-4 text-green-600" />
+                    <span className="text-sm font-medium text-slate-600">
                       {pomodoroCount} sessions today
                     </span>
                   </div>
-                  <span
-                    className="text-sm font-semibold"
-                    style={{ color: "var(--primary)" }}
-                  >
+                  <span className="text-sm font-bold text-blue-600">
                     {formatDuration(focusTimeMinutes)}
                   </span>
                 </div>

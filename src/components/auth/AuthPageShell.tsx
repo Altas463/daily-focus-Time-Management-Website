@@ -56,7 +56,7 @@ export function AuthPageShell({
   const accentClass = variantAccent[variant];
 
   return (
-    <div className="min-h-screen bg-white text-gray-900 dark:bg-gray-950 dark:text-gray-100">
+    <div className="min-h-screen bg-white text-slate-900">
       <Navbar />
 
       <main
@@ -66,21 +66,21 @@ export function AuthPageShell({
       >
         <div className="mx-auto grid max-w-7xl gap-10 md:grid-cols-[1.2fr_1fr] md:items-start">
           <div className="order-last md:order-first">
-            <Link href="/" className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ring-1 ring-inset ring-gray-200 dark:ring-gray-800 ${accentClass}`}>
+            <Link href="/" className={`inline-flex rounded-lg px-3 py-1 text-xs font-bold uppercase tracking-wider ring-1 ring-inset ring-slate-200 ${accentClass}`}>
               Daily Focus
             </Link>
-            <div className="mt-4 space-y-4 text-balance text-gray-900 dark:text-gray-100">
+            <div className="mt-4 space-y-4 text-balance text-slate-900">
               {hero}
             </div>
-            <ul className="mt-6 grid grid-cols-1 gap-3 text-sm text-gray-600 dark:text-gray-300 md:max-w-md">
+            <ul className="mt-6 grid grid-cols-1 gap-3 text-sm text-slate-600 md:max-w-md">
               {highlights.map(({ icon: Icon, title, description }) => (
-                <li key={title} className="flex items-start gap-3 rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900">
-                  <span className="mt-0.5 inline-flex h-8 w-8 items-center justify-center rounded-full bg-gray-900 text-white dark:bg-white dark:text-gray-900">
+                <li key={title} className="flex items-start gap-3 rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+                  <span className="mt-0.5 inline-flex h-8 w-8 items-center justify-center rounded-lg bg-slate-900 text-white">
                     <Icon className="h-4 w-4" aria-hidden />
                   </span>
                   <div>
-                    <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">{title}</p>
-                    <p className="text-xs text-gray-600 dark:text-gray-400">{description}</p>
+                    <p className="text-sm font-bold text-slate-900">{title}</p>
+                    <p className="text-xs text-slate-500">{description}</p>
                   </div>
                 </li>
               ))}
@@ -88,7 +88,7 @@ export function AuthPageShell({
           </div>
 
           <section className="flex items-start justify-center">
-            <div className="w-full max-w-md rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900 sm:p-8">
+            <div className="w-full max-w-md rounded-xl border border-slate-200 bg-white p-6 shadow-xl shadow-slate-200/50 sm:p-8">
               {children}
             </div>
           </section>

@@ -78,13 +78,13 @@ export default function Header() {
   }, [showUserMenu]);
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-gray-200 bg-white transition-colors duration-300 dark:border-gray-800 dark:bg-gray-950">
+    <header className="sticky top-0 z-40 w-full border-b border-slate-200 bg-white transition-colors duration-300">
       <div className="px-4 py-4 sm:px-6">
         <div className="flex items-center justify-between">
           <motion.div initial={{ opacity: 0, x: -16 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.4 }}>
             <div className="flex items-baseline gap-3">
-              <h1 className="text-xl font-bold tracking-tight text-gray-900 dark:text-white">Dashboard</h1>
-              <p className="hidden text-xs text-gray-500 dark:text-gray-400 sm:block">{getDaypartGreeting()}</p>
+              <h1 className="text-xl font-bold tracking-tight text-slate-900">Dashboard</h1>
+              <p className="hidden text-xs text-slate-500 sm:block">{getDaypartGreeting()}</p>
             </div>
           </motion.div>
 
@@ -96,45 +96,45 @@ export default function Header() {
           >
             {status === "loading" ? (
               <div className="flex items-center gap-3">
-                <div className="h-8 w-8 animate-pulse rounded-full bg-gray-300 dark:bg-gray-700" />
+                <div className="h-8 w-8 animate-pulse rounded-full bg-slate-200" />
                 <div className="hidden sm:block">
-                  <div className="mb-1 h-4 w-24 animate-pulse rounded bg-gray-300 dark:bg-gray-700" />
-                  <div className="h-3 w-20 animate-pulse rounded bg-gray-300 dark:bg-gray-700" />
+                  <div className="mb-1 h-4 w-24 animate-pulse rounded bg-slate-200" />
+                  <div className="h-3 w-20 animate-pulse rounded bg-slate-200" />
                 </div>
               </div>
             ) : (
               <>
                 <div className="hidden flex-col items-end pr-1 text-right sm:flex">
-                  <span className="text-sm font-semibold text-gray-800 dark:text-gray-200">{userName}</span>
-                  <span className="text-xs text-gray-500 dark:text-gray-400">{userEmail}</span>
+                  <span className="text-sm font-semibold text-slate-900">{userName}</span>
+                  <span className="text-xs text-slate-500">{userEmail}</span>
                 </div>
 
                 <button
                   ref={btnRef}
                   onClick={() => setShowUserMenu((value) => !value)}
                   className={clsx(
-                    "group relative inline-flex items-center gap-3 rounded-full border border-gray-200 bg-white/90 px-1.5 py-1 shadow-sm transition hover:-translate-y-0.5 hover:border-gray-300 hover:bg-white focus:outline-none focus:ring-2 focus:ring-gray-900/10 dark:border-gray-800 dark:bg-gray-900/80 dark:hover:border-gray-700 dark:hover:bg-gray-900",
-                    showUserMenu && "ring-2 ring-gray-900/10 dark:ring-gray-100/10",
+                    "group relative inline-flex items-center gap-3 rounded-full border border-slate-200 bg-white px-1.5 py-1 shadow-sm transition hover:-translate-y-0.5 hover:border-slate-300 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-900/10",
+                    showUserMenu && "ring-2 ring-slate-900/10",
                   )}
                   aria-haspopup="menu"
                   aria-expanded={showUserMenu}
                   aria-controls="user-menu"
                   aria-label="Open account menu"
                 >
-                  <span className="relative flex h-9 w-9 items-center justify-center overflow-hidden rounded-full bg-gray-900 text-sm font-semibold text-white transition-transform group-hover:scale-[1.02] dark:bg-white dark:text-gray-900">
+                  <span className="relative flex h-9 w-9 items-center justify-center overflow-hidden rounded-full bg-slate-900 text-sm font-semibold text-white transition-transform group-hover:scale-[1.02]">
                     {userAvatar ? (
                       <Image src={userAvatar} alt={userName} width={40} height={40} className="h-full w-full rounded-full object-cover" unoptimized />
                     ) : (
                       getInitials(userName)
                     )}
                   </span>
-                  <span className="hidden pr-2 text-left text-xs text-gray-500 transition-colors group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-200 sm:block">
-                    <span className="block text-sm font-semibold text-gray-800 dark:text-gray-200">Account</span>
+                  <span className="hidden pr-2 text-left text-xs text-slate-500 transition-colors group-hover:text-slate-700 sm:block">
+                    <span className="block text-sm font-semibold text-slate-900">Account</span>
                     Menu
                   </span>
                   <ChevronDown
                     className={clsx(
-                      "mr-1 h-4 w-4 text-gray-500 transition-transform duration-200 ease-out group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-200",
+                      "mr-1 h-4 w-4 text-slate-500 transition-transform duration-200 ease-out group-hover:text-slate-700",
                       showUserMenu && "-rotate-180",
                     )}
                     aria-hidden
@@ -151,19 +151,19 @@ export default function Header() {
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: -6, scale: 0.98 }}
                       transition={{ duration: 0.16 }}
-                      className="absolute right-4 top-[64px] w-72 overflow-hidden rounded-xl border border-gray-200 bg-white shadow-lg dark:border-gray-800 dark:bg-gray-900"
+                      className="absolute right-4 top-[64px] w-72 overflow-hidden rounded-lg border border-slate-200 bg-white shadow-lg"
                     >
-                      <div className="flex items-center gap-3 border-b border-black/5 px-4 py-3 dark:border-white/10 sm:hidden">
+                      <div className="flex items-center gap-3 border-b border-slate-100 px-4 py-3 sm:hidden">
                         {userAvatar ? (
                           <Image src={userAvatar} alt={userName} width={40} height={40} className="h-10 w-10 rounded-full object-cover" unoptimized />
                         ) : (
-                          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-900 text-sm font-semibold text-white dark:bg-white dark:text-gray-900">
-                            {getInitials(userName)}
+                          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-900 text-sm font-semibold text-white">
+                            {getInitials(userName) || "U"}
                           </div>
                         )}
                         <div>
-                          <p className="font-semibold text-gray-900 dark:text-white">{userName}</p>
-                          <p className="text-xs text-gray-500 dark:text-gray-400">{userEmail}</p>
+                          <p className="font-semibold text-slate-900">{userName}</p>
+                          <p className="text-xs text-slate-500">{userEmail}</p>
                         </div>
                       </div>
 
@@ -173,21 +173,21 @@ export default function Header() {
                             key={link.key}
                             role="menuitem"
                             onClick={() => handleNavigate(link.href)}
-                            className="w-full rounded-xl px-3 py-2 text-left text-sm text-gray-700 transition hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-900/10 dark:text-gray-200 dark:hover:bg-gray-800"
+                            className="w-full rounded-md px-3 py-2 text-left text-sm text-slate-700 transition hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-900/10"
                           >
                             <span className="block font-medium">{link.label}</span>
                             {link.description && (
-                              <span className="mt-0.5 block text-xs text-gray-500 dark:text-gray-400">{link.description}</span>
+                              <span className="mt-0.5 block text-xs text-slate-500">{link.description}</span>
                             )}
                           </button>
                         ))}
 
-                        <div className="mt-1 border-t border-black/5 pt-1 dark:border-white/10">
+                        <div className="mt-1 border-t border-slate-100 pt-1">
                           <button
                             role="menuitem"
                             onClick={handleLogout}
                             disabled={isLoggingOut}
-                            className="group relative w-full rounded-xl px-3 py-2 text-left text-sm font-medium text-red-600 transition hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-500/20 disabled:opacity-60 dark:text-red-400 dark:hover:bg-red-900/20"
+                            className="group relative w-full rounded-md px-3 py-2 text-left text-sm font-medium text-red-600 transition hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-500/20 disabled:opacity-60"
                           >
                             {isLoggingOut ? (
                               <span className="inline-flex items-center gap-2">
@@ -212,7 +212,7 @@ export default function Header() {
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.35, delay: 0.15 }}
-          className="mt-2 text-xs text-gray-500 dark:text-gray-400 sm:hidden"
+          className="mt-2 text-xs text-slate-500 sm:hidden"
         >
           {getDaypartGreeting()}
         </motion.p>
