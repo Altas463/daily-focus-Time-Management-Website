@@ -157,7 +157,7 @@ export default function RegisterPage() {
             transition={{ delay: 0.3 }}
             className="text-lg text-slate-400 max-w-md font-mono"
           >
-            // Join the network. Optimize your workflow. Execute with precision.
+            {"// Join the network. Optimize your workflow. Execute with precision."}
           </motion.p>
         </div>
 

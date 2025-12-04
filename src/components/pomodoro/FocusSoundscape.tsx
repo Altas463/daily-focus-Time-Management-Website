@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Volume2, VolumeX, Waves, Wind, Zap } from "lucide-react";
+import { Volume2, VolumeX, Waves, Wind, Zap, LucideIcon } from "lucide-react";
 
 type SoundId = "white" | "brown" | "waves";
 
@@ -9,7 +9,7 @@ type SoundOption = {
   id: SoundId;
   label: string;
   description: string;
-  icon: any;
+  icon: LucideIcon;
 };
 
 type SoundHandle = {
@@ -168,7 +168,7 @@ export default function FocusSoundscape() {
 
   const ensureContext = useCallback(() => {
     if (audioContextRef.current) return audioContextRef.current;
-    const contextClass = window.AudioContext || (window as any).webkitAudioContext;
+    const contextClass = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
     if (!contextClass) throw new Error("Web Audio API not supported.");
     const ctx = new contextClass();
     audioContextRef.current = ctx;

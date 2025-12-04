@@ -65,7 +65,6 @@ export default function SettingsPage() {
   const [timers, setTimers] = useState<TimerState>({ ...DEFAULT_TIMERS });
   const [timerBaseline, setTimerBaseline] = useState<TimerState>({ ...DEFAULT_TIMERS });
   const [theme, setTheme] = useState<"light" | "dark" | "system">("system");
-  const [isLoading, setIsLoading] = useState(true);
   const [isSavingNotifications, setIsSavingNotifications] = useState(false);
   const [isSavingTimers, setIsSavingTimers] = useState(false);
   const [notificationFeedback, setNotificationFeedback] = useState<Feedback | null>(null);
@@ -76,7 +75,6 @@ export default function SettingsPage() {
   useEffect(() => {
     let isMounted = true;
     async function fetchPreferences() {
-      setIsLoading(true);
       setLoadError(null);
       try {
         const response = await fetch("/api/preferences", { cache: "no-store" });
@@ -113,8 +111,6 @@ export default function SettingsPage() {
       } catch (error) {
         if (!isMounted) return;
         setLoadError(error instanceof Error ? error.message : "Something went wrong while loading settings.");
-      } finally {
-        if (isMounted) setIsLoading(false);
       }
     }
 
@@ -176,7 +172,7 @@ export default function SettingsPage() {
       if (!response.ok) throw new Error("Unable to update notifications.");
       setNotificationBaseline({ ...notifications });
       setNotificationFeedback({ type: "success", message: "Notification preferences saved." });
-    } catch (error) {
+    } catch {
       setNotificationFeedback({ type: "error", message: "Unable to update notifications." });
     } finally {
       setIsSavingNotifications(false);
@@ -201,7 +197,7 @@ export default function SettingsPage() {
       if (!response.ok) throw new Error("Unable to save timer defaults.");
       setTimerBaseline({ ...timers });
       setTimerFeedback({ type: "success", message: "Timer defaults saved." });
-    } catch (error) {
+    } catch {
       setTimerFeedback({ type: "error", message: "Unable to save timer defaults." });
     } finally {
       setIsSavingTimers(false);
@@ -218,7 +214,7 @@ export default function SettingsPage() {
 
       <header className="mb-8">
         <h1 className="text-3xl font-display font-bold mb-2">Settings</h1>
-        <p className="text-slate-500 font-mono text-sm">// Configure your workspace parameters.</p>
+        <p className="text-slate-500 font-mono text-sm">{"// Configure your workspace parameters."}</p>
       </header>
 
       {loadError && (
@@ -264,7 +260,7 @@ export default function SettingsPage() {
             ].map((option) => (
               <button
                 key={option.value}
-                onClick={() => handleThemeChange(option.value as any)}
+                onClick={() => handleThemeChange(option.value as "light" | "dark" | "system")}
                 className={clsx(
                   "flex flex-col items-center gap-2 p-4 border rounded-sm transition-all",
                   theme === option.value
