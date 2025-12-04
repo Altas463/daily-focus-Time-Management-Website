@@ -20,51 +20,54 @@ const faqs = [
 
 export default function HelpPage() {
   return (
-    <div className="mx-auto flex max-w-5xl flex-col gap-6">
-      <BackToDashboardLink />
+    <div className="max-w-5xl mx-auto space-y-8 pb-12">
+      <div className="flex items-center gap-4">
+        <BackToDashboardLink />
+        <div className="h-4 w-px bg-border-default"></div>
+        <span className="text-sm font-mono text-slate-500 uppercase tracking-wider">Help Center</span>
+      </div>
 
-      <header className="rounded-3xl border border-gray-200 bg-white p-8 shadow-sm dark:border-gray-800 dark:bg-gray-900">
-        <p className="text-xs font-semibold uppercase tracking-[0.28em] text-gray-500 dark:text-gray-400">Help Center</p>
-        <h1 className="mt-2 text-3xl font-semibold text-gray-900 dark:text-gray-50">Find answers and get support</h1>
-        <p className="mt-3 text-sm text-gray-600 dark:text-gray-300">
-          Browse quick tips, onboarding guides, and troubleshooting resources. Still stuck? Reach out to the team directly.
-        </p>
+      <header>
+        <h1 className="text-3xl font-display font-bold mb-2">Find answers and get support</h1>
+        <p className="text-slate-500 font-mono text-sm">{"// Browse quick tips, onboarding guides, and troubleshooting resources."}</p>
       </header>
 
-      <section className="space-y-6 rounded-3xl border border-gray-200 bg-white p-8 shadow-sm dark:border-gray-800 dark:bg-gray-900">
-        <div>
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Popular questions</h2>
-          <p className="text-sm text-gray-500 dark:text-gray-400">Short answers for the most common questions from new users.</p>
+      <section className="bento-card">
+        <div className="mb-6">
+          <div className="flex items-center gap-2 mb-2">
+            <span className="label-tech">POPULAR QUESTIONS</span>
+          </div>
+          <p className="text-sm text-slate-500 font-mono">Short answers for the most common questions from new users.</p>
         </div>
 
         <ul className="space-y-4">
           {faqs.map((item) => (
-            <li key={item.question} className="rounded-2xl border border-gray-200 bg-gray-50/70 p-4 transition hover:border-gray-300 dark:border-gray-800 dark:bg-gray-900/60">
-              <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">{item.question}</h3>
-              <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">{item.answer}</p>
+            <li key={item.question} className="p-4 bg-surface-base border border-border-subtle rounded-sm transition hover:border-primary">
+              <h3 className="text-sm font-mono font-bold text-slate-800">{item.question}</h3>
+              <p className="mt-2 text-sm text-slate-600 font-mono">{item.answer}</p>
             </li>
           ))}
         </ul>
       </section>
 
-      <section className="rounded-3xl border border-gray-200 bg-white p-8 shadow-sm dark:border-gray-800 dark:bg-gray-900">
-        <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+      <section className="bento-card">
+        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Need more help?</h2>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Open a support ticket or join the community forum for peer tips.</p>
+            <span className="label-tech">NEED MORE HELP?</span>
+            <p className="text-sm text-slate-500 font-mono mt-2">Open a support ticket or join the community forum for peer tips.</p>
           </div>
           <div className="flex flex-wrap gap-3">
             <button
               type="button"
-              className="inline-flex items-center justify-center rounded-lg bg-gray-900 px-4 py-2 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-black/90 focus:outline-none focus:ring-2 focus:ring-gray-900/20 dark:bg-white dark:text-gray-900 dark:hover:bg-white/90"
+              className="btn-tech-primary"
             >
-              Contact support
+              CONTACT SUPPORT
             </button>
             <button
               type="button"
-              className="inline-flex items-center justify-center rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 transition hover:-translate-y-0.5 hover:border-gray-400 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-300/40 dark:border-gray-700 dark:text-gray-200 dark:hover:border-gray-600 dark:hover:bg-gray-900/60"
+              className="btn-tech-secondary"
             >
-              Visit community
+              VISIT COMMUNITY
             </button>
           </div>
         </div>

@@ -162,176 +162,184 @@ export default function ReviewPage() {
   }, [summary, focusTodayMinutes, averageFocusMinutes]);
 
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-gray-950">
-      <div className="mx-auto max-w-6xl px-4 py-8">
-        <div className="space-y-8">
-          <BackToDashboardLink />
-
-          <header className="space-y-3">
-            <p className="text-xs font-semibold uppercase tracking-[0.4em] text-gray-500 dark:text-gray-400">
-              Review dashboard
-            </p>
-            <h1 className="text-4xl font-bold text-gray-900 dark:text-white">Reflect and reset</h1>
-            <p className="max-w-2xl text-sm text-gray-600 dark:text-gray-300">
-              Review how you spent your focus today, celebrate progress, and capture quick notes before the next sprint.
-            </p>
-          </header>
-
-          {loading && <div className="rounded-2xl border border-gray-200 bg-white p-6 text-sm text-gray-600 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-300">Loading your latest progress…</div>}
-          {error && (
-            <div className="rounded-2xl border border-rose-200 bg-rose-50 p-6 text-sm text-rose-700 dark:border-rose-900/50 dark:bg-rose-900/20 dark:text-rose-200">
-              {error}
-            </div>
-          )}
-
-          {summary && !loading && !error && (
-            <>
-              <section className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-                <div className="space-y-4 rounded-3xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900">
-                  <div className="flex items-center justify-between">
-                    <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Daily recap</h2>
-                    <span className="text-xs font-semibold uppercase tracking-[0.3em] text-gray-500 dark:text-gray-400">
-                      Completed {summary.completedTodayCount}
-                    </span>
-                  </div>
-                  {summary.completedTodayCount === 0 ? (
-                    <p className="text-sm text-gray-500 dark:text-gray-400">
-                      No tasks marked complete today. Capture a quick win for tomorrow.
-                    </p>
-                  ) : (
-                    <ul className="space-y-3">
-                      {summary.completedToday.slice(0, 5).map((task) => (
-                        <li key={task.id} className="rounded-2xl border border-gray-200 bg-gray-50 p-4 text-sm text-gray-700 dark:border-gray-800 dark:bg-gray-800/60 dark:text-gray-200">
-                          <p className="font-semibold text-gray-900 dark:text-white">{task.title}</p>
-                          {task.description && <p className="mt-1 text-xs text-gray-500 dark:text-gray-400 line-clamp-2">{task.description}</p>}
-                          <p className="mt-2 text-xs text-gray-400 dark:text-gray-500">
-                            Done at {format(parseISO(task.updatedAt), "HH:mm")}
-                          </p>
-                        </li>
-                      ))}
-                      {summary.completedTodayCount > 5 && (
-                        <li className="text-xs font-medium text-gray-500 dark:text-gray-400">+ {summary.completedTodayCount - 5} more completed items</li>
-                      )}
-                    </ul>
-                  )}
-                </div>
-
-                <div className="flex h-full flex-col gap-4 rounded-3xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900">
-                  <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Focus energy</h2>
-                  <div className="flex flex-1 flex-col justify-center rounded-2xl border border-gray-200 bg-gray-50 p-6 text-center dark:border-gray-800 dark:bg-gray-800/60">
-                    <p className="text-xs font-semibold uppercase tracking-[0.4em] text-gray-500 dark:text-gray-400">
-                      Deep work time
-                    </p>
-                    <p className="mt-3 text-5xl font-bold text-gray-900 dark:text-white">{formatMinutes(focusTodayMinutes)}</p>
-                    <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
-                      {summary.focusTodayPomodoros} pomodoro block{summary.focusTodayPomodoros === 1 ? "" : "s"} logged today
-                    </p>
-                  </div>
-                  <div className="flex items-center justify-between rounded-2xl border border-dashed border-gray-200 px-4 py-3 text-xs text-gray-600 dark:border-gray-700 dark:text-gray-300">
-                    <span>Average this week</span>
-                    <span>{formatMinutes(averageFocusMinutes)}</span>
-                  </div>
-                </div>
-              </section>
-
-              <section className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900">
-                <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-                  <div>
-                    <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Weekly trends</h2>
-                    <p className="text-sm text-gray-600 dark:text-gray-300">Track how focus minutes and completed tasks stacked up during the last seven days.</p>
-                  </div>
-                </div>
-                <div className="mt-6 h-72 w-full">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <ComposedChart data={chartData}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="rgba(148, 163, 184, 0.35)" />
-                      <XAxis dataKey="label" />
-                      <YAxis yAxisId="left" allowDecimals={false} />
-                      <YAxis yAxisId="right" orientation="right" allowDecimals={false} />
-                      <Tooltip
-                        contentStyle={{ background: "#0f172a", borderRadius: 16, border: "none", color: "#f8fafc" }}
-                        labelFormatter={(label) => `Day: ${label}`}
-                        formatter={(value: number, name) => {
-                          if (name === "focusMinutes") return [`${value} min`, "Focus"];
-                          if (name === "completedCount") return [value, "Tasks"];
-                          return [value, name];
-                        }}
-                      />
-                      <Bar yAxisId="left" dataKey="focusMinutes" fill="#6366F1" radius={[12, 12, 4, 4]} />
-                      <Line yAxisId="right" type="monotone" dataKey="completedCount" stroke="#10B981" strokeWidth={3} dot={{ r: 4 }} activeDot={{ r: 6 }} />
-                    </ComposedChart>
-                  </ResponsiveContainer>
-                </div>
-
-                <div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-2">
-                  <div className="rounded-2xl border border-gray-200 bg-gray-50 p-5 dark:border-gray-700 dark:bg-gray-800/60">
-                    <h3 className="text-sm font-semibold text-gray-900 dark:text-white">Top focus days</h3>
-                    {topFocusDays.length === 0 ? (
-                      <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">No tracked focus blocks this week yet.</p>
-                    ) : (
-                      <ul className="mt-3 space-y-2 text-sm text-gray-700 dark:text-gray-200">
-                        {topFocusDays.map((day) => (
-                          <li key={day.date} className="flex items-center justify-between rounded-xl border border-gray-200 bg-white px-4 py-3 dark:border-gray-700 dark:bg-gray-900/70">
-                            <span>{format(parseISO(day.date), "EEEE")}</span>
-                            <span className="font-semibold text-indigo-600 dark:text-indigo-300">{formatMinutes(day.focusMinutes)}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                  </div>
-
-                  <div className="rounded-2xl border border-gray-200 bg-gray-50 p-5 dark:border-gray-700 dark:bg-gray-800/60">
-                    <h3 className="text-sm font-semibold text-gray-900 dark:text-white">Improvement prompts</h3>
-                    <ul className="mt-3 space-y-2 text-sm text-gray-700 dark:text-gray-200">
-                      {improvementPrompts.map((prompt) => (
-                        <li key={prompt} className="rounded-xl border border-gray-200 bg-white px-4 py-3 dark:border-gray-700 dark:bg-gray-900/70">
-                          {prompt}
-                        </li>
-                      ))}
-                      {improvementPrompts.length === 0 && (
-                        <li className="text-xs text-gray-500 dark:text-gray-400">Data is still coming in. Log a few sessions to unlock tailored suggestions.</li>
-                      )}
-                    </ul>
-                  </div>
-                </div>
-              </section>
-
-              <section className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900">
-                <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-                  <div>
-                    <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Journaling prompts</h2>
-                    <p className="text-sm text-gray-600 dark:text-gray-300">Capture quick reflections. Notes stay on this device.</p>
-                  </div>
-                </div>
-
-                <div className="mt-6 grid gap-6 lg:grid-cols-3">
-                  {[
-                    { key: "wins", label: "What went well?", placeholder: "Celebrate progress, even tiny wins." },
-                    { key: "blockers", label: "Where did you get stuck?", placeholder: "Call out blockers so you can clear them tomorrow." },
-                    { key: "goals", label: "What's next?", placeholder: "Set one intention to start your next focus block strong." },
-                  ].map((field) => (
-                    <label key={field.key} className="flex flex-col gap-2 rounded-2xl border border-gray-200 bg-gray-50 p-5 text-sm text-gray-600 dark:border-gray-700 dark:bg-gray-800/60 dark:text-gray-200">
-                      <span className="text-sm font-semibold text-gray-900 dark:text-white">{field.label}</span>
-                      <textarea
-                        value={journal[field.key as keyof JournalState]}
-                        onChange={(event) =>
-                          setJournal((prev) => ({
-                            ...prev,
-                            [field.key]: event.target.value,
-                          }))
-                        }
-                        placeholder={field.placeholder}
-                        rows={5}
-                        className="w-full resize-none rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-800 outline-none focus:ring-2 focus:ring-indigo-400 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100"
-                      />
-                    </label>
-                  ))}
-                </div>
-              </section>
-            </>
-          )}
-        </div>
+    <div className="max-w-6xl mx-auto space-y-8 pb-12">
+      <div className="flex items-center gap-4">
+        <BackToDashboardLink />
+        <div className="h-4 w-px bg-border-default"></div>
+        <span className="text-sm font-mono text-slate-500 uppercase tracking-wider">Daily Review</span>
       </div>
+
+      <header>
+        <h1 className="text-3xl font-display font-bold mb-2">Reflect and reset</h1>
+        <p className="text-slate-500 font-mono text-sm">{"// Review focus patterns, celebrate progress, and capture notes before the next sprint."}</p>
+      </header>
+
+      {loading && (
+        <div className="bento-card p-6">
+          <span className="text-sm font-mono text-slate-500">LOADING_REVIEW_DATA...</span>
+        </div>
+      )}
+      {error && (
+        <div className="p-4 bg-red-50 border border-red-200 text-red-600 text-sm rounded-sm font-mono">
+          ERROR: {error}
+        </div>
+      )}
+
+      {summary && !loading && !error && (
+        <>
+          <section className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+            <div className="bento-card">
+              <div className="flex items-center justify-between mb-4">
+                <span className="label-tech">DAILY RECAP</span>
+                <span className="px-2 py-0.5 text-[10px] font-mono font-bold border rounded-sm bg-emerald-50 text-emerald-600 border-emerald-200">
+                  {summary.completedTodayCount} DONE
+                </span>
+              </div>
+              {summary.completedTodayCount === 0 ? (
+                <p className="text-sm text-slate-500 font-mono">
+                  No tasks marked complete today. Capture a quick win for tomorrow.
+                </p>
+              ) : (
+                <ul className="space-y-3">
+                  {summary.completedToday.slice(0, 5).map((task) => (
+                    <li key={task.id} className="p-3 bg-surface-base border border-border-subtle rounded-sm">
+                      <p className="font-mono text-sm font-bold text-slate-800">{task.title}</p>
+                      {task.description && <p className="mt-1 text-xs text-slate-500 font-mono line-clamp-2">{task.description}</p>}
+                      <p className="mt-2 text-[10px] text-slate-400 font-mono uppercase">
+                        COMPLETED @ {format(parseISO(task.updatedAt), "HH:mm")}
+                      </p>
+                    </li>
+                  ))}
+                  {summary.completedTodayCount > 5 && (
+                    <li className="text-xs font-mono text-slate-500">+ {summary.completedTodayCount - 5} more completed items</li>
+                  )}
+                </ul>
+              )}
+            </div>
+
+            <div className="bento-card flex flex-col">
+              <span className="label-tech mb-4">FOCUS ENERGY</span>
+              <div className="flex-1 flex flex-col justify-center p-6 bg-surface-base border border-border-subtle rounded-sm text-center">
+                <p className="text-[10px] font-mono text-slate-400 uppercase tracking-wider">
+                  Deep work time
+                </p>
+                <p className="mt-3 text-4xl font-mono font-bold text-slate-900">{formatMinutes(focusTodayMinutes)}</p>
+                <p className="mt-2 text-xs text-slate-500 font-mono">
+                  {summary.focusTodayPomodoros} pomodoro block{summary.focusTodayPomodoros === 1 ? "" : "s"} logged today
+                </p>
+              </div>
+              <div className="flex items-center justify-between mt-4 px-4 py-3 border border-dashed border-border-default rounded-sm text-xs font-mono text-slate-600">
+                <span>WEEKLY_AVG:</span>
+                <span className="font-bold">{formatMinutes(averageFocusMinutes)}</span>
+              </div>
+            </div>
+          </section>
+
+          <section className="bento-card">
+            <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between mb-6">
+              <div>
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="label-tech">WEEKLY TRENDS</span>
+                </div>
+                <p className="text-sm text-slate-500 font-mono">
+                  Track how focus minutes and completed tasks stacked up during the last seven days.
+                </p>
+              </div>
+            </div>
+            <div className="h-72 border border-dashed border-border-default bg-surface-base p-4 rounded-sm">
+              <ResponsiveContainer width="100%" height="100%">
+                <ComposedChart data={chartData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(148, 163, 184, 0.3)" />
+                  <XAxis dataKey="label" tick={{ fontSize: 11, fontFamily: "monospace" }} />
+                  <YAxis yAxisId="left" allowDecimals={false} tick={{ fontSize: 11, fontFamily: "monospace" }} />
+                  <YAxis yAxisId="right" orientation="right" allowDecimals={false} tick={{ fontSize: 11, fontFamily: "monospace" }} />
+                  <Tooltip
+                    contentStyle={{
+                      fontFamily: "monospace",
+                      fontSize: "12px",
+                      borderRadius: "2px",
+                      border: "1px solid var(--border-default)"
+                    }}
+                    labelFormatter={(label) => `Day: ${label}`}
+                    formatter={(value: number, name) => {
+                      if (name === "focusMinutes") return [`${value} min`, "Focus"];
+                      if (name === "completedCount") return [value, "Tasks"];
+                      return [value, name];
+                    }}
+                  />
+                  <Bar yAxisId="left" dataKey="focusMinutes" fill="#0047AB" radius={[2, 2, 0, 0]} />
+                  <Line yAxisId="right" type="monotone" dataKey="completedCount" stroke="#10B981" strokeWidth={2} dot={{ r: 3 }} activeDot={{ r: 5 }} />
+                </ComposedChart>
+              </ResponsiveContainer>
+            </div>
+
+            <div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-2">
+              <div className="p-4 bg-surface-base border border-border-subtle rounded-sm">
+                <span className="label-tech">TOP FOCUS DAYS</span>
+                {topFocusDays.length === 0 ? (
+                  <p className="mt-3 text-xs text-slate-500 font-mono">No tracked focus blocks this week yet.</p>
+                ) : (
+                  <ul className="mt-3 space-y-2">
+                    {topFocusDays.map((day) => (
+                      <li key={day.date} className="flex items-center justify-between px-3 py-2 border border-border-subtle rounded-sm bg-white">
+                        <span className="text-sm font-mono text-slate-700">{format(parseISO(day.date), "EEEE")}</span>
+                        <span className="font-mono font-bold text-primary">{formatMinutes(day.focusMinutes)}</span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+
+              <div className="p-4 bg-surface-base border border-border-subtle rounded-sm">
+                <span className="label-tech">IMPROVEMENT PROMPTS</span>
+                <ul className="mt-3 space-y-2">
+                  {improvementPrompts.map((prompt) => (
+                    <li key={prompt} className="px-3 py-2 border border-border-subtle rounded-sm bg-white text-sm font-mono text-slate-700">
+                      {prompt}
+                    </li>
+                  ))}
+                  {improvementPrompts.length === 0 && (
+                    <li className="text-xs text-slate-500 font-mono">Data is still coming in. Log a few sessions to unlock tailored suggestions.</li>
+                  )}
+                </ul>
+              </div>
+            </div>
+          </section>
+
+          <section className="bento-card">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between mb-6">
+              <div>
+                <span className="label-tech">JOURNALING PROMPTS</span>
+                <p className="text-sm text-slate-500 font-mono mt-2">Capture quick reflections. Notes stay on this device.</p>
+              </div>
+            </div>
+
+            <div className="grid gap-6 lg:grid-cols-3">
+              {[
+                { key: "wins", label: "WHAT_WENT_WELL", placeholder: "Celebrate progress, even tiny wins." },
+                { key: "blockers", label: "WHERE_GOT_STUCK", placeholder: "Call out blockers so you can clear them tomorrow." },
+                { key: "goals", label: "WHATS_NEXT", placeholder: "Set one intention to start your next focus block strong." },
+              ].map((field) => (
+                <label key={field.key} className="flex flex-col gap-2 p-4 bg-surface-base border border-border-subtle rounded-sm">
+                  <span className="text-[10px] font-mono font-bold text-slate-500 uppercase tracking-wider">{field.label}</span>
+                  <textarea
+                    value={journal[field.key as keyof JournalState]}
+                    onChange={(event) =>
+                      setJournal((prev) => ({
+                        ...prev,
+                        [field.key]: event.target.value,
+                      }))
+                    }
+                    placeholder={field.placeholder}
+                    rows={5}
+                    className="w-full resize-none bg-white border border-border-subtle rounded-sm px-3 py-2 font-mono text-sm text-slate-800 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition"
+                  />
+                </label>
+              ))}
+            </div>
+          </section>
+        </>
+      )}
     </div>
   );
 }

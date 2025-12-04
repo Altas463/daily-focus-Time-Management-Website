@@ -143,21 +143,24 @@ export default function ProfilePage() {
   };
 
   return (
-    <div className="mx-auto flex max-w-4xl flex-col gap-6">
-      <BackToDashboardLink />
+    <div className="max-w-5xl mx-auto space-y-8">
+      <div className="flex items-center gap-4">
+        <BackToDashboardLink />
+        <div className="h-4 w-px bg-border-default"></div>
+        <span className="text-sm font-mono text-slate-500 uppercase tracking-wider">User Profile</span>
+      </div>
 
-      <header className="rounded-3xl border border-gray-200 bg-white p-8 shadow-sm dark:border-gray-800 dark:bg-gray-900">
-        <p className="text-xs font-semibold uppercase tracking-[0.28em] text-gray-500 dark:text-gray-400">Profile</p>
-        <h1 className="mt-2 text-3xl font-semibold text-gray-900 dark:text-gray-50">Your workspace identity</h1>
-        <p className="mt-3 text-sm text-gray-600 dark:text-gray-300">
-          Manage the information other teammates see, including your display name, avatar, and contact details.
-        </p>
+      <header>
+        <h1 className="text-3xl font-display font-bold mb-2">Your workspace identity</h1>
+        <p className="text-slate-500 font-mono text-sm">{"// Manage display name, role, and profile information."}</p>
       </header>
 
-      <section className="space-y-6 rounded-3xl border border-gray-200 bg-white p-8 shadow-sm dark:border-gray-800 dark:bg-gray-900">
-        <div>
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Public profile</h2>
-          <p className="text-sm text-gray-500 dark:text-gray-400">Update your name, headline, and profile photo.</p>
+      <section className="bento-card">
+        <div className="mb-6">
+          <div className="flex items-center gap-2 mb-2">
+            <span className="label-tech">PUBLIC PROFILE</span>
+          </div>
+          <p className="text-sm text-slate-500 font-mono">Update your name, headline, and bio.</p>
         </div>
 
         {feedback && (
@@ -165,13 +168,13 @@ export default function ProfilePage() {
             role="status"
             aria-live="polite"
             className={clsx(
-              "rounded-2xl border px-4 py-3 text-sm",
+              "mb-6 p-4 text-sm font-mono rounded-sm border",
               feedback.type === "success"
-                ? "border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-900/40 dark:bg-emerald-900/20 dark:text-emerald-200"
-                : "border-red-200 bg-red-50 text-red-700 dark:border-red-900/40 dark:bg-red-900/20 dark:text-red-200",
+                ? "bg-emerald-50 border-emerald-200 text-emerald-600"
+                : "bg-red-50 border-red-200 text-red-600",
             )}
           >
-            {feedback.message}
+            {feedback.type === "success" ? "SUCCESS: " : "ERROR: "}{feedback.message}
           </div>
         )}
 
@@ -181,8 +184,8 @@ export default function ProfilePage() {
           autoComplete="off"
           onSubmit={handleSubmit}
         >
-          <label className="flex flex-col gap-2 text-sm text-gray-700 dark:text-gray-200">
-            <span className="font-medium">Display name</span>
+          <label className="flex flex-col gap-2">
+            <span className="text-xs font-mono font-bold text-slate-500 uppercase tracking-wider">Display Name</span>
             <input
               type="text"
               name="displayName"
@@ -190,12 +193,12 @@ export default function ProfilePage() {
               value={formState.displayName}
               onChange={handleChange("displayName")}
               disabled={isLoading || isSaving}
-              className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 transition focus:outline-none focus:ring-2 focus:ring-gray-900/10 disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-400 dark:border-gray-700 dark:bg-gray-950 dark:text-gray-100 dark:disabled:bg-gray-900"
+              className="bg-surface-base border border-border-subtle rounded-sm px-3 py-2 font-mono text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition disabled:cursor-not-allowed disabled:opacity-50"
             />
           </label>
 
-          <label className="flex flex-col gap-2 text-sm text-gray-700 dark:text-gray-200">
-            <span className="font-medium">Role or focus area</span>
+          <label className="flex flex-col gap-2">
+            <span className="text-xs font-mono font-bold text-slate-500 uppercase tracking-wider">Role / Focus Area</span>
             <input
               type="text"
               name="role"
@@ -203,12 +206,12 @@ export default function ProfilePage() {
               value={formState.role}
               onChange={handleChange("role")}
               disabled={isLoading || isSaving}
-              className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 transition focus:outline-none focus:ring-2 focus:ring-gray-900/10 disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-400 dark:border-gray-700 dark:bg-gray-950 dark:text-gray-100 dark:disabled:bg-gray-900"
+              className="bg-surface-base border border-border-subtle rounded-sm px-3 py-2 font-mono text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition disabled:cursor-not-allowed disabled:opacity-50"
             />
           </label>
 
-          <label className="md:col-span-2 flex flex-col gap-2 text-sm text-gray-700 dark:text-gray-200">
-            <span className="font-medium">About you</span>
+          <label className="md:col-span-2 flex flex-col gap-2">
+            <span className="text-xs font-mono font-bold text-slate-500 uppercase tracking-wider">About You</span>
             <textarea
               name="bio"
               rows={4}
@@ -216,38 +219,38 @@ export default function ProfilePage() {
               value={formState.bio}
               onChange={handleChange("bio")}
               disabled={isLoading || isSaving}
-              className="resize-none rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 transition focus:outline-none focus:ring-2 focus:ring-gray-900/10 disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-400 dark:border-gray-700 dark:bg-gray-950 dark:text-gray-100 dark:disabled:bg-gray-900"
+              className="resize-none bg-surface-base border border-border-subtle rounded-sm px-3 py-2 font-mono text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition disabled:cursor-not-allowed disabled:opacity-50"
             />
           </label>
 
-          <div className="md:col-span-2 flex items-center gap-3 text-xs text-gray-500 dark:text-gray-400">
+          <div className="md:col-span-2 flex items-center gap-3 text-xs font-mono text-slate-400">
             {isLoading ? (
               <span className="inline-flex items-center gap-2">
-                <span className="h-2 w-2 animate-pulse rounded-full bg-gray-300 dark:bg-gray-600" />
-                Loading profile...
+                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-slate-400" />
+                LOADING_PROFILE...
               </span>
             ) : (
-              <span>{isDirty ? "You have unsaved changes." : "All changes are saved."}</span>
+              <span>{isDirty ? "STATUS: UNSAVED_CHANGES" : "STATUS: ALL_SAVED"}</span>
             )}
           </div>
         </form>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 mt-6 pt-6 border-t border-border-subtle">
           <button
             type="submit"
             form="profile-form"
             disabled={!isDirty || isSaving || isLoading}
-            className="inline-flex items-center justify-center rounded-lg bg-gray-900 px-4 py-2 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-black/90 focus:outline-none focus:ring-2 focus:ring-gray-900/20 disabled:translate-y-0 disabled:bg-gray-300 disabled:text-gray-500 dark:bg-white dark:text-gray-900 dark:hover:bg-white/90 dark:disabled:bg-gray-700 dark:disabled:text-gray-300"
+            className="btn-tech-primary disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {isSaving ? "Saving..." : "Save changes"}
+            {isSaving ? "SAVING..." : "SAVE CHANGES"}
           </button>
           <button
             type="button"
             disabled={!isDirty || isSaving || isLoading}
             onClick={handleReset}
-            className="inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-semibold text-gray-700 transition hover:-translate-y-0.5 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-300/40 disabled:cursor-not-allowed disabled:text-gray-400 dark:text-gray-200 dark:hover:bg-gray-800 dark:focus:ring-gray-700/40"
+            className="btn-tech-secondary disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Reset
+            RESET
           </button>
         </div>
       </section>

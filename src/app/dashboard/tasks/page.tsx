@@ -379,298 +379,283 @@ export default function TasksPage() {
   ] as const;
 
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-gray-950">
-      <div className="mx-auto max-w-7xl px-4 py-8">
-        <div className="space-y-8">
-          <BackToDashboardLink />
+    <div className="max-w-7xl mx-auto space-y-8">
+      <div className="flex items-center gap-4">
+        <BackToDashboardLink />
+        <div className="h-4 w-px bg-border-default"></div>
+        <span className="text-sm font-mono text-slate-500 uppercase tracking-wider">Task Queue</span>
+      </div>
 
-          <div className="space-y-3 text-center">
-            <h1 className="text-4xl font-bold text-gray-900 dark:text-white">Task Management</h1>
-            <p className="text-lg text-gray-600 dark:text-gray-300">
-              Clear planning helps you focus and not miss important deadlines.
-            </p>
+      <header>
+        <h1 className="text-3xl font-display font-bold mb-2">Task Management</h1>
+        <p className="text-slate-500 font-mono text-sm">{"// Clear planning helps you focus and not miss important deadlines."}</p>
+      </header>
+
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        {[
+          { label: "TOTAL", value: taskSummary.total },
+          { label: "IN PROGRESS", value: taskSummary.incomplete },
+          { label: "OVERDUE", value: taskSummary.overdue },
+          { label: "COMPLETED", value: taskSummary.completed },
+        ].map((item) => (
+          <div key={item.label} className="bento-card p-4">
+            <span className="label-tech mb-2">{item.label}</span>
+            <div className="text-2xl font-mono font-bold">{item.value}</div>
           </div>
+        ))}
+      </div>
 
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {[
-              { label: "Total Tasks", value: taskSummary.total },
-              { label: "In Progress", value: taskSummary.incomplete },
-              { label: "Overdue", value: taskSummary.overdue },
-              { label: "Completed", value: taskSummary.completed },
-            ].map((item) => (
-              <div
-                key={item.label}
-                className="rounded-lg border border-gray-200 bg-white p-5 text-center shadow-sm dark:border-gray-800 dark:bg-gray-900"
-              >
-                <span className="text-2xl font-bold text-gray-900 dark:text-white">{item.value}</span>
-                <p className="mt-1 text-sm font-medium text-gray-600 dark:text-gray-300">
-                  {item.label}
-                </p>
-              </div>
-            ))}
-          </div>
-
-          <div className="flex flex-col gap-3 rounded-lg border border-gray-200 bg-white p-5 shadow-sm dark:border-gray-800 dark:bg-gray-900 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex flex-wrap gap-2">
-              {filterOptions.map((option) => {
-                const active = filter === option.key;
-                return (
-                  <button
-                    key={option.key}
-                    onClick={() => setFilter(option.key)}
-                    className={[
-                      "rounded-full border px-3 py-1 text-sm font-medium transition",
-                      active
-                        ? "border-gray-900 bg-gray-900 text-white dark:border-white/90 dark:bg-white/90 dark:text-gray-900"
-                        : "border-gray-200 bg-white text-gray-600 hover:border-gray-300 hover:text-gray-900 dark:border-gray-800 dark:bg-white/10 dark:text-gray-300 dark:hover:border-white/20",
-                    ].join(" ")}
-                  >
-                    {option.label}
-                  </button>
-                );
-              })}
-            </div>
-
-            <div className="w-full sm:w-72">
-              <input
-                type="search"
-                value={searchTerm}
-                onChange={(event) => setSearchTerm(event.target.value)}
-                placeholder="Search tasks..."
-                className="w-full rounded-full border border-gray-200 bg-white py-2 px-4 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-gray-900/10 dark:border-gray-800 dark:bg-gray-900 dark:text-white"
-              />
-            </div>
-          </div>
-
-          <div className="rounded-lg border border-gray-200 bg-white p-5 shadow-sm dark:border-gray-800 dark:bg-gray-900">
-            <p className="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
-              Quick templates
-            </p>
-            <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-              Press Alt + N to open the form instantly.
-            </p>
-            <div className="mt-2 flex flex-wrap gap-2">
-              {quickTemplates.map((template) => (
+      <div className="bento-card">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div className="flex flex-wrap gap-2">
+            {filterOptions.map((option) => {
+              const active = filter === option.key;
+              return (
                 <button
-                  key={template.title}
-                  onClick={() => applyTemplate(template)}
-                  className="rounded-full border border-gray-200 bg-white px-3 py-1 text-xs font-medium text-gray-600 transition hover:-translate-y-0.5 hover:border-gray-300 hover:text-gray-900 dark:border-gray-800 dark:bg-white/10 dark:text-gray-300 dark:hover:border-white/20"
+                  key={option.key}
+                  onClick={() => setFilter(option.key)}
+                  className={[
+                    "px-3 py-1.5 text-xs font-mono font-medium uppercase tracking-wider border rounded-sm transition-all",
+                    active
+                      ? "bg-primary text-white border-primary"
+                      : "bg-surface-base border-border-subtle text-slate-500 hover:border-slate-400",
+                  ].join(" ")}
                 >
-                  {template.title}
+                  {option.label}
                 </button>
-              ))}
-            </div>
+              );
+            })}
           </div>
 
-          {nextDueTask && (
-            <div className="rounded-lg border border-gray-200 bg-white p-5 shadow-sm dark:border-gray-800 dark:bg-gray-900">
-              <p className="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
-                Upcoming deadline
-              </p>
-              <p className="mt-1 text-sm font-medium text-gray-900 dark:text-white">{nextDueTask.title}</p>
-              {nextDueTask.endDate && (
-                <p className="text-xs text-gray-500 dark:text-gray-400">
-                  Due {formatRelativeDate(nextDueTask.endDate)} • {formatShortDate(new Date(nextDueTask.endDate))}
-                </p>
-              )}
-            </div>
+          <div className="w-full sm:w-64">
+            <input
+              type="search"
+              value={searchTerm}
+              onChange={(event) => setSearchTerm(event.target.value)}
+              placeholder="Search tasks..."
+              className="w-full bg-surface-base border border-border-subtle rounded-sm px-3 py-2 font-mono text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div className="bento-card">
+        <div className="flex items-center gap-2 mb-4">
+          <span className="label-tech">QUICK TEMPLATES</span>
+          <span className="text-[10px] font-mono text-slate-400">ALT + N</span>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {quickTemplates.map((template) => (
+            <button
+              key={template.title}
+              onClick={() => applyTemplate(template)}
+              className="px-3 py-1.5 text-xs font-mono border border-dashed border-border-default text-slate-500 hover:border-primary hover:text-primary transition-colors rounded-sm"
+            >
+              {template.title}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {nextDueTask && (
+        <div className="bento-card bg-surface-base border-primary/20 relative overflow-hidden">
+          <div className="absolute top-0 left-0 w-1 h-full bg-primary"></div>
+          <div className="flex items-center gap-2 mb-2">
+            <span className="label-tech">UPCOMING DEADLINE</span>
+          </div>
+          <p className="font-medium text-slate-900">{nextDueTask.title}</p>
+          {nextDueTask.endDate && (
+            <p className="text-xs font-mono text-slate-500 mt-1">
+              Due {formatRelativeDate(nextDueTask.endDate)} • {formatShortDate(new Date(nextDueTask.endDate))}
+            </p>
           )}
+        </div>
+      )}
 
-          <DragDropContext onDragEnd={onDragEnd}>
-            <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-              {(Object.keys(columns) as ColumnKey[]).map((columnKey) => {
-                const columnTasks = columns[columnKey];
-                const config = columnConfig[columnKey];
-                return (
-                  <Droppable droppableId={columnKey} key={columnKey}>
-                    {(provided) => (
-                      <div ref={provided.innerRef} {...provided.droppableProps}>
-                        <div className="h-full rounded-xl border border-gray-200 bg-white shadow-sm dark:border-gray-800 dark:bg-gray-900">
-                          <div className="flex items-center justify-between gap-3 border-b border-gray-200 p-6 dark:border-gray-800">
-                            <div>
-                              <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-                                {config.title}
-                              </h2>
-                              <p className="text-sm text-gray-500 dark:text-gray-400">
-                                {config.description}
-                              </p>
-                            </div>
-                            <span
-                              className={`rounded-full px-3 py-1 text-sm font-medium ${config.badgeColor}`}
-                            >
-                              {columnTasks.length}
-                            </span>
+      <DragDropContext onDragEnd={onDragEnd}>
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+          {(Object.keys(columns) as ColumnKey[]).map((columnKey) => {
+            const columnTasks = columns[columnKey];
+            const config = columnConfig[columnKey];
+            return (
+              <Droppable droppableId={columnKey} key={columnKey}>
+                {(provided) => (
+                  <div ref={provided.innerRef} {...provided.droppableProps}>
+                    <div className="bento-card h-full min-h-[400px]">
+                      <div className="flex items-center justify-between mb-6">
+                        <div className="flex items-center gap-2">
+                          <span className="label-tech">{config.title.toUpperCase()}</span>
+                        </div>
+                        <span className="px-2 py-0.5 bg-primary/10 text-primary text-xs font-mono rounded-sm">
+                          {columnTasks.length}
+                        </span>
+                      </div>
+                      <p className="text-xs text-slate-500 mb-4">{config.description}</p>
+
+                      <div className="space-y-3">
+                        {columnTasks.length === 0 ? (
+                          <div className="py-8 border border-dashed border-border-default text-center text-sm text-slate-400 rounded-sm">
+                            {config.emptyText}
                           </div>
-
-                          <div className="space-y-4 p-6">
-                            {columnTasks.length === 0 ? (
-                              <div className="rounded-2xl border-2 border-dashed border-gray-200 p-6 text-center text-sm text-gray-500 dark:border-gray-800 dark:text-gray-400">
-                                {config.emptyText}
-                              </div>
-                            ) : (
-                              columnTasks.map((task, index) => {
-                                const urgency = getTaskUrgency(task.endDate);
-                                return (
-                                  <Draggable key={task.id} draggableId={task.id} index={index}>
-                                    {(draggableProvided, snapshot) => (
-                                      <div
-                                        ref={draggableProvided.innerRef}
-                                        {...draggableProvided.draggableProps}
-                                        style={draggableProvided.draggableProps.style}
-                                        className={snapshot.isDragging ? "z-50 drop-shadow-2xl" : ""}
-                                      >
-                                        <div {...draggableProvided.dragHandleProps}>
-                                          <TaskCard
-                                            task={task}
-                                            onUpdate={updateTask}
-                                            onDelete={deleteTask}
-                                          />
-                                          {task.endDate && (
-                                            <div className="mt-2 flex items-center gap-2 rounded-xl bg-gray-100/70 px-3 py-2 text-xs text-gray-600 dark:bg-gray-700/40 dark:text-gray-300">
-                                              <span className={`inline-flex h-2 w-2 rounded-full ${toneBadge[urgency.tone]}`} aria-hidden />
-                                              <span>{urgency.label}</span>
-                                              <span className="text-gray-400">•</span>
-                                              <span>{formatRelativeDate(task.endDate)}</span>
-                                            </div>
-                                          )}
+                        ) : (
+                          columnTasks.map((task, index) => {
+                            const urgency = getTaskUrgency(task.endDate);
+                            return (
+                              <Draggable key={task.id} draggableId={task.id} index={index}>
+                                {(draggableProvided, snapshot) => (
+                                  <div
+                                    ref={draggableProvided.innerRef}
+                                    {...draggableProvided.draggableProps}
+                                    style={draggableProvided.draggableProps.style}
+                                    className={snapshot.isDragging ? "z-50 drop-shadow-2xl" : ""}
+                                  >
+                                    <div {...draggableProvided.dragHandleProps}>
+                                      <TaskCard
+                                        task={task}
+                                        onUpdate={updateTask}
+                                        onDelete={deleteTask}
+                                      />
+                                      {task.endDate && (
+                                        <div className="mt-2 flex items-center gap-2 px-3 py-2 text-xs font-mono bg-surface-panel border border-border-subtle rounded-sm">
+                                          <span className={`inline-flex h-2 w-2 rounded-full ${toneBadge[urgency.tone]}`} aria-hidden />
+                                          <span className="text-slate-600">{urgency.label}</span>
+                                          <span className="text-slate-400">•</span>
+                                          <span className="text-slate-500">{formatRelativeDate(task.endDate)}</span>
                                         </div>
-                                      </div>
-                                    )}
-                                  </Draggable>
-                                );
-                              })
-                            )}
-                            {provided.placeholder}
-
-                            {formVisible[columnKey] ? (
-                              <div className="space-y-3 rounded-xl border border-gray-200 bg-white/80 p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900">
-                                <div>
-                                  <label className="text-xs font-semibold text-gray-500 dark:text-gray-300">
-                                    Tieu de
-                                  </label>
-                                  <input
-                                    type="text"
-                                    className="mt-1 w-full rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-sm text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-4 focus:ring-gray-900/10 dark:border-gray-800 dark:bg-gray-900 dark:text-white"
-                                    value={newTaskMap[columnKey].title}
-                                    onChange={(event) =>
-                                      handleInputChange(columnKey, "title", event.target.value)
-                                    }
-                                    onKeyDown={(event) => {
-                                      if (event.key === "Enter" && !event.shiftKey) {
-                                        event.preventDefault();
-                                        void handleCreateTask(columnKey);
-                                      }
-                                    }}
-                                    placeholder="Nhap tieu de task..."
-                                    autoFocus
-                                  />
-                                </div>
-                                <div>
-                                  <label className="text-xs font-semibold text-gray-500 dark:text-gray-300">
-                                    Mo ta (tuy chon)
-                                  </label>
-                                  <textarea
-                                    className="mt-1 w-full rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-sm text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-4 focus:ring-gray-900/10 dark:border-gray-800 dark:bg-gray-900 dark:text-white"
-                                    rows={3}
-                                    value={newTaskMap[columnKey].description}
-                                    onChange={(event) =>
-                                      handleInputChange(columnKey, "description", event.target.value)
-                                    }
-                                  />
-                                </div>
-                                <div className="grid gap-3 sm:grid-cols-2">
-                                  <div>
-                                    <label className="text-xs font-semibold text-gray-500 dark:text-gray-300">
-                                      Bat dau
-                                    </label>
-                                    <input
-                                      type="datetime-local"
-                                      className="mt-1 w-full rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-900/10 dark:border-gray-800 dark:bg-gray-900 dark:text-white"
-                                      value={newTaskMap[columnKey].startDate}
-                                      onChange={(event) =>
-                                        handleInputChange(columnKey, "startDate", event.target.value)
-                                      }
-                                    />
+                                      )}
+                                    </div>
                                   </div>
-                                  <div>
-                                    <label className="text-xs font-semibold text-gray-500 dark:text-gray-300">
-                                      Ket thuc
-                                    </label>
-                                    <input
-                                      type="datetime-local"
-                                      className="mt-1 w-full rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-900/10 dark:border-gray-800 dark:bg-gray-900 dark:text-white"
-                                      value={newTaskMap[columnKey].endDate}
-                                      onChange={(event) =>
-                                        handleInputChange(columnKey, "endDate", event.target.value)
-                                      }
-                                    />
-                                  </div>
-                                </div>
-
-                                {formErrors[columnKey] && (
-                                  <p className="text-xs font-medium text-red-500">
-                                    {formErrors[columnKey]}
-                                  </p>
                                 )}
+                              </Draggable>
+                            );
+                          })
+                        )}
+                        {provided.placeholder}
 
-                                <div className="flex items-center gap-2">
-                                  <button
-                                    onClick={() => handleCreateTask(columnKey)}
-                                    disabled={submitting[columnKey]}
-                                    className="inline-flex items-center justify-center rounded-md bg-gray-900 px-4 py-2 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-black/90 focus:outline-none focus:ring-4 focus:ring-gray-900/20 disabled:opacity-60 dark:bg-white dark:text-gray-900 dark:hover:bg-white/90"
-                                  >
-                                    {submitting[columnKey] ? "Dang tao..." : "Them task"}
-                                  </button>
-                                  <button
-                                    onClick={() =>
-                                      setFormVisible((prev) => ({
-                                        ...prev,
-                                        [columnKey]: false,
-                                      }))
-                                    }
-                                    className="rounded-md px-3 py-2 text-sm text-gray-600 transition hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-white/10"
-                                  >
-                                    Huy
-                                  </button>
-                                </div>
+                        {formVisible[columnKey] ? (
+                          <div className="space-y-3 p-4 bg-surface-panel border border-border-subtle rounded-sm">
+                            <div>
+                              <label className="text-[10px] font-mono font-bold text-slate-500 uppercase">
+                                Title
+                              </label>
+                              <input
+                                type="text"
+                                className="mt-1 w-full bg-surface-base border border-border-subtle rounded-sm px-3 py-2 text-sm font-mono focus:border-primary focus:ring-1 focus:ring-primary outline-none"
+                                value={newTaskMap[columnKey].title}
+                                onChange={(event) =>
+                                  handleInputChange(columnKey, "title", event.target.value)
+                                }
+                                onKeyDown={(event) => {
+                                  if (event.key === "Enter" && !event.shiftKey) {
+                                    event.preventDefault();
+                                    void handleCreateTask(columnKey);
+                                  }
+                                }}
+                                placeholder="Enter task title..."
+                                autoFocus
+                              />
+                            </div>
+                            <div>
+                              <label className="text-[10px] font-mono font-bold text-slate-500 uppercase">
+                                Description (optional)
+                              </label>
+                              <textarea
+                                className="mt-1 w-full bg-surface-base border border-border-subtle rounded-sm px-3 py-2 text-sm font-mono focus:border-primary focus:ring-1 focus:ring-primary outline-none"
+                                rows={3}
+                                value={newTaskMap[columnKey].description}
+                                onChange={(event) =>
+                                  handleInputChange(columnKey, "description", event.target.value)
+                                }
+                              />
+                            </div>
+                            <div className="grid gap-3 sm:grid-cols-2">
+                              <div>
+                                <label className="text-[10px] font-mono font-bold text-slate-500 uppercase">
+                                  Start
+                                </label>
+                                <input
+                                  type="datetime-local"
+                                  className="mt-1 w-full bg-surface-base border border-border-subtle rounded-sm px-3 py-2 text-sm font-mono focus:border-primary focus:ring-1 focus:ring-primary outline-none"
+                                  value={newTaskMap[columnKey].startDate}
+                                  onChange={(event) =>
+                                    handleInputChange(columnKey, "startDate", event.target.value)
+                                  }
+                                />
                               </div>
-                            ) : (
+                              <div>
+                                <label className="text-[10px] font-mono font-bold text-slate-500 uppercase">
+                                  End
+                                </label>
+                                <input
+                                  type="datetime-local"
+                                  className="mt-1 w-full bg-surface-base border border-border-subtle rounded-sm px-3 py-2 text-sm font-mono focus:border-primary focus:ring-1 focus:ring-primary outline-none"
+                                  value={newTaskMap[columnKey].endDate}
+                                  onChange={(event) =>
+                                    handleInputChange(columnKey, "endDate", event.target.value)
+                                  }
+                                />
+                              </div>
+                            </div>
+
+                            {formErrors[columnKey] && (
+                              <p className="text-xs font-mono text-red-500">
+                                {formErrors[columnKey]}
+                              </p>
+                            )}
+
+                            <div className="flex items-center gap-2 pt-2">
+                              <button
+                                onClick={() => handleCreateTask(columnKey)}
+                                disabled={submitting[columnKey]}
+                                className="btn-tech-primary disabled:opacity-50"
+                              >
+                                {submitting[columnKey] ? "CREATING..." : "ADD TASK"}
+                              </button>
                               <button
                                 onClick={() =>
                                   setFormVisible((prev) => ({
                                     ...prev,
-                                    [columnKey]: true,
+                                    [columnKey]: false,
                                   }))
                                 }
-                                className="group flex w-full items-center justify-between rounded-xl border-2 border-dashed border-gray-300 bg-white/70 px-4 py-4 text-left text-gray-700 transition hover:border-gray-400 hover:bg-white/90 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-200 dark:hover:bg-white/10"
+                                className="btn-tech-secondary"
                               >
-                                <span className="text-sm font-medium">Them task moi</span>
-                                <span className="rounded-full border border-gray-300 px-2 py-0.5 text-xs text-gray-500 group-hover:border-gray-400 dark:border-gray-800 dark:text-gray-400">
-                                  Enter
-                                </span>
+                                CANCEL
                               </button>
-                            )}
+                            </div>
                           </div>
-                        </div>
+                        ) : (
+                          <button
+                            onClick={() =>
+                              setFormVisible((prev) => ({
+                                ...prev,
+                                [columnKey]: true,
+                              }))
+                            }
+                            className="w-full py-2 border border-dashed border-border-default text-slate-400 text-sm font-mono hover:border-primary hover:text-primary transition-colors rounded-sm"
+                          >
+                            + ADD TASK
+                          </button>
+                        )}
                       </div>
-                    )}
-                  </Droppable>
-                );
-              })}
-            </div>
-
-            <TimeBlockingBoard
-              selectedDate={timeBlockDate}
-              onSelectedDateChange={handleTimeBlockDateChange}
-              assignments={timeBlockAssignments}
-              onClearAssignment={handleClearAssignment}
-              pendingBlockId={timeBlockPending}
-              statusMessage={timeBlockStatus}
-              onDismissStatus={() => setTimeBlockStatus(null)}
-            />
-          </DragDropContext>
+                    </div>
+                  </div>
+                )}
+              </Droppable>
+            );
+          })}
         </div>
-      </div>
+
+        <TimeBlockingBoard
+          selectedDate={timeBlockDate}
+          onSelectedDateChange={handleTimeBlockDateChange}
+          assignments={timeBlockAssignments}
+          onClearAssignment={handleClearAssignment}
+          pendingBlockId={timeBlockPending}
+          statusMessage={timeBlockStatus}
+          onDismissStatus={() => setTimeBlockStatus(null)}
+        />
+      </DragDropContext>
     </div>
   );
 }
