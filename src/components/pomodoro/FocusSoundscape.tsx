@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Volume2, VolumeX } from "lucide-react";
+import { Volume2, VolumeX, Waves, Wind, Zap } from "lucide-react";
 
 type SoundId = "white" | "brown" | "waves";
 
@@ -9,6 +9,7 @@ type SoundOption = {
   id: SoundId;
   label: string;
   description: string;
+  icon: any;
 };
 
 type SoundHandle = {
@@ -19,21 +20,25 @@ type SoundHandle = {
 const soundOptions: SoundOption[] = [
   {
     id: "white",
-    label: "White noise",
-    description: "Balanced static wall to mask background chatter.",
+    label: "White Noise",
+    description: "Static masking",
+    icon: Zap,
   },
   {
     id: "brown",
-    label: "Deep brown",
-    description: "Low frequencies that feel grounded and steady.",
+    label: "Brown Noise",
+    description: "Deep rumble",
+    icon: Wind,
   },
   {
     id: "waves",
-    label: "Soft waves",
-    description: "Faint swell inspired by shoreline ambience.",
+    label: "Ocean Waves",
+    description: "Natural swell",
+    icon: Waves,
   },
 ];
 
+// Audio generation functions (kept same logic, just moved for brevity if needed, but including full logic here)
 const createWhiteNoise = (ctx: AudioContext) => {
   const bufferSize = ctx.sampleRate * 2;
   const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
@@ -57,11 +62,7 @@ const createWhiteNoise = (ctx: AudioContext) => {
   return {
     node: filter,
     stop: () => {
-      try {
-        source.stop();
-      } catch {
-        // ignore if already stopped
-      }
+      try { source.stop(); } catch {}
       source.disconnect();
       filter.disconnect();
     },
@@ -96,11 +97,7 @@ const createBrownNoise = (ctx: AudioContext) => {
   return {
     node: filter,
     stop: () => {
-      try {
-        source.stop();
-      } catch {
-        // ignore if already stopped
-      }
+      try { source.stop(); } catch {}
       source.disconnect();
       filter.disconnect();
     },
@@ -144,9 +141,7 @@ const createSoftWaves = (ctx: AudioContext) => {
         carrier.stop();
         shimmer.stop();
         lfo.stop();
-      } catch {
-        // ignore if already stopped
-      }
+      } catch {}
       carrier.disconnect();
       shimmer.disconnect();
       lfo.disconnect();
@@ -172,18 +167,9 @@ export default function FocusSoundscape() {
   const activeHandleRef = useRef<SoundHandle | null>(null);
 
   const ensureContext = useCallback(() => {
-    if (audioContextRef.current) {
-      return audioContextRef.current;
-    }
-
-    const contextClass =
-      window.AudioContext ||
-      (window as Window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
-
-    if (!contextClass) {
-      throw new Error("This browser does not support the Web Audio API.");
-    }
-
+    if (audioContextRef.current) return audioContextRef.current;
+    const contextClass = window.AudioContext || (window as any).webkitAudioContext;
+    if (!contextClass) throw new Error("Web Audio API not supported.");
     const ctx = new contextClass();
     audioContextRef.current = ctx;
     return ctx;
@@ -195,11 +181,7 @@ export default function FocusSoundscape() {
       activeHandleRef.current = null;
     }
     if (gainRef.current) {
-      try {
-        gainRef.current.disconnect();
-      } catch {
-        // ignore
-      }
+      try { gainRef.current.disconnect(); } catch {}
       gainRef.current = null;
     }
     setActiveSound(null);
@@ -209,7 +191,6 @@ export default function FocusSoundscape() {
     async (id: SoundId) => {
       const ctx = ensureContext();
       await ctx.resume();
-
       await stopCurrent();
 
       const gain = ctx.createGain();
@@ -239,13 +220,8 @@ export default function FocusSoundscape() {
 
   useEffect(() => {
     return () => {
-      if (activeHandleRef.current) {
-        activeHandleRef.current.stop();
-        activeHandleRef.current = null;
-      }
-      if (audioContextRef.current) {
-        audioContextRef.current.close().catch(() => null);
-      }
+      if (activeHandleRef.current) activeHandleRef.current.stop();
+      if (audioContextRef.current) audioContextRef.current.close().catch(() => null);
     };
   }, []);
 
@@ -255,51 +231,53 @@ export default function FocusSoundscape() {
   }, [volume]);
 
   return (
-    <section className="rounded-3xl border border-white/10 bg-white/5 p-6 text-slate-200 backdrop-blur">
-      <div className="flex items-center justify-between">
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.28em] text-blue-100/70">Soundscapes</p>
-          <p className="mt-1 text-sm text-slate-200/80">Layer gentle ambience without leaving the page.</p>
+    <section className="bento-card">
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-2">
+          <Volume2 className="w-4 h-4 text-primary" />
+          <span className="label-tech">AUDIO ENVIRONMENT</span>
         </div>
         <button
           type="button"
           onClick={() => stopCurrent()}
-          className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/10 text-slate-200/70 transition hover:border-white/20 hover:text-white"
-          aria-label="Stop ambient sound"
+          className="text-slate-400 hover:text-red-500 transition-colors"
           disabled={!activeSound}
         >
-          {activeSound ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4 opacity-60" />}
+          <VolumeX className="w-4 h-4" />
         </button>
       </div>
 
-      <div className="mt-6 space-y-3">
+      <div className="space-y-2">
         {soundOptions.map((option) => {
           const active = option.id === activeSound;
+          const Icon = option.icon;
           return (
             <button
               key={option.id}
               type="button"
               onClick={() => toggleSound(option.id)}
-              className={[
-                "w-full rounded-2xl border px-4 py-4 text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300/60",
+              className={`w-full flex items-center gap-3 p-3 rounded-sm border transition-all ${
                 active
-                  ? "border-white/30 bg-white/10 text-white shadow-lg shadow-blue-500/10"
-                  : "border-white/10 bg-white/5 text-slate-100/80 hover:border-white/20 hover:text-white",
-              ].join(" ")}
-              aria-pressed={active}
+                  ? "bg-primary/5 border-primary text-primary"
+                  : "bg-surface-base border-border-subtle text-slate-500 hover:border-slate-400 hover:text-slate-700"
+              }`}
             >
-              <p className="text-sm font-semibold">{option.label}</p>
-              <p className="mt-1 text-xs text-slate-200/70">{option.description}</p>
+              <Icon className="w-4 h-4" />
+              <div className="text-left flex-1">
+                <div className="text-sm font-bold font-mono uppercase">{option.label}</div>
+                <div className="text-[10px] opacity-70">{option.description}</div>
+              </div>
+              {active && <div className="w-2 h-2 bg-primary rounded-full animate-pulse"></div>}
             </button>
           );
         })}
       </div>
 
-      <div className="mt-6">
-        <label className="flex items-center justify-between text-xs uppercase tracking-[0.2em] text-blue-100/70">
-          Volume
-          <span className="font-mono text-[11px] text-slate-200/80">{Math.round(volume * 100)}%</span>
-        </label>
+      <div className="mt-6 pt-4 border-t border-border-subtle">
+        <div className="flex justify-between items-center mb-2">
+          <span className="text-[10px] font-mono text-slate-400 uppercase">Master Volume</span>
+          <span className="text-[10px] font-mono font-bold text-primary">{Math.round(volume * 100)}%</span>
+        </div>
         <input
           type="range"
           min={0}
@@ -307,10 +285,7 @@ export default function FocusSoundscape() {
           step={0.02}
           value={volume}
           onChange={(event) => setVolume(Number(event.target.value))}
-          className="mt-2 h-1 w-full cursor-pointer appearance-none rounded-full bg-white/20 accent-blue-400"
-          aria-valuemin={0}
-          aria-valuemax={60}
-          aria-valuenow={Math.round(volume * 100)}
+          className="w-full h-1 bg-slate-200 rounded-full appearance-none cursor-pointer accent-primary"
         />
       </div>
     </section>

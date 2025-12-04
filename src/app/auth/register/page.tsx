@@ -1,10 +1,11 @@
 'use client';
+
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { jwtDecode } from "jwt-decode";
-import { ArrowRight, CheckCircle2, CircleAlert, Eye, EyeOff, Loader2, Lock, Mail, Rocket, Target, UserRound } from "lucide-react";
+import { ArrowRight, CheckCircle2, CircleAlert, Eye, EyeOff, Loader2, Lock, Mail, Target, UserRound } from "lucide-react";
 import { calculatePasswordStrength } from "@/utils/password";
 import { getMotivationTip } from "@/utils/motivation";
 
@@ -41,12 +42,12 @@ export default function RegisterPage() {
 
   const passwordStrengthLabel = ["Very Weak", "Weak", "Fair", "Good", "Strong", "Very Strong"];
   const passwordStrengthColors = [
-    "#c45d43", // Very Weak - primary dark
-    "#e07a5f", // Weak - primary
-    "#f4a393", // Fair - primary light
-    "#81b29a", // Good - accent
-    "#5a8a6f", // Strong - accent dark
-    "#3d5a80", // Very Strong - secondary
+    "#ef4444", // Red
+    "#f97316", // Orange
+    "#eab308", // Yellow
+    "#84cc16", // Lime
+    "#22c55e", // Green
+    "#3b82f6", // Blue
   ];
 
   const isPasswordMatching = confirmPassword.length > 0 && password === confirmPassword;
@@ -118,139 +119,84 @@ export default function RegisterPage() {
   };
 
   return (
-    <div
-      className="min-h-screen flex grain"
-      style={{ background: "var(--background)" }}
-    >
+    <div className="min-h-screen flex bg-surface-base text-foreground font-sans">
       {/* Left Panel - Branding */}
-      <div
-        className="hidden lg:flex lg:w-1/2 flex-col justify-between p-12 relative overflow-hidden"
-        style={{ background: "var(--accent)" }}
-      >
-        {/* Background pattern */}
-        <div
-          className="absolute inset-0 opacity-10"
+      <div className="hidden lg:flex lg:w-1/2 flex-col justify-between p-12 relative overflow-hidden bg-slate-900 text-white">
+        {/* Technical Grid Background */}
+        <div 
+          className="absolute inset-0 opacity-20 pointer-events-none"
           style={{
-            backgroundImage: `radial-gradient(circle at 2px 2px, white 1px, transparent 0)`,
-            backgroundSize: '32px 32px',
+            backgroundImage: `linear-gradient(to right, #334155 1px, transparent 1px), linear-gradient(to bottom, #334155 1px, transparent 1px)`,
+            backgroundSize: '40px 40px'
           }}
         />
 
         <div className="relative z-10">
           <Link href="/" className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center">
-              <Target className="w-6 h-6 text-white" />
+            <div className="w-10 h-10 rounded-sm bg-primary flex items-center justify-center">
+              <Target className="w-5 h-5 text-white" />
             </div>
-            <span className="text-2xl font-bold text-white">Daily Focus</span>
+            <span className="text-xl font-bold tracking-tight">Daily Focus</span>
           </Link>
         </div>
 
-        <div className="relative z-10 space-y-6">
+        <div className="relative z-10 space-y-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
           >
-            <div className="accent-line mb-6" style={{ background: 'white', opacity: 0.5 }} />
-            <h1 className="display-text text-4xl text-white leading-tight">
-              Start your<br />productivity journey
+            <div className="w-12 h-1 bg-primary mb-6" />
+            <h1 className="font-display text-4xl lg:text-5xl font-bold leading-tight">
+              Initiate New<br />User Protocol
             </h1>
           </motion.div>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="text-lg text-white/80 max-w-md"
+            className="text-lg text-slate-400 max-w-md font-mono"
           >
-            Join thousands of users who have transformed their daily routines with Daily Focus.
+            // Join the network. Optimize your workflow. Execute with precision.
           </motion.p>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-            className="space-y-4"
-          >
-            {[
-              { text: "Track tasks & projects effortlessly" },
-              { text: "Pomodoro timer for deep focus" },
-              { text: "Detailed productivity insights" },
-            ].map((item, i) => (
-              <div key={i} className="flex items-center gap-3">
-                <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center">
-                  <CheckCircle2 className="w-4 h-4 text-white" />
-                </div>
-                <span className="text-white/90">{item.text}</span>
-              </div>
-            ))}
-          </motion.div>
         </div>
 
-        <div className="relative z-10 text-white/60 text-sm">
-          &copy; {new Date().getFullYear()} Daily Focus. All rights reserved.
+        <div className="relative z-10 text-slate-500 text-xs font-mono">
+          SYSTEM_ID: DF-2024-V2 // REGISTRATION_MODULE
         </div>
       </div>
 
       {/* Right Panel - Form */}
-      <div className="flex-1 flex items-center justify-center p-8 overflow-y-auto">
+      <div className="flex-1 flex items-center justify-center p-8 bg-surface-base overflow-y-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="w-full max-w-md"
+          className="w-full max-w-md space-y-8"
         >
           {/* Mobile Logo */}
           <div className="lg:hidden flex items-center justify-center gap-3 mb-8">
-            <div
-              className="w-10 h-10 rounded-xl flex items-center justify-center"
-              style={{ background: "var(--accent)" }}
-            >
+            <div className="w-10 h-10 rounded-sm bg-primary flex items-center justify-center">
               <Target className="w-5 h-5 text-white" />
             </div>
-            <span
-              className="text-xl font-bold"
-              style={{ color: "var(--text-primary)" }}
-            >
-              Daily Focus
-            </span>
+            <span className="text-xl font-bold tracking-tight">Daily Focus</span>
           </div>
 
-          <div className="text-center mb-8">
-            <div
-              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold mb-4"
-              style={{
-                background: "rgba(129, 178, 154, 0.15)",
-                color: "var(--accent)",
-              }}
-            >
-              <Rocket className="w-3.5 h-3.5" />
-              Get started free
+          <div className="text-center">
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 text-primary text-xs font-mono font-bold rounded-sm mb-4">
+              NEW_USER_REGISTRATION
             </div>
-            <h1
-              className="display-text text-2xl mb-2"
-              style={{ color: "var(--text-primary)" }}
-            >
-              Create your account
-            </h1>
-            <p style={{ color: "var(--text-secondary)" }}>
-              Start your productivity journey today
-            </p>
+            <h1 className="font-display text-2xl font-bold mb-2">Create Account</h1>
+            <p className="text-slate-500">Configure your profile to access the system</p>
           </div>
 
-          <form onSubmit={handleRegister} className="space-y-4" noValidate>
+          <form onSubmit={handleRegister} className="space-y-5" noValidate>
             {/* Name field */}
             <div className="space-y-2">
-              <label
-                htmlFor="name"
-                className="block text-sm font-medium"
-                style={{ color: "var(--text-primary)" }}
-              >
+              <label htmlFor="name" className="block text-sm font-medium text-slate-700">
                 Full Name
               </label>
               <div className="relative">
-                <UserRound
-                  className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5"
-                  style={{ color: "var(--text-muted)" }}
-                />
+                <UserRound className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                 <input
                   id="name"
                   type="text"
@@ -258,30 +204,18 @@ export default function RegisterPage() {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="John Doe"
-                  className="w-full pl-12 pr-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 outline-none focus:ring-2"
-                  style={{
-                    background: "var(--surface)",
-                    border: "1px solid var(--border)",
-                    color: "var(--text-primary)",
-                  }}
+                  className="w-full pl-12 pr-4 py-3 bg-surface-panel border border-border-default rounded-sm text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all"
                 />
               </div>
             </div>
 
             {/* Email field */}
             <div className="space-y-2">
-              <label
-                htmlFor="email"
-                className="block text-sm font-medium"
-                style={{ color: "var(--text-primary)" }}
-              >
-                Email
+              <label htmlFor="email" className="block text-sm font-medium text-slate-700">
+                Email Address
               </label>
               <div className="relative">
-                <Mail
-                  className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5"
-                  style={{ color: "var(--text-muted)" }}
-                />
+                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                 <input
                   id="email"
                   type="email"
@@ -289,13 +223,8 @@ export default function RegisterPage() {
                   autoComplete="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="you@example.com"
-                  className="w-full pl-12 pr-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 outline-none focus:ring-2"
-                  style={{
-                    background: "var(--surface)",
-                    border: "1px solid var(--border)",
-                    color: "var(--text-primary)",
-                  }}
+                  placeholder="name@company.com"
+                  className="w-full pl-12 pr-4 py-3 bg-surface-panel border border-border-default rounded-sm text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all"
                 />
               </div>
             </div>
@@ -303,73 +232,51 @@ export default function RegisterPage() {
             {/* Password field */}
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <label
-                  htmlFor="password"
-                  className="block text-sm font-medium"
-                  style={{ color: "var(--text-primary)" }}
-                >
+                <label htmlFor="password" className="block text-sm font-medium text-slate-700">
                   Password
                 </label>
                 {capsOnPw && (
-                  <span className="text-xs font-medium" style={{ color: "var(--primary)" }}>
-                    Caps Lock is on
+                  <span className="text-xs font-bold text-primary animate-pulse">
+                    CAPS LOCK ON
                   </span>
                 )}
               </div>
               <div className="relative">
-                <Lock
-                  className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5"
-                  style={{ color: "var(--text-muted)" }}
-                />
+                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                 <input
                   id="password"
                   type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   onKeyUp={(e) => setCapsOnPw(e.getModifierState && e.getModifierState("CapsLock"))}
-                  placeholder="Create a strong password"
-                  className="w-full pl-12 pr-12 py-3 rounded-xl text-sm font-medium transition-all duration-200 outline-none focus:ring-2"
-                  style={{
-                    background: "var(--surface)",
-                    border: "1px solid var(--border)",
-                    color: "var(--text-primary)",
-                  }}
+                  placeholder="Create password"
+                  className="w-full pl-12 pr-12 py-3 bg-surface-panel border border-border-default rounded-sm text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword((v) => !v)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 p-1"
-                  style={{ color: "var(--text-muted)" }}
-                  aria-label={showPassword ? "Hide password" : "Show password"}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-slate-600"
                 >
-                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
-
-              {/* Password strength indicator */}
+              
+              {/* Strength Meter */}
               {password && (
-                <div className="space-y-2">
-                  <div
-                    className="h-1 rounded-full overflow-hidden"
-                    style={{ background: "var(--border)" }}
-                  >
+                <div className="space-y-1 pt-1">
+                  <div className="h-1 w-full bg-slate-100 rounded-full overflow-hidden">
                     <motion.div
-                      className="h-full rounded-full"
+                      className="h-full"
                       initial={{ width: 0 }}
-                      animate={{
-                        width: passwordMax ? `${(passwordScore / passwordMax) * 100}%` : "0%",
-                      }}
+                      animate={{ width: passwordMax ? `${(passwordScore / passwordMax) * 100}%` : "0%" }}
                       style={{ background: passwordStrengthColors[passwordScore] }}
-                      transition={{ duration: 0.3 }}
                     />
                   </div>
-                  <div className="flex items-center justify-between text-xs">
+                  <div className="flex justify-between text-[10px] uppercase font-mono">
                     <span style={{ color: passwordStrengthColors[passwordScore] }}>
-                      {passwordStrengthLabel[passwordScore] || ""}
+                      {passwordStrengthLabel[passwordScore]}
                     </span>
-                    <span style={{ color: "var(--text-muted)" }}>
-                      Min 8 characters
-                    </span>
+                    <span className="text-slate-400">MIN 8 CHARS</span>
                   </div>
                 </div>
               )}
@@ -378,29 +285,20 @@ export default function RegisterPage() {
             {/* Confirm Password field */}
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <label
-                  htmlFor="confirmPassword"
-                  className="block text-sm font-medium"
-                  style={{ color: "var(--text-primary)" }}
-                >
+                <label htmlFor="confirmPassword" className="block text-sm font-medium text-slate-700">
                   Confirm Password
                 </label>
                 {capsOnConfirm && (
-                  <span className="text-xs font-medium" style={{ color: "var(--primary)" }}>
-                    Caps Lock is on
+                  <span className="text-xs font-bold text-primary animate-pulse">
+                    CAPS LOCK ON
                   </span>
                 )}
               </div>
               <div className="relative">
                 <ConfirmIcon
-                  className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5"
-                  style={{
-                    color: confirmPassword.length === 0
-                      ? "var(--text-muted)"
-                      : isPasswordMatching
-                        ? "var(--accent)"
-                        : "var(--primary)"
-                  }}
+                  className={`absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 ${
+                    confirmPassword.length === 0 ? "text-slate-400" : isPasswordMatching ? "text-green-500" : "text-red-500"
+                  }`}
                 />
                 <input
                   id="confirmPassword"
@@ -408,144 +306,72 @@ export default function RegisterPage() {
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   onKeyUp={(e) => setCapsOnConfirm(e.getModifierState && e.getModifierState("CapsLock"))}
-                  placeholder="Confirm your password"
-                  className="w-full pl-12 pr-12 py-3 rounded-xl text-sm font-medium transition-all duration-200 outline-none focus:ring-2"
-                  style={{
-                    background: "var(--surface)",
-                    border: `1px solid ${
-                      confirmPassword.length === 0
-                        ? "var(--border)"
-                        : isPasswordMatching
-                          ? "rgba(129, 178, 154, 0.5)"
-                          : "rgba(224, 122, 95, 0.5)"
-                    }`,
-                    color: "var(--text-primary)",
-                  }}
+                  placeholder="Confirm password"
+                  className={`w-full pl-12 pr-12 py-3 bg-surface-panel border rounded-sm text-sm focus:ring-1 outline-none transition-all ${
+                    confirmPassword.length > 0 && !isPasswordMatching 
+                      ? "border-red-300 focus:border-red-500 focus:ring-red-500" 
+                      : "border-border-default focus:border-primary focus:ring-primary"
+                  }`}
                 />
                 <button
                   type="button"
                   onClick={() => setShowConfirmPassword((v) => !v)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 p-1"
-                  style={{ color: "var(--text-muted)" }}
-                  aria-label={showConfirmPassword ? "Hide password" : "Show password"}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-slate-600"
                 >
-                  {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                  {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
-
-              {/* Password match indicator */}
-              {confirmPassword && (
-                <motion.div
-                  initial={{ opacity: 0, y: -5 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="flex items-center gap-2 text-xs font-medium"
-                  style={{
-                    color: isPasswordMatching ? "var(--accent)" : "var(--primary)",
-                  }}
-                >
-                  {isPasswordMatching ? (
-                    <>
-                      <CheckCircle2 className="w-3.5 h-3.5" />
-                      Passwords match
-                    </>
-                  ) : (
-                    <>
-                      <CircleAlert className="w-3.5 h-3.5" />
-                      Passwords do not match
-                    </>
-                  )}
-                </motion.div>
-              )}
-            </div>
-
-            {/* Terms */}
-            <div
-              className="p-4 rounded-xl text-xs"
-              style={{
-                background: "var(--surface-secondary)",
-                border: "1px solid var(--border)",
-                color: "var(--text-muted)",
-              }}
-            >
-              By creating an account, you agree to our{" "}
-              <Link href="/terms" className="link-underline" style={{ color: "var(--primary)" }}>
-                Terms of Service
-              </Link>{" "}
-              and{" "}
-              <Link href="/privacy" className="link-underline" style={{ color: "var(--primary)" }}>
-                Privacy Policy
-              </Link>
             </div>
 
             {/* Error message */}
             <AnimatePresence>
               {errorMessage && (
                 <motion.div
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  className="p-4 rounded-xl text-sm"
-                  style={{
-                    background: "rgba(224, 122, 95, 0.1)",
-                    border: "1px solid rgba(224, 122, 95, 0.2)",
-                    color: "var(--primary-dark)",
-                  }}
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="p-3 bg-red-50 border border-red-200 text-red-600 text-sm rounded-sm flex items-center gap-2"
                 >
+                  <div className="w-1.5 h-1.5 bg-red-500 rounded-full" />
                   {errorMessage}
                 </motion.div>
               )}
             </AnimatePresence>
 
             {/* Submit button */}
-            <motion.button
-              whileHover={{ scale: 1.01 }}
-              whileTap={{ scale: 0.99 }}
+            <button
               type="submit"
               disabled={isLoading}
-              className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl font-semibold transition-all duration-200 disabled:opacity-60"
-              style={{
-                background: "var(--accent)",
-                color: "white",
-              }}
+              className="btn-tech-primary w-full flex items-center justify-center gap-2"
             >
               {isLoading ? (
                 <>
-                  <Loader2 className="w-5 h-5 animate-spin" />
-                  Creating account...
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  REGISTERING...
                 </>
               ) : (
                 <>
-                  Create Account
-                  <ArrowRight className="w-5 h-5" />
+                  CREATE ACCOUNT
+                  <ArrowRight className="w-4 h-4" />
                 </>
               )}
-            </motion.button>
+            </button>
           </form>
 
-          {/* Tip */}
-          <div
-            className="mt-6 p-4 rounded-xl"
-            style={{
-              background: "rgba(129, 178, 154, 0.1)",
-              border: "1px solid var(--border)",
-            }}
-          >
-            <p className="text-xs" style={{ color: "var(--text-secondary)" }}>
-              <span className="font-semibold" style={{ color: "var(--accent)" }}>Tip:</span> {motivationTip}
-            </p>
-          </div>
-
           {/* Sign in link */}
-          <p className="mt-6 text-center text-sm" style={{ color: "var(--text-secondary)" }}>
+          <p className="text-center text-sm text-slate-500">
             Already have an account?{" "}
-            <Link
-              href="/auth/login"
-              className="font-semibold link-underline"
-              style={{ color: "var(--primary)" }}
-            >
+            <Link href="/auth/login" className="font-bold text-primary hover:underline">
               Sign In
             </Link>
           </p>
+
+          {/* Tip */}
+          <div className="p-4 bg-surface-panel border border-border-default rounded-sm">
+            <p className="text-xs font-mono text-slate-500">
+              <span className="font-bold text-primary">TIP_OF_DAY:</span> {motivationTip}
+            </p>
+          </div>
         </motion.div>
       </div>
     </div>
