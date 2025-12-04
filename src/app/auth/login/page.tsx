@@ -105,7 +105,7 @@ export default function LoginPage() {
             transition={{ delay: 0.3 }}
             className="text-lg text-slate-400 max-w-md font-mono"
           >
-            // Initialize your workspace and execute your daily objectives.
+            {"// Initialize your workspace and execute your daily objectives."}
           </motion.p>
         </div>
 
