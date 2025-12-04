@@ -2,7 +2,6 @@
 
 import { useSession } from "next-auth/react";
 import { useState } from "react";
-import { motion } from "framer-motion";
 import {
   Play,
   Pause,
@@ -29,7 +28,7 @@ export default function DashboardPage() {
             {getDaypartGreeting()}, {session?.user?.name?.split(" ")[0]}
           </h1>
           <p className="text-slate-500 font-mono text-sm">
-            // SYSTEM_STATUS: OPTIMAL
+            {"// SYSTEM_STATUS: OPTIMAL"}
           </p>
         </div>
         <button className="btn-tech-primary flex items-center gap-2">

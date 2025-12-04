@@ -2,17 +2,12 @@
 
 import Navbar from '@/components/navbar/Navbar';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
 import {
   ArrowRight,
-  Target,
   Clock,
   BarChart3,
-  CheckCircle2,
-  Zap,
   LayoutGrid,
   Shield,
-  Cpu
 } from 'lucide-react';
 
 export default function HomePage() {
@@ -37,7 +32,7 @@ export default function HomePage() {
             </h1>
 
             <p className="text-xl text-slate-500 max-w-md font-mono leading-relaxed">
-              // A command center for high-performance work.
+              {"// A command center for high-performance work."}
               <br />
               Eliminate noise. Execute with clarity.
             </p>
