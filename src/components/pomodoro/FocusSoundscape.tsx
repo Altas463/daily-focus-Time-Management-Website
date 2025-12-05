@@ -38,7 +38,7 @@ const soundOptions: SoundOption[] = [
   },
 ];
 
-// Audio generation functions (kept same logic, just moved for brevity if needed, but including full logic here)
+// Audio generation functions
 const createWhiteNoise = (ctx: AudioContext) => {
   const bufferSize = ctx.sampleRate * 2;
   const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
@@ -231,8 +231,8 @@ export default function FocusSoundscape() {
   }, [volume]);
 
   return (
-    <section className="bento-card">
-      <div className="flex items-center justify-between mb-6">
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Volume2 className="w-4 h-4 text-primary" />
           <span className="label-tech">AUDIO ENVIRONMENT</span>
@@ -240,14 +240,15 @@ export default function FocusSoundscape() {
         <button
           type="button"
           onClick={() => stopCurrent()}
-          className="text-slate-400 hover:text-red-500 transition-colors"
+          className="text-slate-400 hover:text-red-500 transition-colors disabled:opacity-50"
           disabled={!activeSound}
+          title="Stop Audio"
         >
           <VolumeX className="w-4 h-4" />
         </button>
       </div>
 
-      <div className="space-y-2">
+      <div className="grid gap-3">
         {soundOptions.map((option) => {
           const active = option.id === activeSound;
           const Icon = option.icon;
@@ -256,26 +257,34 @@ export default function FocusSoundscape() {
               key={option.id}
               type="button"
               onClick={() => toggleSound(option.id)}
-              className={`w-full flex items-center gap-3 p-3 rounded-sm border transition-all ${
+              className={`group w-full flex items-center gap-3 p-3 rounded-sm border transition-all ${
                 active
                   ? "bg-primary/5 border-primary text-primary"
                   : "bg-surface-base border-border-subtle text-slate-500 hover:border-slate-400 hover:text-slate-700"
               }`}
             >
-              <Icon className="w-4 h-4" />
-              <div className="text-left flex-1">
-                <div className="text-sm font-bold font-mono uppercase">{option.label}</div>
-                <div className="text-[10px] opacity-70">{option.description}</div>
+              <div className={`p-2 rounded-sm ${active ? "bg-primary/10" : "bg-slate-100 group-hover:bg-slate-200"}`}>
+                <Icon className="w-4 h-4" />
               </div>
-              {active && <div className="w-2 h-2 bg-primary rounded-full animate-pulse"></div>}
+              <div className="text-left flex-1">
+                <div className="text-xs font-bold font-mono uppercase tracking-wider">{option.label}</div>
+                <div className="text-[10px] font-mono opacity-70">{option.description}</div>
+              </div>
+              {active && (
+                <div className="flex gap-0.5 items-end h-3">
+                   <div className="w-0.5 h-full bg-primary animate-[pulse_0.5s_ease-in-out_infinite]" />
+                   <div className="w-0.5 h-2/3 bg-primary animate-[pulse_0.7s_ease-in-out_infinite]" />
+                   <div className="w-0.5 h-full bg-primary animate-[pulse_0.6s_ease-in-out_infinite]" />
+                </div>
+              )}
             </button>
           );
         })}
       </div>
 
-      <div className="mt-6 pt-4 border-t border-border-subtle">
-        <div className="flex justify-between items-center mb-2">
-          <span className="text-[10px] font-mono text-slate-400 uppercase">Master Volume</span>
+      <div className="pt-4 border-t border-border-subtle">
+        <div className="flex justify-between items-center mb-3">
+          <span className="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-wider">Master Volume</span>
           <span className="text-[10px] font-mono font-bold text-primary">{Math.round(volume * 100)}%</span>
         </div>
         <input
@@ -288,6 +297,6 @@ export default function FocusSoundscape() {
           className="w-full h-1 bg-slate-200 rounded-full appearance-none cursor-pointer accent-primary"
         />
       </div>
-    </section>
+    </div>
   );
 }

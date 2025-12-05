@@ -17,14 +17,12 @@ import TimeBlockingBoard, {
 import type { Task } from "@/types";
 import {
   createEmptyTask,
-  getTaskUrgency,
   summarizeTasks,
-  TaskUrgency,
   isTaskDueSoon,
   isTaskOverdue,
-  findNextDueTask,
 } from "@/utils/tasks";
-import { formatRelativeDate, formatShortDate } from "@/utils/date";
+
+import { Filter, Plus, Search, LayoutTemplate, BarChart3 } from "lucide-react";
 
 type ColumnKey = "incomplete" | "completed";
 
@@ -36,15 +34,15 @@ const columnConfig: Record<
 > = {
   incomplete: {
     title: "In Progress",
-    description: "Tasks in progress, drag and drop to change status",
-    badgeColor: "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300",
-    emptyText: "All tasks completed, create new ones to continue!",
+    description: "Active tasks",
+    badgeColor: "bg-amber-100 text-amber-700",
+    emptyText: "No active tasks",
   },
   completed: {
     title: "Completed",
-    description: "Keep track of what you have accomplished",
-    badgeColor: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300",
-    emptyText: "No completed tasks yet. You can drag tasks from the other column.",
+    description: "Finished tasks",
+    badgeColor: "bg-emerald-100 text-emerald-700",
+    emptyText: "No completed tasks",
   },
 };
 
@@ -54,13 +52,6 @@ const quickTemplates = [
   { title: "End of day recap", description: "Reflection + plan for tomorrow" },
 ] as const;
 
-const toneBadge: Record<TaskUrgency["tone"], string> = {
-  danger: "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300",
-  warning: "bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300",
-  notice: "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300",
-  success: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300",
-  default: "bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300",
-};
 
 const MINUTE_IN_MS = 60_000;
 
@@ -89,7 +80,7 @@ export default function TasksPage() {
     incomplete: false,
     completed: false,
   });
-  const [formErrors, setFormErrors] = useState<Record<ColumnKey, string | null>>({
+  const [, setFormErrors] = useState<Record<ColumnKey, string | null>>({
     incomplete: null,
     completed: null,
   });
@@ -370,300 +361,224 @@ export default function TasksPage() {
     return base;
   }, [filteredTasks, filter]);
 
-  const nextDueTask = useMemo(() => findNextDueTask(columns.incomplete), [columns.incomplete]);
+
 
   const filterOptions = [
-    { key: "all", label: "All" },
+    { key: "all", label: "All Tasks" },
     { key: "dueSoon", label: "Due Soon" },
     { key: "overdue", label: "Overdue" },
   ] as const;
 
   return (
     <div className="max-w-7xl mx-auto space-y-8">
+      {/* Header */}
       <div className="flex items-center gap-4">
         <BackToDashboardLink />
         <div className="h-4 w-px bg-border-default"></div>
-        <span className="text-sm font-mono text-slate-500 uppercase tracking-wider">Task Queue</span>
+        <span className="text-sm font-mono text-slate-500 uppercase tracking-wider">Task Management</span>
       </div>
 
       <header>
-        <h1 className="text-3xl font-display font-bold mb-2">Task Management</h1>
-        <p className="text-slate-500 font-mono text-sm">{"// Clear planning helps you focus and not miss important deadlines."}</p>
+        <h1 className="text-3xl font-display font-bold mb-2">Tasks & Planning</h1>
+        <p className="text-slate-500 font-mono text-sm">{"// Organize your work, track progress, and block time for deep focus."}</p>
       </header>
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        {[
-          { label: "TOTAL", value: taskSummary.total },
-          { label: "IN PROGRESS", value: taskSummary.incomplete },
-          { label: "OVERDUE", value: taskSummary.overdue },
-          { label: "COMPLETED", value: taskSummary.completed },
-        ].map((item) => (
-          <div key={item.label} className="bento-card p-4">
-            <span className="label-tech mb-2">{item.label}</span>
-            <div className="text-2xl font-mono font-bold">{item.value}</div>
+      {/* Main Grid Layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        {/* Left Sidebar (Filters & Stats) - 3 Cols */}
+        <div className="lg:col-span-3 space-y-6">
+          {/* Stats Card */}
+          <div className="bento-card p-4 space-y-4">
+            <div className="flex items-center gap-2 mb-2">
+              <BarChart3 className="w-4 h-4 text-primary" />
+              <span className="label-tech">OVERVIEW</span>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <div className="text-2xl font-mono font-bold">{taskSummary.incomplete}</div>
+                <div className="text-[10px] font-mono text-slate-500 uppercase">Active</div>
+              </div>
+              <div>
+                <div className="text-2xl font-mono font-bold">{taskSummary.completed}</div>
+                <div className="text-[10px] font-mono text-slate-500 uppercase">Done</div>
+              </div>
+            </div>
           </div>
-        ))}
-      </div>
 
-      <div className="bento-card">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div className="flex flex-wrap gap-2">
-            {filterOptions.map((option) => {
-              const active = filter === option.key;
-              return (
+          {/* Filters Card */}
+          <div className="bento-card p-4 space-y-4">
+            <div className="flex items-center gap-2 mb-2">
+              <Filter className="w-4 h-4 text-primary" />
+              <span className="label-tech">FILTERS</span>
+            </div>
+            
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3 h-3 text-slate-400" />
+              <input
+                type="search"
+                value={searchTerm}
+                onChange={(event) => setSearchTerm(event.target.value)}
+                placeholder="Search..."
+                className="w-full bg-surface-base border border-border-subtle rounded-sm pl-8 pr-3 py-2 font-mono text-xs focus:border-primary focus:ring-1 focus:ring-primary outline-none"
+              />
+            </div>
+
+            <div className="flex flex-col gap-1">
+              {filterOptions.map((option) => {
+                const active = filter === option.key;
+                return (
+                  <button
+                    key={option.key}
+                    onClick={() => setFilter(option.key)}
+                    className={`text-left px-3 py-2 text-xs font-mono font-medium uppercase tracking-wider rounded-sm transition-all ${
+                      active
+                        ? "bg-primary/10 text-primary border border-primary/20"
+                        : "text-slate-500 hover:bg-surface-panel"
+                    }`}
+                  >
+                    {option.label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Templates Card */}
+          <div className="bento-card p-4 space-y-4">
+            <div className="flex items-center gap-2 mb-2">
+              <LayoutTemplate className="w-4 h-4 text-primary" />
+              <span className="label-tech">TEMPLATES</span>
+            </div>
+            <div className="flex flex-col gap-2">
+              {quickTemplates.map((template) => (
                 <button
-                  key={option.key}
-                  onClick={() => setFilter(option.key)}
-                  className={[
-                    "px-3 py-1.5 text-xs font-mono font-medium uppercase tracking-wider border rounded-sm transition-all",
-                    active
-                      ? "bg-primary text-white border-primary"
-                      : "bg-surface-base border-border-subtle text-slate-500 hover:border-slate-400",
-                  ].join(" ")}
+                  key={template.title}
+                  onClick={() => applyTemplate(template)}
+                  className="text-left px-3 py-2 text-xs font-mono border border-dashed border-border-default text-slate-500 hover:border-primary hover:text-primary transition-colors rounded-sm"
                 >
-                  {option.label}
+                  {template.title}
                 </button>
-              );
-            })}
-          </div>
-
-          <div className="w-full sm:w-64">
-            <input
-              type="search"
-              value={searchTerm}
-              onChange={(event) => setSearchTerm(event.target.value)}
-              placeholder="Search tasks..."
-              className="w-full bg-surface-base border border-border-subtle rounded-sm px-3 py-2 font-mono text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none"
-            />
+              ))}
+            </div>
           </div>
         </div>
-      </div>
 
-      <div className="bento-card">
-        <div className="flex items-center gap-2 mb-4">
-          <span className="label-tech">QUICK TEMPLATES</span>
-          <span className="text-[10px] font-mono text-slate-400">ALT + N</span>
-        </div>
-        <div className="flex flex-wrap gap-2">
-          {quickTemplates.map((template) => (
-            <button
-              key={template.title}
-              onClick={() => applyTemplate(template)}
-              className="px-3 py-1.5 text-xs font-mono border border-dashed border-border-default text-slate-500 hover:border-primary hover:text-primary transition-colors rounded-sm"
-            >
-              {template.title}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {nextDueTask && (
-        <div className="bento-card bg-surface-base border-primary/20 relative overflow-hidden">
-          <div className="absolute top-0 left-0 w-1 h-full bg-primary"></div>
-          <div className="flex items-center gap-2 mb-2">
-            <span className="label-tech">UPCOMING DEADLINE</span>
-          </div>
-          <p className="font-medium text-slate-900">{nextDueTask.title}</p>
-          {nextDueTask.endDate && (
-            <p className="text-xs font-mono text-slate-500 mt-1">
-              Due {formatRelativeDate(nextDueTask.endDate)} • {formatShortDate(new Date(nextDueTask.endDate))}
-            </p>
-          )}
-        </div>
-      )}
-
-      <DragDropContext onDragEnd={onDragEnd}>
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-          {(Object.keys(columns) as ColumnKey[]).map((columnKey) => {
-            const columnTasks = columns[columnKey];
-            const config = columnConfig[columnKey];
-            return (
-              <Droppable droppableId={columnKey} key={columnKey}>
-                {(provided) => (
-                  <div ref={provided.innerRef} {...provided.droppableProps}>
-                    <div className="bento-card h-full min-h-[400px]">
-                      <div className="flex items-center justify-between mb-6">
-                        <div className="flex items-center gap-2">
-                          <span className="label-tech">{config.title.toUpperCase()}</span>
-                        </div>
-                        <span className="px-2 py-0.5 bg-primary/10 text-primary text-xs font-mono rounded-sm">
-                          {columnTasks.length}
-                        </span>
-                      </div>
-                      <p className="text-xs text-slate-500 mb-4">{config.description}</p>
-
-                      <div className="space-y-3">
-                        {columnTasks.length === 0 ? (
-                          <div className="py-8 border border-dashed border-border-default text-center text-sm text-slate-400 rounded-sm">
-                            {config.emptyText}
+        {/* Right Content (Task Board) - 9 Cols */}
+        <div className="lg:col-span-9 space-y-8">
+          <DragDropContext onDragEnd={onDragEnd}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {(Object.keys(columns) as ColumnKey[]).map((columnKey) => {
+                const columnTasks = columns[columnKey];
+                const config = columnConfig[columnKey];
+                return (
+                  <Droppable droppableId={columnKey} key={columnKey}>
+                    {(provided) => (
+                      <div ref={provided.innerRef} {...provided.droppableProps} className="flex flex-col h-full">
+                        <div className="bento-card flex-1 min-h-[500px] flex flex-col">
+                          <div className="flex items-center justify-between mb-4">
+                            <span className="label-tech">{config.title.toUpperCase()}</span>
+                            <span className={`px-2 py-0.5 text-[10px] font-mono font-bold rounded-sm ${config.badgeColor.split(' ')[0]} ${config.badgeColor.split(' ')[1]}`}>
+                              {columnTasks.length}
+                            </span>
                           </div>
-                        ) : (
-                          columnTasks.map((task, index) => {
-                            const urgency = getTaskUrgency(task.endDate);
-                            return (
-                              <Draggable key={task.id} draggableId={task.id} index={index}>
-                                {(draggableProvided, snapshot) => (
-                                  <div
-                                    ref={draggableProvided.innerRef}
-                                    {...draggableProvided.draggableProps}
-                                    style={draggableProvided.draggableProps.style}
-                                    className={snapshot.isDragging ? "z-50 drop-shadow-2xl" : ""}
-                                  >
-                                    <div {...draggableProvided.dragHandleProps}>
-                                      <TaskCard
-                                        task={task}
-                                        onUpdate={updateTask}
-                                        onDelete={deleteTask}
-                                      />
-                                      {task.endDate && (
-                                        <div className="mt-2 flex items-center gap-2 px-3 py-2 text-xs font-mono bg-surface-panel border border-border-subtle rounded-sm">
-                                          <span className={`inline-flex h-2 w-2 rounded-full ${toneBadge[urgency.tone]}`} aria-hidden />
-                                          <span className="text-slate-600">{urgency.label}</span>
-                                          <span className="text-slate-400">•</span>
-                                          <span className="text-slate-500">{formatRelativeDate(task.endDate)}</span>
+                          
+                          <div className="flex-1 space-y-3">
+                            {columnTasks.length === 0 ? (
+                              <div className="h-32 flex items-center justify-center border border-dashed border-border-default rounded-sm">
+                                <p className="text-xs font-mono text-slate-400">{config.emptyText}</p>
+                              </div>
+                            ) : (
+                              columnTasks.map((task, index) => {
+                                return (
+                                  <Draggable key={task.id} draggableId={task.id} index={index}>
+                                    {(draggableProvided, snapshot) => (
+                                      <div
+                                        ref={draggableProvided.innerRef}
+                                        {...draggableProvided.draggableProps}
+                                        style={draggableProvided.draggableProps.style}
+                                        className={snapshot.isDragging ? "z-50 drop-shadow-2xl" : ""}
+                                      >
+                                        <div {...draggableProvided.dragHandleProps}>
+                                          <TaskCard
+                                            task={task}
+                                            onUpdate={updateTask}
+                                            onDelete={deleteTask}
+                                          />
                                         </div>
-                                      )}
-                                    </div>
-                                  </div>
-                                )}
-                              </Draggable>
-                            );
-                          })
-                        )}
-                        {provided.placeholder}
-
-                        {formVisible[columnKey] ? (
-                          <div className="space-y-3 p-4 bg-surface-panel border border-border-subtle rounded-sm">
-                            <div>
-                              <label className="text-[10px] font-mono font-bold text-slate-500 uppercase">
-                                Title
-                              </label>
-                              <input
-                                type="text"
-                                className="mt-1 w-full bg-surface-base border border-border-subtle rounded-sm px-3 py-2 text-sm font-mono focus:border-primary focus:ring-1 focus:ring-primary outline-none"
-                                value={newTaskMap[columnKey].title}
-                                onChange={(event) =>
-                                  handleInputChange(columnKey, "title", event.target.value)
-                                }
-                                onKeyDown={(event) => {
-                                  if (event.key === "Enter" && !event.shiftKey) {
-                                    event.preventDefault();
-                                    void handleCreateTask(columnKey);
-                                  }
-                                }}
-                                placeholder="Enter task title..."
-                                autoFocus
-                              />
-                            </div>
-                            <div>
-                              <label className="text-[10px] font-mono font-bold text-slate-500 uppercase">
-                                Description (optional)
-                              </label>
-                              <textarea
-                                className="mt-1 w-full bg-surface-base border border-border-subtle rounded-sm px-3 py-2 text-sm font-mono focus:border-primary focus:ring-1 focus:ring-primary outline-none"
-                                rows={3}
-                                value={newTaskMap[columnKey].description}
-                                onChange={(event) =>
-                                  handleInputChange(columnKey, "description", event.target.value)
-                                }
-                              />
-                            </div>
-                            <div className="grid gap-3 sm:grid-cols-2">
-                              <div>
-                                <label className="text-[10px] font-mono font-bold text-slate-500 uppercase">
-                                  Start
-                                </label>
-                                <input
-                                  type="datetime-local"
-                                  className="mt-1 w-full bg-surface-base border border-border-subtle rounded-sm px-3 py-2 text-sm font-mono focus:border-primary focus:ring-1 focus:ring-primary outline-none"
-                                  value={newTaskMap[columnKey].startDate}
-                                  onChange={(event) =>
-                                    handleInputChange(columnKey, "startDate", event.target.value)
-                                  }
-                                />
-                              </div>
-                              <div>
-                                <label className="text-[10px] font-mono font-bold text-slate-500 uppercase">
-                                  End
-                                </label>
-                                <input
-                                  type="datetime-local"
-                                  className="mt-1 w-full bg-surface-base border border-border-subtle rounded-sm px-3 py-2 text-sm font-mono focus:border-primary focus:ring-1 focus:ring-primary outline-none"
-                                  value={newTaskMap[columnKey].endDate}
-                                  onChange={(event) =>
-                                    handleInputChange(columnKey, "endDate", event.target.value)
-                                  }
-                                />
-                              </div>
-                            </div>
-
-                            {formErrors[columnKey] && (
-                              <p className="text-xs font-mono text-red-500">
-                                {formErrors[columnKey]}
-                              </p>
+                                      </div>
+                                    )}
+                                  </Draggable>
+                                );
+                              })
                             )}
-
-                            <div className="flex items-center gap-2 pt-2">
-                              <button
-                                onClick={() => handleCreateTask(columnKey)}
-                                disabled={submitting[columnKey]}
-                                className="btn-tech-primary disabled:opacity-50"
-                              >
-                                {submitting[columnKey] ? "CREATING..." : "ADD TASK"}
-                              </button>
-                              <button
-                                onClick={() =>
-                                  setFormVisible((prev) => ({
-                                    ...prev,
-                                    [columnKey]: false,
-                                  }))
-                                }
-                                className="btn-tech-secondary"
-                              >
-                                CANCEL
-                              </button>
-                            </div>
+                            {provided.placeholder}
                           </div>
-                        ) : (
-                          <button
-                            onClick={() =>
-                              setFormVisible((prev) => ({
-                                ...prev,
-                                [columnKey]: true,
-                              }))
-                            }
-                            className="w-full py-2 border border-dashed border-border-default text-slate-400 text-sm font-mono hover:border-primary hover:text-primary transition-colors rounded-sm"
-                          >
-                            + ADD TASK
-                          </button>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </Droppable>
-            );
-          })}
-        </div>
 
-        <TimeBlockingBoard
-          selectedDate={timeBlockDate}
-          onSelectedDateChange={handleTimeBlockDateChange}
-          assignments={timeBlockAssignments}
-          onClearAssignment={handleClearAssignment}
-          pendingBlockId={timeBlockPending}
-          statusMessage={timeBlockStatus}
-          onDismissStatus={() => setTimeBlockStatus(null)}
-        />
-      </DragDropContext>
+                          {/* Add Task Form / Button */}
+                          <div className="mt-4 pt-4 border-t border-border-subtle">
+                             {formVisible[columnKey] ? (
+                              <div className="space-y-3 bg-surface-panel p-3 rounded-sm border border-border-subtle">
+                                <input
+                                  type="text"
+                                  className="w-full bg-surface-base border border-border-subtle rounded-sm px-3 py-2 text-sm font-mono focus:border-primary focus:ring-1 focus:ring-primary outline-none"
+                                  value={newTaskMap[columnKey].title}
+                                  onChange={(e) => handleInputChange(columnKey, "title", e.target.value)}
+                                  onKeyDown={(e) => {
+                                    if (e.key === "Enter" && !e.shiftKey) {
+                                      e.preventDefault();
+                                      void handleCreateTask(columnKey);
+                                    }
+                                  }}
+                                  placeholder="Task title..."
+                                  autoFocus
+                                />
+                                <div className="flex gap-2">
+                                  <button
+                                    onClick={() => handleCreateTask(columnKey)}
+                                    disabled={submitting[columnKey]}
+                                    className="btn-tech-primary flex-1 py-1.5 text-xs"
+                                  >
+                                    ADD
+                                  </button>
+                                  <button
+                                    onClick={() => setFormVisible((prev) => ({ ...prev, [columnKey]: false }))}
+                                    className="btn-tech-secondary flex-1 py-1.5 text-xs"
+                                  >
+                                    CANCEL
+                                  </button>
+                                </div>
+                              </div>
+                             ) : (
+                               <button
+                                onClick={() => setFormVisible((prev) => ({ ...prev, [columnKey]: true }))}
+                                className="w-full py-2 border border-dashed border-border-default text-slate-400 text-xs font-mono hover:border-primary hover:text-primary transition-colors rounded-sm flex items-center justify-center gap-2"
+                              >
+                                <Plus className="w-3 h-3" />
+                                ADD TASK
+                              </button>
+                             )}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </Droppable>
+                );
+              })}
+            </div>
+
+            <TimeBlockingBoard
+              selectedDate={timeBlockDate}
+              onSelectedDateChange={handleTimeBlockDateChange}
+              assignments={timeBlockAssignments}
+              onClearAssignment={handleClearAssignment}
+              pendingBlockId={timeBlockPending}
+              statusMessage={timeBlockStatus}
+              onDismissStatus={() => setTimeBlockStatus(null)}
+            />
+          </DragDropContext>
+        </div>
+      </div>
     </div>
   );
 }
-
-
-
-
-
-
-
-

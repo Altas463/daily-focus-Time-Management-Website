@@ -4,12 +4,12 @@ import { ChangeEvent, FormEvent, useEffect, useMemo, useState } from "react";
 import clsx from "clsx";
 import { useSession } from "next-auth/react";
 import BackToDashboardLink from "@/components/BackToDashboardLink";
-import { Save, Bell, Clock, Shield, Palette } from "lucide-react";
+import { Save, Bell, Clock, Shield, Palette, Smartphone, Mail, Calendar } from "lucide-react";
 
 const notificationChannels = [
-  { key: "emailNotifications", label: "Email Summaries", description: "Daily focus reports and reminders" },
-  { key: "pushNotifications", label: "Push Notifications", description: "Session nudges and timer alerts" },
-  { key: "weeklyDigest", label: "Weekly Digest", description: "Highlights from tasks, stats, and reviews" },
+  { key: "emailNotifications", label: "Email Summaries", description: "Daily focus reports and reminders", icon: Mail },
+  { key: "pushNotifications", label: "Push Notifications", description: "Session nudges and timer alerts", icon: Smartphone },
+  { key: "weeklyDigest", label: "Weekly Digest", description: "Highlights from tasks, stats, and reviews", icon: Calendar },
 ] as const;
 
 type NotificationKey = typeof notificationChannels[number]["key"];
@@ -205,16 +205,16 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="max-w-5xl mx-auto space-y-8 pb-12">
-      <div className="flex items-center gap-4 mb-8">
+    <div className="max-w-7xl mx-auto space-y-8 pb-12">
+      <div className="flex items-center gap-4">
         <BackToDashboardLink />
         <div className="h-4 w-px bg-border-default"></div>
         <span className="text-sm font-mono text-slate-500 uppercase tracking-wider">System Configuration</span>
       </div>
 
-      <header className="mb-8">
-        <h1 className="text-3xl font-display font-bold mb-2">Settings</h1>
-        <p className="text-slate-500 font-mono text-sm">{"// Configure your workspace parameters."}</p>
+      <header>
+        <h1 className="text-3xl font-display font-bold mb-2">Workspace Settings</h1>
+        <p className="text-slate-500 font-mono text-sm">{"// Configure your environment, notifications, and timer defaults."}</p>
       </header>
 
       {loadError && (
@@ -223,164 +223,183 @@ export default function SettingsPage() {
         </div>
       )}
 
-      <div className="grid gap-6 lg:grid-cols-2">
-        {/* Account Section */}
-        <section className="bento-card">
-          <div className="flex items-center gap-2 mb-6">
-            <Shield className="w-4 h-4 text-primary" />
-            <span className="label-tech">ACCOUNT SECURITY</span>
-          </div>
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        {/* Left Column (4 Cols) */}
+        <div className="lg:col-span-4 space-y-6">
           
-          <div className="space-y-4">
-            <div className="p-4 bg-surface-base border border-border-subtle rounded-sm">
-              <span className="block text-[10px] font-mono text-slate-400 uppercase mb-1">Email Identity</span>
-              <span className="block font-mono text-sm">{session?.user?.email ?? "UNKNOWN_USER"}</span>
-            </div>
-            <div className="p-4 bg-surface-base border border-border-subtle rounded-sm">
-              <span className="block text-[10px] font-mono text-slate-400 uppercase mb-1">Auth Method</span>
-              <span className="block font-mono text-sm">
-                {session?.user?.image ? "OAUTH_PROVIDER_GOOGLE" : "STANDARD_CREDENTIALS"}
-              </span>
-            </div>
-          </div>
-        </section>
-
-        {/* Appearance Section */}
-        <section className="bento-card">
-          <div className="flex items-center gap-2 mb-6">
-            <Palette className="w-4 h-4 text-primary" />
-            <span className="label-tech">INTERFACE THEME</span>
-          </div>
-
-          <div className="grid grid-cols-3 gap-3">
-            {[
-              { value: "light", label: "LIGHT", icon: "☀️" },
-              { value: "dark", label: "DARK", icon: "🌙" },
-              { value: "system", label: "AUTO", icon: "💻" },
-            ].map((option) => (
-              <button
-                key={option.value}
-                onClick={() => handleThemeChange(option.value as "light" | "dark" | "system")}
-                className={clsx(
-                  "flex flex-col items-center gap-2 p-4 border rounded-sm transition-all",
-                  theme === option.value
-                    ? "bg-primary/5 border-primary text-primary"
-                    : "bg-surface-base border-border-subtle text-slate-500 hover:border-slate-400"
-                )}
-              >
-                <span className="text-xl">{option.icon}</span>
-                <span className="text-xs font-mono font-bold">{option.label}</span>
-              </button>
-            ))}
-          </div>
-          {themeFeedback && (
-            <div className="mt-4 text-xs font-mono text-green-600 flex items-center gap-2">
-              <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
-              {themeFeedback.message}
-            </div>
-          )}
-        </section>
-
-        {/* Notifications Section */}
-        <section className="bento-card lg:col-span-2">
-          <div className="flex items-center gap-2 mb-6">
-            <Bell className="w-4 h-4 text-primary" />
-            <span className="label-tech">NOTIFICATION PROTOCOLS</span>
-          </div>
-
-          <form onSubmit={handleNotificationsSubmit}>
-            <div className="grid gap-4 md:grid-cols-3 mb-6">
-              {notificationChannels.map((channel) => (
-                <label
-                  key={channel.key}
-                  className={clsx(
-                    "flex items-start gap-3 p-4 border rounded-sm cursor-pointer transition-all",
-                    notifications[channel.key]
-                      ? "bg-surface-base border-primary/50"
-                      : "bg-surface-base border-border-subtle hover:border-slate-400"
-                  )}
-                >
-                  <input
-                    type="checkbox"
-                    checked={notifications[channel.key]}
-                    onChange={handleToggle(channel.key)}
-                    className="mt-1 w-4 h-4 text-primary border-border-default rounded-sm focus:ring-primary"
-                  />
-                  <div>
-                    <span className="block text-sm font-bold text-slate-700">{channel.label}</span>
-                    <span className="block text-xs text-slate-500 mt-1">{channel.description}</span>
-                  </div>
-                </label>
-              ))}
+          {/* Account Security */}
+          <section className="bento-card p-4 space-y-4">
+            <div className="flex items-center gap-2 mb-2">
+              <Shield className="w-4 h-4 text-primary" />
+              <span className="label-tech">ACCOUNT SECURITY</span>
             </div>
             
-            <div className="flex justify-end border-t border-border-subtle pt-4">
-              <button
-                type="submit"
-                disabled={!isNotificationDirty || isSavingNotifications}
-                className="btn-tech-primary flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {isSavingNotifications ? "SAVING..." : "UPDATE PROTOCOLS"}
-                <Save className="w-4 h-4" />
-              </button>
-            </div>
-            {notificationFeedback && (
-              <div className="mt-2 text-right text-xs font-mono text-green-600">
-                {notificationFeedback.message}
+            <div className="space-y-3">
+              <div className="p-3 bg-surface-panel border border-border-subtle rounded-sm">
+                <span className="block text-[10px] font-mono text-slate-400 uppercase mb-1">Email Identity</span>
+                <span className="block font-mono text-xs font-bold text-slate-700">{session?.user?.email ?? "UNKNOWN_USER"}</span>
               </div>
-            )}
-          </form>
-        </section>
+              <div className="p-3 bg-surface-panel border border-border-subtle rounded-sm">
+                <span className="block text-[10px] font-mono text-slate-400 uppercase mb-1">Auth Method</span>
+                <span className="block font-mono text-xs font-bold text-slate-700">
+                  {session?.user?.image ? "OAUTH_PROVIDER_GOOGLE" : "STANDARD_CREDENTIALS"}
+                </span>
+              </div>
+            </div>
+          </section>
 
-        {/* Timer Defaults Section */}
-        <section className="bento-card lg:col-span-2">
-          <div className="flex items-center gap-2 mb-6">
-            <Clock className="w-4 h-4 text-primary" />
-            <span className="label-tech">TIMER CALIBRATION</span>
-          </div>
+          {/* Interface Theme */}
+          <section className="bento-card p-4 space-y-4">
+            <div className="flex items-center gap-2 mb-2">
+              <Palette className="w-4 h-4 text-primary" />
+              <span className="label-tech">INTERFACE THEME</span>
+            </div>
 
-          <form onSubmit={handleTimersSubmit}>
-            <div className="grid gap-6 md:grid-cols-3 mb-6">
+            <div className="grid grid-cols-3 gap-2">
               {[
-                { key: "focusDurationMinutes", label: "FOCUS DURATION", limits: TIMER_LIMITS.focus },
-                { key: "shortBreakMinutes", label: "SHORT BREAK", limits: TIMER_LIMITS.shortBreak },
-                { key: "longBreakMinutes", label: "LONG BREAK", limits: TIMER_LIMITS.longBreak },
-              ].map((item) => (
-                <div key={item.key} className="space-y-2">
-                  <label className="text-xs font-mono font-bold text-slate-500">{item.label}</label>
-                  <div className="relative">
-                    <input
-                      type="number"
-                      value={timers[item.key as keyof TimerState]}
-                      onChange={handleTimerChange(item.key as keyof TimerState)}
-                      className="w-full bg-surface-base border border-border-subtle rounded-sm px-4 py-3 font-mono text-lg focus:border-primary focus:ring-1 focus:ring-primary outline-none"
-                    />
-                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-mono text-slate-400">MIN</span>
-                  </div>
-                  <div className="text-[10px] text-slate-400 font-mono">
-                    RANGE: {item.limits.min}-{item.limits.max}
-                  </div>
-                </div>
+                { value: "light", label: "LIGHT", icon: "☀️" },
+                { value: "dark", label: "DARK", icon: "🌙" },
+                { value: "system", label: "AUTO", icon: "💻" },
+              ].map((option) => (
+                <button
+                  key={option.value}
+                  onClick={() => handleThemeChange(option.value as "light" | "dark" | "system")}
+                  className={clsx(
+                    "flex flex-col items-center gap-2 p-3 border rounded-sm transition-all",
+                    theme === option.value
+                      ? "bg-primary/5 border-primary text-primary"
+                      : "bg-surface-panel border-border-subtle text-slate-500 hover:border-slate-400"
+                  )}
+                >
+                  <span className="text-lg">{option.icon}</span>
+                  <span className="text-[10px] font-mono font-bold">{option.label}</span>
+                </button>
               ))}
             </div>
-
-            <div className="flex justify-end border-t border-border-subtle pt-4">
-              <button
-                type="submit"
-                disabled={!isTimerDirty || isSavingTimers}
-                className="btn-tech-primary flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {isSavingTimers ? "SAVING..." : "CALIBRATE TIMERS"}
-                <Save className="w-4 h-4" />
-              </button>
-            </div>
-            {timerFeedback && (
-              <div className="mt-2 text-right text-xs font-mono text-green-600">
-                {timerFeedback.message}
+            {themeFeedback && (
+              <div className="text-[10px] font-mono text-emerald-600 flex items-center gap-2">
+                <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full"></div>
+                {themeFeedback.message}
               </div>
             )}
-          </form>
-        </section>
+          </section>
+
+        </div>
+
+        {/* Right Column (8 Cols) */}
+        <div className="lg:col-span-8 space-y-6">
+          
+          {/* Notification Protocols */}
+          <section className="bento-card">
+            <div className="flex items-center gap-2 mb-6">
+              <Bell className="w-4 h-4 text-primary" />
+              <span className="label-tech">NOTIFICATION PROTOCOLS</span>
+            </div>
+
+            <form onSubmit={handleNotificationsSubmit}>
+              <div className="grid gap-4 md:grid-cols-2 mb-6">
+                {notificationChannels.map((channel) => {
+                  const Icon = channel.icon;
+                  return (
+                    <label
+                      key={channel.key}
+                      className={clsx(
+                        "flex items-start gap-3 p-4 border rounded-sm cursor-pointer transition-all group",
+                        notifications[channel.key]
+                          ? "bg-surface-panel border-primary/50"
+                          : "bg-surface-base border-border-subtle hover:border-slate-400"
+                      )}
+                    >
+                      <div className={clsx("mt-0.5 p-1.5 rounded-sm", notifications[channel.key] ? "bg-primary/10 text-primary" : "bg-slate-100 text-slate-400")}>
+                         <Icon className="w-4 h-4" />
+                      </div>
+                      <div className="flex-1">
+                        <div className="flex items-center justify-between">
+                          <span className="block text-sm font-bold text-slate-700">{channel.label}</span>
+                          <input
+                            type="checkbox"
+                            checked={notifications[channel.key]}
+                            onChange={handleToggle(channel.key)}
+                            className="w-4 h-4 text-primary border-border-default rounded-sm focus:ring-primary"
+                          />
+                        </div>
+                        <span className="block text-xs text-slate-500 mt-1 font-mono">{channel.description}</span>
+                      </div>
+                    </label>
+                  );
+                })}
+              </div>
+              
+              <div className="flex justify-end border-t border-border-subtle pt-4">
+                <button
+                  type="submit"
+                  disabled={!isNotificationDirty || isSavingNotifications}
+                  className="btn-tech-primary flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isSavingNotifications ? "SAVING..." : "UPDATE PROTOCOLS"}
+                  <Save className="w-4 h-4" />
+                </button>
+              </div>
+              {notificationFeedback && (
+                <div className="mt-2 text-right text-xs font-mono text-emerald-600">
+                  {notificationFeedback.message}
+                </div>
+              )}
+            </form>
+          </section>
+
+          {/* Timer Calibration */}
+          <section className="bento-card">
+            <div className="flex items-center gap-2 mb-6">
+              <Clock className="w-4 h-4 text-primary" />
+              <span className="label-tech">TIMER CALIBRATION</span>
+            </div>
+
+            <form onSubmit={handleTimersSubmit}>
+              <div className="grid gap-6 md:grid-cols-3 mb-6">
+                {[
+                  { key: "focusDurationMinutes", label: "FOCUS DURATION", limits: TIMER_LIMITS.focus },
+                  { key: "shortBreakMinutes", label: "SHORT BREAK", limits: TIMER_LIMITS.shortBreak },
+                  { key: "longBreakMinutes", label: "LONG BREAK", limits: TIMER_LIMITS.longBreak },
+                ].map((item) => (
+                  <div key={item.key} className="space-y-2">
+                    <label className="text-[10px] font-mono font-bold text-slate-500 uppercase tracking-wider">{item.label}</label>
+                    <div className="relative group">
+                      <input
+                        type="number"
+                        value={timers[item.key as keyof TimerState]}
+                        onChange={handleTimerChange(item.key as keyof TimerState)}
+                        className="w-full bg-surface-base border border-border-subtle rounded-sm px-4 py-3 font-mono text-xl font-bold focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all group-hover:border-slate-400"
+                      />
+                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-mono text-slate-400 font-bold">MIN</span>
+                    </div>
+                    <div className="text-[10px] text-slate-400 font-mono">
+                      RANGE: {item.limits.min}-{item.limits.max} MIN
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="flex justify-end border-t border-border-subtle pt-4">
+                <button
+                  type="submit"
+                  disabled={!isTimerDirty || isSavingTimers}
+                  className="btn-tech-primary flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isSavingTimers ? "SAVING..." : "CALIBRATE TIMERS"}
+                  <Save className="w-4 h-4" />
+                </button>
+              </div>
+              {timerFeedback && (
+                <div className="mt-2 text-right text-xs font-mono text-emerald-600">
+                  {timerFeedback.message}
+                </div>
+              )}
+            </form>
+          </section>
+
+        </div>
       </div>
     </div>
   );

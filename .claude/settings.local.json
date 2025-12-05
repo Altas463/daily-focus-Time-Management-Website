@@ -4,7 +4,9 @@
       "Skill(frontend-design:frontend-design)",
       "Bash(npm run build:*)",
       "Bash(npm run lint)",
-      "Bash(npx tsc:*)"
+      "Bash(npx tsc:*)",
+      "Bash(npm run lint:*)",
+      "Bash(npx eslint:*)"
     ],
     "deny": [],
     "ask": []

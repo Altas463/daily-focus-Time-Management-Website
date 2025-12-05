@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import clsx from "clsx";
 import BackToDashboardLink from "@/components/BackToDashboardLink";
 import { formatShortDate } from "@/utils/date";
+import { BarChart3, Users, Zap, Target, Layers, LayoutTemplate } from "lucide-react";
 
 const accentPalette: Record<PersonaAccentToken, string> = {
   emerald: "#10b981",
@@ -111,10 +112,10 @@ export default function ProjectsPage() {
     if (!stats) return [] as Array<{ label: string; value: string | number }>;
     const completionRate = stats.tasksTotal === 0 ? 0 : Math.round((stats.tasksCompleted / stats.tasksTotal) * 100);
     return [
-      { label: "Active projects", value: stats.activeProjects },
-      { label: "Total projects", value: stats.totalProjects },
-      { label: "Tasks complete", value: `${stats.tasksCompleted}/${stats.tasksTotal}` },
-      { label: "Completion rate", value: `${completionRate}%` },
+      { label: "Active", value: stats.activeProjects },
+      { label: "Total", value: stats.totalProjects },
+      { label: "Tasks", value: `${stats.tasksCompleted}/${stats.tasksTotal}` },
+      { label: "Rate", value: `${completionRate}%` },
     ];
   }, [stats]);
 
@@ -130,173 +131,175 @@ export default function ProjectsPage() {
       </div>
 
       <header>
-        <h1 className="text-3xl font-display font-bold mb-2">Keep every initiative moving forward</h1>
-        <p className="text-slate-500 font-mono text-sm">{"// Switch personas to focus on the work that matters this week."}</p>
+        <h1 className="text-3xl font-display font-bold mb-2">Project Initiatives</h1>
+        <p className="text-slate-500 font-mono text-sm">{"// Manage complex workflows and track progress across multiple domains."}</p>
       </header>
-
-      <section className="bento-card">
-        <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
-          <div className="flex flex-1 flex-col gap-4">
-            <div className="flex flex-wrap gap-2">
-              {personaOptions.map((option) => (
-                <button
-                  key={option.key}
-                  type="button"
-                  onClick={() => setActivePersona(option.key)}
-                  className={clsx(
-                    "px-4 py-2 text-xs font-mono font-bold uppercase tracking-wider border rounded-sm transition-all",
-                    activePersona === option.key
-                      ? "bg-primary text-white border-primary"
-                      : "bg-surface-base border-border-subtle text-slate-500 hover:border-primary hover:text-primary",
-                  )}
-                >
-                  {option.label}
-                </button>
-              ))}
-            </div>
-            {activePersonaDetails?.blurb && (
-              <p className="text-sm text-slate-500 font-mono">{activePersonaDetails.blurb}</p>
-            )}
-          </div>
-
-          <div className="grid flex-none grid-cols-2 gap-3 sm:grid-cols-4">
-            {statCards.map((card) => (
-              <StatCard key={card.label} label={card.label} value={card.value} />
-            ))}
-          </div>
-        </div>
-      </section>
 
       {loading ? (
         <LoadingBoard />
       ) : error ? (
         <ErrorState message={error} />
       ) : (
-        <>
-          <section className="grid gap-6 lg:grid-cols-[3fr,2fr]">
-            <article className="bento-card">
-              <header className="flex items-center justify-between mb-6">
-                <div>
-                  <div className="flex items-center gap-2 mb-2">
-                    <span className="label-tech">FOCUS SUGGESTIONS</span>
-                  </div>
-                  <p className="text-sm text-slate-500 font-mono">
-                    High-impact projects ranked by urgency and progress.
-                  </p>
-                </div>
-                <span className="text-[10px] font-mono text-slate-400 uppercase tracking-wider">Auto curated</span>
-              </header>
-
-              <div className="space-y-3">
-                {focusSuggestions.length === 0 ? (
-                  <div className="border border-dashed border-border-default bg-surface-base p-6 text-sm text-slate-500 font-mono rounded-sm">
-                    Add a project or task to see personalised recommendations.
-                  </div>
-                ) : (
-                  focusSuggestions.map((suggestion) => <FocusSuggestionCard key={suggestion.projectId} suggestion={suggestion} />)
-                )}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          
+          {/* Left Sidebar (3 Cols) */}
+          <div className="lg:col-span-3 space-y-6">
+            
+            {/* Persona Selector */}
+            <div className="bento-card p-4 space-y-4">
+              <div className="flex items-center gap-2 mb-2">
+                <Users className="w-4 h-4 text-primary" />
+                <span className="label-tech">PERSONA</span>
               </div>
-            </article>
-
-            <article className="bento-card">
-              <header className="flex items-center justify-between mb-6">
-                <div>
-                  <div className="flex items-center gap-2 mb-2">
-                    <span className="label-tech">DELIVERY RADAR</span>
-                  </div>
-                  <p className="text-sm text-slate-500 font-mono">Upcoming hand-offs and deadlines.</p>
-                </div>
-                <span className="text-[10px] font-mono text-slate-400 uppercase tracking-wider">This week</span>
-              </header>
-
-              <ul className="space-y-3">
-                {focusSuggestions.length === 0 ? (
-                  <li className="border border-dashed border-border-default bg-surface-base p-4 text-xs text-slate-500 font-mono rounded-sm">
-                    Nothing queued up—great time to plan the next milestone.
-                  </li>
-                ) : (
-                  focusSuggestions.slice(0, 4).map((item) => (
-                    <li key={item.projectId} className="flex items-start gap-3 border border-border-subtle bg-surface-base p-4 rounded-sm">
-                      <span className="mt-1 h-2 w-2 rounded-full" style={{ backgroundColor: accentPalette[item.accent] }} aria-hidden />
-                      <div className="flex flex-1 flex-col gap-1">
-                        <span className="text-sm font-bold text-slate-900">{item.title}</span>
-                        <span className="text-[10px] font-mono uppercase tracking-wider text-slate-400">{item.stage}</span>
-                        <p className="text-xs text-slate-500 font-mono">{item.dueLabel}</p>
-                      </div>
-                    </li>
-                  ))
-                )}
-              </ul>
-            </article>
-          </section>
-
-          <section className="bento-card">
-            <header className="mb-6 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-              <div>
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="label-tech">BOARD OVERVIEW</span>
-                </div>
-                <p className="text-sm text-slate-500 font-mono">
-                  Columns reflect how you categorise the work.
+              <div className="flex flex-col gap-2">
+                {personaOptions.map((option) => (
+                  <button
+                    key={option.key}
+                    type="button"
+                    onClick={() => setActivePersona(option.key)}
+                    className={clsx(
+                      "text-left px-3 py-2 text-xs font-mono font-bold uppercase tracking-wider border rounded-sm transition-all",
+                      activePersona === option.key
+                        ? "bg-primary text-white border-primary"
+                        : "bg-surface-base border-border-subtle text-slate-500 hover:border-primary hover:text-primary",
+                    )}
+                  >
+                    {option.label}
+                  </button>
+                ))}
+              </div>
+              {activePersonaDetails?.blurb && (
+                <p className="text-xs text-slate-500 font-mono border-t border-dashed border-border-default pt-3">
+                  {activePersonaDetails.blurb}
                 </p>
-              </div>
-              <span className="text-[10px] font-mono text-slate-400 uppercase tracking-wider">{boardColumns.length} columns</span>
-            </header>
-
-            <div className="grid gap-6 lg:grid-cols-2 xl:grid-cols-3">
-              {boardColumns.map((column) => (
-                <ProjectColumn key={column.id} column={column} />
-              ))}
-
-              {boardColumns.length === 0 && (
-                <div className="border border-dashed border-border-default bg-surface-base p-8 text-center text-sm text-slate-500 font-mono rounded-sm">
-                  No projects yet—start by creating a column that matches how you track work.
-                </div>
               )}
             </div>
-          </section>
 
-          <section className="bento-card">
-            <header className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between mb-6">
-              <div>
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="label-tech">PROJECT TEMPLATES</span>
-                </div>
-                <p className="text-sm text-slate-500 font-mono">Optional blueprints to spin up consistent project groups faster.</p>
+            {/* Stats */}
+            <div className="bento-card p-4 space-y-4">
+              <div className="flex items-center gap-2 mb-2">
+                <BarChart3 className="w-4 h-4 text-primary" />
+                <span className="label-tech">METRICS</span>
               </div>
-              <span className="text-[10px] font-mono text-slate-400 uppercase tracking-wider">
-                Power user presets
-              </span>
-            </header>
-
-            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-              {templates
-                .filter((template) => template.bestFor === "all" || template.bestFor === activePersona)
-                .map((template) => (
-                  <article
-                    key={template.id}
-                    className="flex flex-col gap-3 border border-border-subtle bg-surface-base p-4 rounded-sm transition hover:border-primary"
-                  >
-                    <div className="flex items-center justify-between gap-2">
-                      <h3 className="text-sm font-bold text-slate-900">{template.title}</h3>
-                      <span className="px-2 py-0.5 text-[10px] font-mono font-bold uppercase tracking-wider text-slate-500 border border-border-subtle rounded-sm">
-                        {template.bestFor === "all" ? "ALL" : template.bestFor.toUpperCase()}
-                      </span>
-                    </div>
-                    <p className="text-xs text-slate-500 font-mono">{template.summary}</p>
-                    <ul className="space-y-1 text-xs text-slate-600">
-                      {template.highlights.map((highlight) => (
-                        <li key={highlight} className="flex items-center gap-2 font-mono">
-                          <span className="h-1 w-1 bg-primary rounded-full" aria-hidden />
-                          <span>{highlight}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </article>
+              <div className="grid grid-cols-2 gap-3">
+                {statCards.map((card) => (
+                  <div key={card.label}>
+                    <div className="text-xl font-mono font-bold text-slate-900">{card.value}</div>
+                    <div className="text-[10px] font-mono text-slate-500 uppercase">{card.label}</div>
+                  </div>
                 ))}
+              </div>
             </div>
-          </section>
-        </>
+
+            {/* Templates */}
+            <div className="bento-card p-4 space-y-4">
+              <div className="flex items-center gap-2 mb-2">
+                <LayoutTemplate className="w-4 h-4 text-primary" />
+                <span className="label-tech">TEMPLATES</span>
+              </div>
+              <div className="flex flex-col gap-3">
+                {templates
+                  .filter((template) => template.bestFor === "all" || template.bestFor === activePersona)
+                  .map((template) => (
+                    <button
+                      key={template.id}
+                      className="text-left group"
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-bold text-slate-700 group-hover:text-primary transition-colors">{template.title}</span>
+                      </div>
+                      <p className="text-[10px] text-slate-500 font-mono line-clamp-2 mt-0.5">{template.summary}</p>
+                    </button>
+                  ))}
+              </div>
+            </div>
+
+          </div>
+
+          {/* Right Content (9 Cols) */}
+          <div className="lg:col-span-9 space-y-6">
+            
+            {/* Top Row: Suggestions & Radar */}
+            <div className="grid gap-6 lg:grid-cols-2">
+              {/* Focus Suggestions */}
+              <div className="bento-card flex flex-col">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-2">
+                    <Zap className="w-4 h-4 text-primary" />
+                    <span className="label-tech">FOCUS SUGGESTIONS</span>
+                  </div>
+                  <span className="text-[10px] font-mono text-slate-400 uppercase tracking-wider">Auto-curated</span>
+                </div>
+                
+                <div className="flex-1 space-y-3">
+                  {focusSuggestions.length === 0 ? (
+                    <div className="h-full flex items-center justify-center border border-dashed border-border-default rounded-sm p-4 text-center">
+                       <p className="text-xs text-slate-500 font-mono">Add projects to see recommendations.</p>
+                    </div>
+                  ) : (
+                    focusSuggestions.slice(0, 3).map((suggestion) => (
+                      <FocusSuggestionCard key={suggestion.projectId} suggestion={suggestion} />
+                    ))
+                  )}
+                </div>
+              </div>
+
+              {/* Delivery Radar */}
+              <div className="bento-card flex flex-col">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-2">
+                    <Target className="w-4 h-4 text-primary" />
+                    <span className="label-tech">DELIVERY RADAR</span>
+                  </div>
+                  <span className="text-[10px] font-mono text-slate-400 uppercase tracking-wider">This Week</span>
+                </div>
+
+                <div className="flex-1 space-y-3">
+                  {focusSuggestions.length === 0 ? (
+                    <div className="h-full flex items-center justify-center border border-dashed border-border-default rounded-sm p-4 text-center">
+                       <p className="text-xs text-slate-500 font-mono">No upcoming deadlines.</p>
+                    </div>
+                  ) : (
+                    focusSuggestions.slice(0, 4).map((item) => (
+                      <div key={item.projectId} className="flex items-center gap-3 border border-border-subtle bg-surface-panel px-3 py-2 rounded-sm">
+                        <span className="h-2 w-2 rounded-full flex-shrink-0" style={{ backgroundColor: accentPalette[item.accent] }} />
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-between">
+                            <span className="text-xs font-bold text-slate-900 truncate">{item.title}</span>
+                            <span className="text-[10px] font-mono text-slate-500">{item.dueLabel}</span>
+                          </div>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Board Overview */}
+            <div className="bento-card">
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center gap-2">
+                  <Layers className="w-4 h-4 text-primary" />
+                  <span className="label-tech">BOARD OVERVIEW</span>
+                </div>
+                <span className="text-[10px] font-mono text-slate-400 uppercase tracking-wider">{boardColumns.length} Columns</span>
+              </div>
+
+              <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+                {boardColumns.map((column) => (
+                  <ProjectColumn key={column.id} column={column} />
+                ))}
+                {boardColumns.length === 0 && (
+                  <div className="col-span-full border border-dashed border-border-default bg-surface-base p-8 text-center text-sm text-slate-500 font-mono rounded-sm">
+                    No projects yet—start by creating a column.
+                  </div>
+                )}
+              </div>
+            </div>
+
+          </div>
+        </div>
       )}
     </div>
   );
@@ -304,24 +307,19 @@ export default function ProjectsPage() {
 
 function LoadingBoard() {
   return (
-    <section className="grid gap-6 lg:grid-cols-[3fr,2fr]">
-      <div className="bento-card">
-        <div className="h-4 w-48 animate-pulse rounded-sm bg-slate-200" />
-        <div className="space-y-3 mt-6">
-          {Array.from({ length: 3 }).map((_, index) => (
-            <div key={index} className="h-16 animate-pulse rounded-sm bg-surface-base border border-border-subtle" />
-          ))}
-        </div>
+    <div className="grid grid-cols-12 gap-6">
+      <div className="col-span-3 space-y-6">
+         <div className="bento-card h-48 animate-pulse bg-slate-100" />
+         <div className="bento-card h-32 animate-pulse bg-slate-100" />
       </div>
-      <div className="bento-card">
-        <div className="h-4 w-32 animate-pulse rounded-sm bg-slate-200" />
-        <div className="space-y-3 mt-6">
-          {Array.from({ length: 4 }).map((_, index) => (
-            <div key={index} className="h-20 animate-pulse rounded-sm bg-surface-base border border-border-subtle" />
-          ))}
-        </div>
+      <div className="col-span-9 space-y-6">
+         <div className="grid grid-cols-2 gap-6">
+            <div className="bento-card h-48 animate-pulse bg-slate-100" />
+            <div className="bento-card h-48 animate-pulse bg-slate-100" />
+         </div>
+         <div className="bento-card h-96 animate-pulse bg-slate-100" />
       </div>
-    </section>
+    </div>
   );
 }
 
@@ -333,39 +331,21 @@ function ErrorState({ message }: { message: string }) {
   );
 }
 
-function StatCard({ label, value }: { label: string; value: number | string }) {
-  return (
-    <div className="bento-card p-4">
-      <span className="label-tech mb-2">{label.toUpperCase()}</span>
-      <p className="text-2xl font-mono font-bold text-slate-900">{value}</p>
-    </div>
-  );
-}
-
 function FocusSuggestionCard({ suggestion }: { suggestion: FocusSuggestion }) {
   return (
-    <article className="flex items-start gap-4 border border-border-subtle bg-surface-base p-4 rounded-sm transition hover:border-primary">
+    <article className="flex items-start gap-3 border border-border-subtle bg-surface-panel p-3 rounded-sm transition hover:border-primary cursor-pointer group">
       <div
-        className="flex h-10 w-10 items-center justify-center rounded-sm text-xs font-mono font-bold text-white"
+        className="flex h-8 w-8 items-center justify-center rounded-sm text-[10px] font-mono font-bold text-white flex-shrink-0"
         style={{ backgroundColor: accentPalette[suggestion.accent] }}
       >
-        {suggestion.title
-          .split(" ")
-          .filter(Boolean)
-          .slice(0, 2)
-          .map((word) => word[0]?.toUpperCase())
-          .join("")}
+        {suggestion.title.substring(0, 2).toUpperCase()}
       </div>
-      <div className="flex flex-1 flex-col gap-1">
+      <div className="flex flex-1 flex-col gap-0.5 min-w-0">
         <div className="flex items-center justify-between gap-2">
-          <div>
-            <p className="text-sm font-bold text-slate-900">{suggestion.title}</p>
-            <p className="text-[10px] font-mono uppercase tracking-wider text-slate-400">{suggestion.stage}</p>
-          </div>
+          <p className="text-xs font-bold text-slate-900 truncate group-hover:text-primary transition-colors">{suggestion.title}</p>
           <FocusPriorityBadge priority={suggestion.priority} />
         </div>
-        <p className="text-xs text-slate-500 font-mono">{suggestion.summary}</p>
-        <p className="text-xs font-mono font-medium text-slate-600">{suggestion.dueLabel}</p>
+        <p className="text-[10px] text-slate-500 font-mono line-clamp-1">{suggestion.summary}</p>
       </div>
     </article>
   );
@@ -373,108 +353,87 @@ function FocusSuggestionCard({ suggestion }: { suggestion: FocusSuggestion }) {
 
 function FocusPriorityBadge({ priority }: { priority: FocusSuggestion["priority"] }) {
   const tone: Record<FocusSuggestion["priority"], string> = {
-    "Critical focus": "bg-red-50 text-red-600 border-red-200",
-    "High focus": "bg-amber-50 text-amber-600 border-amber-200",
-    "Worth a look": "bg-blue-50 text-blue-600 border-blue-200",
-    "On track": "bg-emerald-50 text-emerald-600 border-emerald-200",
+    "Critical focus": "text-red-600 bg-red-50 border-red-100",
+    "High focus": "text-amber-600 bg-amber-50 border-amber-100",
+    "Worth a look": "text-blue-600 bg-blue-50 border-blue-100",
+    "On track": "text-emerald-600 bg-emerald-50 border-emerald-100",
   };
 
   return (
-    <span className={clsx("px-2 py-1 text-[10px] font-mono font-bold uppercase tracking-wider border rounded-sm", tone[priority])}>{priority}</span>
+    <span className={clsx("px-1.5 py-0.5 text-[9px] font-mono font-bold uppercase tracking-wider border rounded-[2px]", tone[priority])}>
+      {priority.split(' ')[0]}
+    </span>
   );
 }
 
 function ProjectColumn({ column }: { column: ProjectBoardColumn }) {
   return (
-    <section className="flex h-full flex-col gap-4 border border-border-subtle bg-surface-base p-5 rounded-sm">
-      <header className="space-y-2">
-        <div className="flex items-center justify-between">
-          <h3 className="text-sm font-bold text-slate-900">{column.title}</h3>
-          <span className="px-2 py-0.5 text-[10px] font-mono font-bold text-slate-500 bg-slate-100 rounded-sm">
-            {column.projects.length}
-          </span>
-        </div>
-        {column.description && <p className="text-xs text-slate-500 font-mono">{column.description}</p>}
-        {column.intent && (
-          <p className="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-400">{column.intent}</p>
-        )}
+    <section className="flex flex-col gap-3 border border-border-subtle bg-surface-panel p-3 rounded-sm h-full">
+      <header className="flex items-center justify-between pb-2 border-b border-border-subtle">
+        <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wide">{column.title}</h3>
+        <span className="text-[10px] font-mono font-bold text-slate-400">
+          {column.projects.length}
+        </span>
       </header>
 
-      <div className="space-y-4">
+      <div className="space-y-3 flex-1">
         {column.projects.map((project) => (
-          <article key={project.id} className="space-y-4 border border-border-subtle bg-white p-5 rounded-sm transition hover:border-primary">
-            <div className="flex items-start gap-4">
+          <article key={project.id} className="space-y-3 border border-border-subtle bg-surface-base p-3 rounded-sm transition hover:border-primary group cursor-pointer shadow-sm">
+            <div className="flex items-start gap-3">
               <ProjectProgressRing value={project.progress} accent={project.accent} />
-              <div className="flex flex-1 flex-col gap-1">
+              <div className="flex flex-1 flex-col min-w-0">
                 <div className="flex items-center justify-between gap-2">
-                  <h4 className="text-sm font-bold text-slate-900">{project.name}</h4>
-                  <span className="px-2 py-0.5 text-[10px] font-mono font-bold uppercase tracking-wider text-slate-500 bg-slate-100 rounded-sm">
-                    {project.stage}
-                  </span>
+                  <h4 className="text-sm font-bold text-slate-900 truncate group-hover:text-primary transition-colors">{project.name}</h4>
                 </div>
-                <p className="text-xs text-slate-500 font-mono">
-                  {project.dueDate ? `Due ${formatShortDate(new Date(project.dueDate))}` : "No due date"}
-                  {project.focus ? ` | ${project.focus}` : ""}
+                <p className="text-[10px] text-slate-500 font-mono mt-0.5">
+                  {project.dueDate ? `Due ${formatShortDate(new Date(project.dueDate))}` : "No date"}
                 </p>
               </div>
             </div>
 
-            <div className="space-y-3">
-              <ul className="space-y-2">
-                {project.tasks.map((task) => (
-                  <li key={task.id} className="flex flex-col gap-1 border border-border-subtle bg-surface-base px-3 py-2 text-sm rounded-sm">
-                    <div className="flex items-center justify-between gap-2">
-                      <span className="font-medium text-slate-800">{task.label}</span>
-                      <span className={clsx("h-2 w-2 rounded-full", taskStatusTone[task.status])} aria-hidden />
-                    </div>
-                    {task.context && <span className="text-xs text-slate-500 font-mono">{task.context}</span>}
-                  </li>
-                ))}
-              </ul>
-
-              {project.notes && (
-                <div className="border border-dashed border-border-default bg-surface-base px-3 py-3 text-xs text-slate-600 font-mono rounded-sm">
-                  {project.notes}
-                </div>
+            <div className="space-y-2">
+              {project.tasks.length > 0 && (
+                <ul className="space-y-1.5">
+                  {project.tasks.slice(0, 3).map((task) => (
+                    <li key={task.id} className="flex items-center justify-between gap-2 text-[10px]">
+                      <span className="text-slate-600 truncate">{task.label}</span>
+                      <span className={clsx("h-1.5 w-1.5 rounded-full flex-shrink-0", taskStatusTone[task.status])} />
+                    </li>
+                  ))}
+                </ul>
               )}
             </div>
           </article>
         ))}
-
-        {column.projects.length === 0 && (
-          <div className="border border-dashed border-border-default bg-surface-base p-6 text-center text-xs text-slate-500 font-mono rounded-sm">
-            No projects here yet.
-          </div>
-        )}
       </div>
     </section>
   );
 }
 
 function ProjectProgressRing({ value, accent }: { value: number; accent: PersonaAccentToken }) {
-  const radius = 26;
+  const radius = 18;
   const circumference = 2 * Math.PI * radius;
   const offset = circumference - (value / 100) * circumference;
   const stroke = accentPalette[accent];
 
   return (
-    <div className="relative h-14 w-14">
-      <svg className="h-full w-full" viewBox="0 0 64 64">
-        <circle cx="32" cy="32" r={radius} fill="none" stroke="rgba(148, 163, 184, 0.25)" strokeWidth="5" />
+    <div className="relative h-10 w-10 flex-shrink-0">
+      <svg className="h-full w-full" viewBox="0 0 44 44">
+        <circle cx="22" cy="22" r={radius} fill="none" stroke="var(--border-subtle)" strokeWidth="3" />
         <circle
-          cx="32"
-          cy="32"
+          cx="22"
+          cy="22"
           r={radius}
           fill="none"
           stroke={stroke}
-          strokeWidth="5"
+          strokeWidth="3"
           strokeDasharray={`${circumference} ${circumference}`}
           strokeDashoffset={offset}
-          strokeLinecap="square"
-          transform="rotate(-90 32 32)"
+          strokeLinecap="round"
+          transform="rotate(-90 22 22)"
         />
       </svg>
-      <div className="absolute inset-0 flex flex-col items-center justify-center text-xs font-mono font-bold text-slate-900">
+      <div className="absolute inset-0 flex items-center justify-center text-[9px] font-mono font-bold text-slate-700">
         {value}%
       </div>
     </div>
