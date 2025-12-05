@@ -198,28 +198,25 @@ const TimeBlockingBoard = ({
   };
 
   return (
-    <section className="mt-10 space-y-6 rounded-3xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900">
-      <header className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+    <section className="bento-card mt-10">
+      <header className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between mb-6">
         <div>
-          <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.3em] text-gray-500 dark:text-gray-400">
-            <CalendarPlus className="h-4 w-4" aria-hidden />
-            Time blocking
-          </p>
-          <h2 className="mt-2 text-2xl font-semibold text-gray-900 dark:text-white">
-            Plan your deep work blocks
-          </h2>
-          <p className="mt-1 text-sm text-gray-600 dark:text-gray-300">
-            Drag any task into a block to instantly schedule 30, 60, or 90 focused minutes.
+          <div className="flex items-center gap-2 mb-2">
+            <CalendarPlus className="h-4 w-4 text-primary" aria-hidden />
+            <span className="label-tech">TIME BLOCKING</span>
+          </div>
+          <p className="text-sm text-slate-500 font-mono">
+            Drag tasks into blocks to schedule deep work sessions.
           </p>
         </div>
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-          <label className="flex items-center gap-2 rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200">
-            <span className="font-medium">Date</span>
+          <label className="flex items-center gap-2 rounded-sm border border-border-subtle bg-surface-base px-3 py-2 text-sm text-slate-700">
+            <span className="font-mono font-bold text-xs uppercase text-slate-500">Date</span>
             <input
               type="date"
               value={selectedDate}
               onChange={(event) => onSelectedDateChange(event.target.value)}
-              className="border-none bg-transparent text-gray-900 outline-none dark:text-gray-50"
+              className="border-none bg-transparent text-slate-900 outline-none font-mono text-sm"
             />
           </label>
 
@@ -227,20 +224,20 @@ const TimeBlockingBoard = ({
             type="button"
             onClick={() => void downloadIcs()}
             disabled={!selectedDate || scheduledTasks.length === 0 || downloading}
-            className="inline-flex items-center gap-2 rounded-xl bg-gray-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-black disabled:cursor-not-allowed disabled:bg-gray-400 dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100"
+            className="btn-tech-primary flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Download className="h-4 w-4" aria-hidden />
-            Add to Google Calendar
+            Export ICS
           </button>
         </div>
       </header>
 
       {statusMessage && (
         <div
-          className={`flex items-center justify-between rounded-xl border px-4 py-3 text-sm ${
+          className={`flex items-center justify-between rounded-sm border px-4 py-3 text-sm font-mono mb-6 ${
             statusMessage.type === "success"
-              ? "border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-900/40 dark:bg-emerald-900/20 dark:text-emerald-200"
-              : "border-rose-200 bg-rose-50 text-rose-700 dark:border-rose-900/40 dark:bg-rose-900/20 dark:text-rose-200"
+              ? "border-emerald-200 bg-emerald-50 text-emerald-700"
+              : "border-red-200 bg-red-50 text-red-700"
           }`}
         >
           <span>{statusMessage.text}</span>
@@ -248,7 +245,7 @@ const TimeBlockingBoard = ({
             <button
               type="button"
               onClick={onDismissStatus}
-              className="text-xs font-semibold uppercase tracking-[0.2em] text-current/70 underline-offset-2 hover:underline"
+              className="text-xs font-bold uppercase tracking-wider underline-offset-2 hover:underline"
             >
               Dismiss
             </button>
@@ -256,19 +253,19 @@ const TimeBlockingBoard = ({
         </div>
       )}
 
-      <div className="flex flex-wrap items-center gap-3 rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200">
-        <Clock3 className="h-4 w-4" aria-hidden />
-        <span>
+      <div className="flex flex-wrap items-center gap-3 rounded-sm border border-border-subtle bg-surface-base px-4 py-3 text-sm text-slate-700 mb-8">
+        <Clock3 className="h-4 w-4 text-slate-400" aria-hidden />
+        <span className="font-mono text-xs">
           {scheduledTasks.length > 0
-            ? `${scheduledTasks.length} block${scheduledTasks.length > 1 ? "s" : ""} â€¢ ${totalMinutes} scheduled minutes`
-            : "No blocks scheduled yet"}
+            ? `${scheduledTasks.length} BLOCK${scheduledTasks.length > 1 ? "S" : ""} • ${totalMinutes} MIN SCHEDULED`
+            : "NO BLOCKS SCHEDULED"}
         </span>
       </div>
 
       <div className="space-y-8">
         {blocksByHour.map(({ hourLabel, blocks }) => (
           <div key={hourLabel} className="space-y-3">
-            <p className="text-xs font-semibold uppercase tracking-[0.3em] text-gray-500 dark:text-gray-400">
+            <p className="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-400 border-b border-border-subtle pb-1">
               {hourLabel}
             </p>
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -282,15 +279,15 @@ const TimeBlockingBoard = ({
                         ref={provided.innerRef}
                         {...provided.droppableProps}
                         className={[
-                          "relative min-h-[120px] rounded-2xl border p-4 transition",
+                          "relative min-h-[100px] rounded-sm border p-4 transition-all",
                           snapshot.isDraggingOver
-                            ? "border-blue-400 bg-blue-50/80 dark:border-blue-500/60 dark:bg-blue-500/10"
+                            ? "border-primary bg-primary/5"
                             : assignedTask
-                              ? "border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800"
-                              : "border-dashed border-gray-300 bg-gray-50 dark:border-gray-700 dark:bg-gray-900",
+                              ? "border-border-subtle bg-white shadow-sm"
+                              : "border-dashed border-border-default bg-surface-base hover:border-border-strong",
                         ].join(" ")}
                       >
-                        <div className="flex items-center justify-between gap-2 text-xs font-semibold uppercase tracking-[0.25em] text-gray-500 dark:text-gray-400">
+                        <div className="flex items-center justify-between gap-2 text-[10px] font-mono font-bold uppercase tracking-wider text-slate-400">
                           {block.windowLabel}
                           <span>{block.duration}m</span>
                         </div>
@@ -298,32 +295,27 @@ const TimeBlockingBoard = ({
                         <div className="mt-3">
                           {assignedTask ? (
                             <>
-                              <p className="text-sm font-semibold text-gray-900 dark:text-white">
+                              <p className="text-sm font-bold text-slate-900 line-clamp-2">
                                 {assignedTask.title}
                               </p>
-                              {assignedTask.description && (
-                                <p className="mt-1 text-xs text-gray-500 dark:text-gray-300 line-clamp-2">
-                                  {assignedTask.description}
-                                </p>
-                              )}
                               <button
                                 type="button"
                                 onClick={() => void onClearAssignment(assignedTask.id)}
                                 disabled={isPending}
-                                className="mt-4 inline-flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-1.5 text-xs font-medium text-gray-600 transition hover:border-gray-300 hover:text-gray-900 disabled:cursor-not-allowed disabled:opacity-60 dark:border-gray-700 dark:text-gray-300 dark:hover:border-gray-600"
+                                className="mt-3 inline-flex items-center gap-1.5 text-[10px] font-mono font-bold uppercase tracking-wider text-slate-400 hover:text-red-600 transition-colors disabled:opacity-50"
                               >
-                                <Trash2 className="h-3.5 w-3.5" aria-hidden />
+                                <Trash2 className="h-3 w-3" aria-hidden />
                                 Remove
                               </button>
                             </>
                           ) : (
-                            <p className="text-sm text-gray-500 dark:text-gray-400">
-                              Drop a task here to schedule this block.
+                            <p className="text-xs text-slate-400 font-mono">
+                              Drop task here
                             </p>
                           )}
                         </div>
                         {isPending && (
-                          <div className="absolute inset-0 flex items-center justify-center rounded-2xl bg-white/80 text-xs font-semibold uppercase tracking-[0.3em] text-gray-500 dark:bg-gray-900/80 dark:text-gray-300">
+                          <div className="absolute inset-0 flex items-center justify-center bg-white/80 text-[10px] font-mono font-bold uppercase tracking-wider text-slate-500">
                             Updating...
                           </div>
                         )}
@@ -342,4 +334,3 @@ const TimeBlockingBoard = ({
 };
 
 export default TimeBlockingBoard;
-

@@ -1,7 +1,6 @@
 "use client";
 
 import { FC, useState } from "react";
-import { motion } from "framer-motion";
 import { Task } from "@/types";
 import TaskEditModal from "./TaskEditModal";
 import { MoreHorizontal, Clock, CheckCircle2, AlertCircle } from "lucide-react";
@@ -16,11 +15,11 @@ type TaskCardProps = {
 const getPriorityStyle = (priority?: string) => {
   switch (priority) {
     case "high":
-      return { bg: "rgba(239, 68, 68, 0.1)", color: "#ef4444", label: "High" };
+      return "bg-red-50 text-red-600 border-red-200";
     case "medium":
-      return { bg: "rgba(249, 115, 22, 0.1)", color: "#f97316", label: "Medium" };
+      return "bg-orange-50 text-orange-600 border-orange-200";
     case "low":
-      return { bg: "rgba(34, 197, 94, 0.1)", color: "#22c55e", label: "Low" };
+      return "bg-emerald-50 text-emerald-600 border-emerald-200";
     default:
       return null;
   }
@@ -30,31 +29,23 @@ const TaskCard: FC<TaskCardProps> = ({ task, onUpdate, onDelete }) => {
   const [showModal, setShowModal] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const dueText = formatDayMonth(task.endDate);
-  const priorityStyle = getPriorityStyle(task.priority);
+  const priorityClass = getPriorityStyle(task.priority);
 
   const isOverdue = task.endDate && new Date(task.endDate) < new Date() && !task.completed;
 
   return (
     <>
-      <motion.div
+      <div
         onClick={() => setShowModal(true)}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
-        whileHover={{ y: -2 }}
-        whileTap={{ scale: 0.98 }}
-        className="relative p-4 rounded-xl cursor-pointer transition-all duration-200"
-        style={{
-          background: "var(--surface)",
-          border: `1px solid ${isHovered ? "var(--primary)" : "var(--border)"}`,
-          boxShadow: isHovered ? "var(--shadow-card)" : "none",
-        }}
+        className={`group relative p-4 bg-surface-base border rounded-sm cursor-pointer transition-all duration-200 ${
+          isHovered ? "border-primary shadow-sm" : "border-border-subtle"
+        }`}
       >
         {/* Completed indicator line */}
         {task.completed && (
-          <div
-            className="absolute left-0 top-0 bottom-0 w-1 rounded-l-xl"
-            style={{ background: "var(--success)" }}
-          />
+          <div className="absolute left-0 top-0 bottom-0 w-1 bg-emerald-500 rounded-l-sm" />
         )}
 
         {/* Header row */}
@@ -62,11 +53,8 @@ const TaskCard: FC<TaskCardProps> = ({ task, onUpdate, onDelete }) => {
           {/* Task title */}
           <h3
             className={`text-sm font-medium leading-snug flex-1 ${
-              task.completed ? "line-through" : ""
+              task.completed ? "line-through text-slate-400" : "text-slate-900"
             }`}
-            style={{
-              color: task.completed ? "var(--text-muted)" : "var(--text-primary)",
-            }}
           >
             {task.title}
           </h3>
@@ -77,11 +65,9 @@ const TaskCard: FC<TaskCardProps> = ({ task, onUpdate, onDelete }) => {
               e.stopPropagation();
               setShowModal(true);
             }}
-            className="flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-200"
-            style={{
-              background: isHovered ? "var(--surface-secondary)" : "transparent",
-              color: "var(--text-muted)",
-            }}
+            className={`flex-shrink-0 w-6 h-6 rounded-sm flex items-center justify-center transition-colors ${
+              isHovered ? "bg-slate-100 text-slate-600" : "text-transparent group-hover:text-slate-400"
+            }`}
             aria-label="Edit task"
           >
             <MoreHorizontal className="w-4 h-4" />
@@ -92,47 +78,29 @@ const TaskCard: FC<TaskCardProps> = ({ task, onUpdate, onDelete }) => {
         <div className="flex items-center gap-2 mt-3 flex-wrap">
           {/* Completion status */}
           {task.completed && (
-            <span
-              className="inline-flex items-center gap-1 text-xs font-medium px-2 py-1 rounded-md"
-              style={{
-                background: "rgba(34, 197, 94, 0.1)",
-                color: "#22c55e",
-              }}
-            >
+            <span className="inline-flex items-center gap-1 text-[10px] font-mono font-bold px-1.5 py-0.5 rounded-sm bg-emerald-50 text-emerald-600 border border-emerald-200 uppercase tracking-wider">
               <CheckCircle2 className="w-3 h-3" />
               Done
             </span>
           )}
 
           {/* Priority badge */}
-          {priorityStyle && !task.completed && (
-            <span
-              className="inline-flex items-center gap-1 text-xs font-medium px-2 py-1 rounded-md"
-              style={{
-                background: priorityStyle.bg,
-                color: priorityStyle.color,
-              }}
-            >
-              {priorityStyle.label}
+          {priorityClass && !task.completed && (
+            <span className={`inline-flex items-center gap-1 text-[10px] font-mono font-bold px-1.5 py-0.5 rounded-sm border uppercase tracking-wider ${priorityClass}`}>
+              {task.priority}
             </span>
           )}
 
           {/* Due date */}
           {dueText && (
             <span
-              className="inline-flex items-center gap-1 text-xs font-medium px-2 py-1 rounded-md"
-              style={{
-                background: task.completed
-                  ? "rgba(34, 197, 94, 0.1)"
+              className={`inline-flex items-center gap-1 text-[10px] font-mono font-bold px-1.5 py-0.5 rounded-sm border uppercase tracking-wider ${
+                task.completed
+                  ? "bg-emerald-50 text-emerald-600 border-emerald-200"
                   : isOverdue
-                  ? "rgba(239, 68, 68, 0.1)"
-                  : "rgba(249, 115, 22, 0.1)",
-                color: task.completed
-                  ? "#22c55e"
-                  : isOverdue
-                  ? "#ef4444"
-                  : "#f97316",
-              }}
+                  ? "bg-red-50 text-red-600 border-red-200"
+                  : "bg-orange-50 text-orange-600 border-orange-200"
+              }`}
             >
               {isOverdue && !task.completed ? (
                 <AlertCircle className="w-3 h-3" />
@@ -143,20 +111,7 @@ const TaskCard: FC<TaskCardProps> = ({ task, onUpdate, onDelete }) => {
             </span>
           )}
         </div>
-
-        {/* Hover gradient effect */}
-        {isHovered && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="absolute inset-0 rounded-xl pointer-events-none"
-            style={{
-              background: "linear-gradient(135deg, var(--primary-muted) 0%, transparent 50%)",
-              opacity: 0.3,
-            }}
-          />
-        )}
-      </motion.div>
+      </div>
 
       {showModal && (
         <TaskEditModal

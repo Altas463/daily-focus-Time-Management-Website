@@ -2,6 +2,7 @@
 
 import { useSession } from "next-auth/react";
 import { Bell, Search } from "lucide-react";
+import Link from "next/link";
 
 export default function Header() {
   const { data: session } = useSession();
@@ -18,20 +19,27 @@ export default function Header() {
         </div>
       </div>
 
-      {/* Center: Search (Visual) */}
-      <div className="hidden md:flex items-center gap-2 px-3 py-1.5 bg-surface-panel border border-border-default rounded-sm w-96 opacity-60 hover:opacity-100 transition-opacity cursor-text">
+      {/* Center: Search (Visual -> Functional Input) */}
+      <div className="hidden md:flex items-center gap-2 px-3 py-1.5 bg-surface-panel border border-border-default rounded-sm w-96 focus-within:border-primary focus-within:ring-1 focus-within:ring-primary transition-all">
         <Search className="w-4 h-4 text-slate-400" />
-        <span className="text-sm text-slate-400 font-mono">Search commands... (CMD+K)</span>
+        <input 
+          type="text"
+          placeholder="Search commands... (CMD+K)"
+          className="bg-transparent border-none outline-none text-sm font-mono text-slate-700 placeholder:text-slate-400 w-full"
+        />
       </div>
 
       {/* Right: User & Actions */}
       <div className="flex items-center gap-6">
-        <button className="relative text-slate-400 hover:text-slate-600 transition-colors">
+        <button 
+          className="relative text-slate-400 hover:text-slate-600 transition-colors"
+          title="Notifications"
+        >
           <Bell className="w-5 h-5" />
           <span className="absolute top-0 right-0 w-2 h-2 bg-primary rounded-full border-2 border-surface-base"></span>
         </button>
 
-        <div className="flex items-center gap-3 pl-6 border-l border-border-subtle">
+        <Link href="/dashboard/profile" className="flex items-center gap-3 pl-6 border-l border-border-subtle hover:opacity-80 transition-opacity">
           <div className="text-right hidden sm:block">
             <div className="text-xs font-bold text-slate-900">{userName}</div>
             <div className="text-[10px] font-mono text-slate-400 uppercase">PRO PLAN</div>
@@ -42,7 +50,7 @@ export default function Header() {
               {userName[0]}
             </div>
           </div>
-        </div>
+        </Link>
       </div>
     </header>
   );

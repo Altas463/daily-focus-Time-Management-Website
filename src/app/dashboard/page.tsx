@@ -1,7 +1,8 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import { useState } from "react";
+import { usePomodoro } from "@/hooks/usePomodoro";
+import Link from "next/link";
 import {
   Play,
   Pause,
@@ -14,10 +15,58 @@ import {
   ArrowUpRight
 } from "lucide-react";
 import { getDaypartGreeting } from "@/utils/date";
+import { useEffect, useState } from "react";
+import { Task } from "@/types";
 
 export default function DashboardPage() {
   const { data: session } = useSession();
-  const [isRunning, setIsRunning] = useState(false);
+  const {
+    secondsLeft,
+    isRunning,
+    mode,
+    start,
+    pause,
+    reset,
+  } = usePomodoro(25, 5);
+
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [isLoadingTasks, setIsLoadingTasks] = useState(true);
+
+  useEffect(() => {
+    async function fetchTasks() {
+      try {
+        const res = await fetch("/api/tasks");
+        if (res.ok) {
+          const data = await res.json();
+          setTasks(data);
+        }
+      } catch (error) {
+        console.error("Failed to fetch tasks", error);
+      } finally {
+        setIsLoadingTasks(false);
+      }
+    }
+    fetchTasks();
+  }, []);
+
+  const formatTime = (secs: number) => {
+    const minutes = Math.floor(secs / 60).toString().padStart(2, "0");
+    const seconds = (secs % 60).toString().padStart(2, "0");
+    return `${minutes}:${seconds}`;
+  };
+
+  const taskQueue = tasks.filter((t) => !t.completed).slice(0, 3);
+  
+  const todaySchedule = tasks.filter((t) => {
+    if (!t.startDate) return false;
+    const date = new Date(t.startDate);
+    const today = new Date();
+    return (
+      date.getDate() === today.getDate() &&
+      date.getMonth() === today.getMonth() &&
+      date.getFullYear() === today.getFullYear()
+    );
+  }).sort((a, b) => new Date(a.startDate!).getTime() - new Date(b.startDate!).getTime());
 
   return (
     <div className="max-w-7xl mx-auto space-y-8">
@@ -31,10 +80,12 @@ export default function DashboardPage() {
             {"// SYSTEM_STATUS: OPTIMAL"}
           </p>
         </div>
-        <button className="btn-tech-primary flex items-center gap-2">
-          <Plus className="w-4 h-4" />
-          New Task
-        </button>
+        <Link href="/dashboard/tasks">
+          <button className="btn-tech-primary flex items-center gap-2">
+            <Plus className="w-4 h-4" />
+            New Task
+          </button>
+        </Link>
       </div>
 
       {/* Main Grid - Masonry-ish */}
@@ -44,35 +95,39 @@ export default function DashboardPage() {
         <div className="lg:col-span-4 space-y-6">
           {/* Timer Card */}
           <div className="bento-card bg-surface-base border-primary/20 relative overflow-hidden">
-            <div className="absolute top-0 left-0 w-1 h-full bg-primary"></div>
+            <div className={`absolute top-0 left-0 w-1 h-full transition-colors ${mode === 'work' ? 'bg-primary' : 'bg-amber-500'}`}></div>
             <div className="flex justify-between items-start mb-8">
               <div className="flex items-center gap-2">
-                <Clock className="w-4 h-4 text-primary" />
+                <Clock className={`w-4 h-4 ${mode === 'work' ? 'text-primary' : 'text-amber-500'}`} />
                 <span className="label-tech">FOCUS TIMER</span>
               </div>
-              <div className="px-2 py-0.5 bg-primary/10 text-primary text-xs font-mono rounded-sm">
-                WORK MODE
+              <div className={`px-2 py-0.5 text-xs font-mono rounded-sm ${mode === 'work' ? 'bg-primary/10 text-primary' : 'bg-amber-500/10 text-amber-600'}`}>
+                {mode === 'work' ? 'WORK MODE' : 'BREAK MODE'}
               </div>
             </div>
 
             <div className="text-center mb-8">
               <div className="text-7xl font-mono font-bold tracking-tighter text-slate-900">
-                25:00
+                {formatTime(secondsLeft)}
               </div>
               <div className="text-xs font-mono text-slate-400 mt-2">
-                SESSION 3/4
+                {isRunning ? 'SESSION IN PROGRESS' : 'READY TO START'}
               </div>
             </div>
 
             <div className="flex gap-2">
               <button 
-                onClick={() => setIsRunning(!isRunning)}
+                onClick={isRunning ? pause : start}
                 className="flex-1 btn-tech-primary flex items-center justify-center gap-2"
               >
                 {isRunning ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
                 {isRunning ? "PAUSE" : "START"}
               </button>
-              <button className="btn-tech-secondary px-3">
+              <button 
+                onClick={reset}
+                className="btn-tech-secondary px-3"
+                title="Reset Timer"
+              >
                 <RotateCcw className="w-4 h-4" />
               </button>
             </div>
@@ -101,38 +156,41 @@ export default function DashboardPage() {
                 <CheckSquare className="w-4 h-4 text-slate-400" />
                 <span className="label-tech">TASK QUEUE</span>
               </div>
-              <button className="text-slate-400 hover:text-primary transition-colors">
-                <MoreHorizontal className="w-4 h-4" />
-              </button>
+              <Link href="/dashboard/tasks">
+                <button className="text-slate-400 hover:text-primary transition-colors">
+                  <MoreHorizontal className="w-4 h-4" />
+                </button>
+              </Link>
             </div>
 
             <div className="space-y-3">
-              {[
-                { title: "Refactor Authentication Flow", tag: "DEV", urgent: true },
-                { title: "Update Documentation", tag: "DOCS", urgent: false },
-                { title: "Design System Review", tag: "DESIGN", urgent: false },
-              ].map((task, i) => (
-                <div key={i} className="group flex items-start gap-3 p-3 bg-surface-panel border border-border-subtle hover:border-border-strong rounded-sm transition-colors cursor-pointer">
-                  <div className="mt-1 w-4 h-4 border border-slate-300 rounded-sm group-hover:border-primary transition-colors"></div>
-                  <div className="flex-1">
-                    <p className="font-medium text-sm text-slate-900">{task.title}</p>
-                    <div className="flex items-center gap-2 mt-1">
-                      <span className="text-[10px] font-mono px-1.5 py-0.5 bg-slate-100 text-slate-500 rounded-sm">
-                        {task.tag}
-                      </span>
-                      {task.urgent && (
-                        <span className="text-[10px] font-mono px-1.5 py-0.5 bg-red-50 text-red-600 rounded-sm">
-                          URGENT
-                        </span>
-                      )}
+              {isLoadingTasks ? (
+                <div className="text-center py-8 text-slate-400 font-mono text-xs">LOADING_TASKS...</div>
+              ) : taskQueue.length === 0 ? (
+                <div className="text-center py-8 text-slate-400 font-mono text-xs">NO_ACTIVE_TASKS</div>
+              ) : (
+                taskQueue.map((task) => (
+                  <div key={task.id} className="group flex items-start gap-3 p-3 bg-surface-panel border border-border-subtle hover:border-border-strong rounded-sm transition-colors cursor-pointer">
+                    <div className={`mt-1 w-4 h-4 border rounded-sm transition-colors ${task.completed ? 'bg-emerald-500 border-emerald-500' : 'border-slate-300 group-hover:border-primary'}`}></div>
+                    <div className="flex-1">
+                      <p className={`font-medium text-sm ${task.completed ? 'text-slate-400 line-through' : 'text-slate-900'}`}>{task.title}</p>
+                      <div className="flex items-center gap-2 mt-1">
+                        {task.priority && (
+                          <span className="text-[10px] font-mono px-1.5 py-0.5 bg-slate-100 text-slate-500 rounded-sm uppercase">
+                            {task.priority}
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                ))
+              )}
               
-              <button className="w-full py-2 border border-dashed border-border-default text-slate-400 text-sm font-mono hover:border-primary hover:text-primary transition-colors rounded-sm">
-                + ADD TASK
-              </button>
+              <Link href="/dashboard/tasks" className="block w-full">
+                <button className="w-full py-2 border border-dashed border-border-default text-slate-400 text-sm font-mono hover:border-primary hover:text-primary transition-colors rounded-sm">
+                  + ADD TASK
+                </button>
+              </Link>
             </div>
           </div>
         </div>
@@ -145,16 +203,20 @@ export default function DashboardPage() {
               <span className="label-tech">SCHEDULE</span>
             </div>
             <div className="space-y-4">
-              {[
-                { time: "10:00", title: "Team Sync" },
-                { time: "14:00", title: "Deep Work" },
-                { time: "16:30", title: "Wrap Up" },
-              ].map((event, i) => (
-                <div key={i} className="flex gap-3 text-sm">
-                  <span className="font-mono text-slate-400">{event.time}</span>
-                  <span className="font-medium text-slate-700">{event.title}</span>
-                </div>
-              ))}
+              {isLoadingTasks ? (
+                 <div className="text-center py-4 text-slate-400 font-mono text-xs">LOADING...</div>
+              ) : todaySchedule.length === 0 ? (
+                <div className="text-center py-4 text-slate-400 font-mono text-xs">NO_SCHEDULED_TASKS</div>
+              ) : (
+                todaySchedule.map((task) => (
+                  <div key={task.id} className="flex gap-3 text-sm">
+                    <span className="font-mono text-slate-400">
+                      {task.startDate ? new Date(task.startDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '--:--'}
+                    </span>
+                    <span className="font-medium text-slate-700 truncate">{task.title}</span>
+                  </div>
+                ))
+              )}
             </div>
           </div>
 
