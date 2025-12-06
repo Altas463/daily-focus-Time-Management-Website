@@ -1,74 +1,66 @@
-import Link from 'next/link';
+"use client";
 
-const sections = [
-  {
-    heading: 'What information we collect',
-    body: [
-      'Your account details like name and email address to create and manage your profile.',
-      'The content you choose to add to your workspace: tasks, notes, and Pomodoro sessions.',
-      'Usage insights that help us understand how you use Daily Focus and improve your experience.',
-    ],
-  },
-  {
-    heading: 'How we use your information',
-    body: [
-      'To deliver and enhance Daily Focus, including monitoring performance and fixing issues.',
-      'To send important service updates and respond when you reach out for support.',
-      'To share product news and updates when you\'ve chosen to receive them.',
-    ],
-  },
-  {
-    heading: 'Your data, your control',
-    body: [
-      'Export or delete your workspace anytime from your dashboard settings.',
-      'We keep backups for 30 days to protect against accidental data loss.',
-      'When you close your account, we remove your personal information from active systems within 7 days.',
-    ],
-  },
-];
+import Navbar from "@/components/navbar/Navbar";
+import Link from "next/link";
+import { ArrowLeft, Lock } from "lucide-react";
 
 export default function PrivacyPage() {
   return (
-    <div className="min-h-screen bg-white text-gray-900 dark:bg-gray-950 dark:text-gray-100">
-      <div className="mx-auto flex max-w-3xl flex-col gap-12 px-6 py-16">
-        <header className="space-y-4 text-center">
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gray-500 dark:text-gray-400">Privacy notice</p>
-          <h1 className="text-4xl font-semibold">Your privacy is our priority</h1>
-          <p className="text-sm text-gray-600 dark:text-gray-300">
-            We built Daily Focus with privacy at its core. Here&apos;s exactly what we collect, why we need it, 
-            and how you stay in control of your information.
-          </p>
-        </header>
+    <div className="min-h-screen bg-background text-foreground flex flex-col font-sans">
+      <Navbar />
+      
+      <main className="flex-1 pt-32 pb-16 px-6">
+         <div className="max-w-3xl mx-auto space-y-12">
+            <header>
+               <Link href="/" className="inline-flex items-center gap-2 text-slate-400 hover:text-primary transition-colors text-xs font-mono mb-6">
+                 <ArrowLeft className="w-3 h-3" /> RETURN_HOME
+               </Link>
+               <h1 className="text-4xl md:text-5xl font-display font-bold mb-4">Data Privacy Protocol</h1>
+               <div className="flex items-center gap-2 text-emerald-600 font-mono text-sm">
+                  <Lock className="w-4 h-4" />
+                  <span>LOCAL_FIRST_ENCRYPTION: ACTIVE</span>
+               </div>
+            </header>
 
-        <main className="space-y-10">
-          {sections.map((section) => (
-            <section key={section.heading} className="space-y-3">
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">{section.heading}</h2>
-              <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-300">
-                {section.body.map((item) => (
-                  <li key={item} className="flex gap-2">
-                    <span className="mt-1 inline-block h-1.5 w-1.5 rounded-full bg-gray-300 dark:bg-gray-600" aria-hidden />
-                    <span>{item}</span>
-                  </li>
-                ))}
-              </ul>
-            </section>
-          ))}
+            <div className="bg-surface-panel border border-border-subtle p-6 rounded-sm mb-8">
+               <p className="font-mono text-sm text-slate-600">
+                  <strong>TL;DR:</strong> We do not sell your data. We do not track you across the web. Your productivity data (tasks, projects, logs) is stored locally on your device or encrypted before syncing.
+               </p>
+            </div>
 
-          <section className="space-y-3">
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Questions about privacy?</h2>
-            <p className="text-sm text-gray-600 dark:text-gray-300">
-              You can manage most privacy settings right from your dashboard. For specific requests or more details, 
-              reach out to us through the{' '}
-              <Link href="/contact" className="text-blue-600 hover:underline dark:text-blue-400">contact form</Link>.
-            </p>
-          </section>
-        </main>
+            <div className="prose prose-slate max-w-none prose-headings:font-bold prose-headings:font-display">
+               <h3>1. Data Collection</h3>
+               <p>
+                  We collect only the minimum necessary information to provide the service:
+               </p>
+               <ul>
+                  <li>Account information (email, name) for authentication.</li>
+                  <li>Application state (tasks, timer logs) for sync functionality (if enabled).</li>
+                  <li>Payment information (processed securely by Stripe, we never see your card details).</li>
+               </ul>
 
-        <footer className="text-xs text-gray-500 dark:text-gray-400">
-          Last updated {new Date().getFullYear()} — We review and update this privacy policy regularly to keep you informed.
-        </footer>
-      </div>
+               <h3>2. Local Storage</h3>
+               <p>
+                  By default, <strong>Daily Focus</strong> operates on a local-first basis. This means your data is primarily stored in your browser&apos;s `localStorage` and `IndexedDB`.
+               </p>
+
+               <h3>3. Third-Party Services</h3>
+               <p>
+                  We use the following third-party services:
+               </p>
+               <ul>
+                  <li><strong>NextAuth</strong> for authentication.</li>
+                  <li><strong>Vercel</strong> for hosting and infrastructure.</li>
+               </ul>
+            </div>
+         </div>
+      </main>
+
+      <footer className="py-8 border-t border-border-subtle bg-surface-base text-center">
+         <div className="font-mono text-xs text-slate-400">
+           DAILY FOCUS © 2024
+         </div>
+      </footer>
     </div>
   );
 }

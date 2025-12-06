@@ -1,198 +1,94 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { useEffect, useState } from 'react';
-import { usePathname } from 'next/navigation';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, ArrowRight, Target } from 'lucide-react';
-
-const navLinks = [
-  { href: '/auth/login', label: 'Sign In' },
-  { href: '/auth/register', label: 'Sign Up', primary: true },
-  { href: '/dashboard', label: 'Dashboard' },
-];
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import clsx from "clsx";
+import { useEffect, useState } from "react";
+import { Menu, X } from "lucide-react";
 
 export default function Navbar() {
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
-  const [progress, setProgress] = useState(0);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => {
-      const y = window.scrollY || document.documentElement.scrollTop;
-      setScrolled(y > 20);
-      const doc = document.documentElement;
-      const h = doc.scrollHeight - doc.clientHeight;
-      setProgress(h > 0 ? (doc.scrollTop / h) * 100 : 0);
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
     };
-    onScroll();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  useEffect(() => {
-    if (mobileMenuOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
-    return () => {
-      document.body.style.overflow = '';
-    };
-  }, [mobileMenuOpen]);
+  const isAuthPage = pathname?.startsWith("/auth");
+  const isDashboard = pathname?.startsWith("/dashboard");
 
-  const isActive = (href: string) => (href === '/' ? pathname === '/' : pathname.startsWith(href));
+  if (isAuthPage || isDashboard) return null;
 
   return (
-    <>
-      <nav
-        className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${
-          scrolled
-            ? 'bg-white/90 backdrop-blur-md border-b border-slate-200 shadow-sm'
-            : 'bg-transparent border-b border-transparent'
-        }`}
-      >
-        <div className="mx-auto max-w-7xl px-6">
-          <div className="flex h-16 items-center justify-between">
-            {/* Logo */}
-            <Link
-              href="/"
-              className="flex items-center gap-2.5 group"
-            >
-              <div className="w-9 h-9 rounded-lg bg-blue-600 flex items-center justify-center transition-transform group-hover:scale-105 shadow-sm">
-                <Target className="w-5 h-5 text-white" />
-              </div>
-              <span className={`text-lg font-bold tracking-tight transition-colors ${scrolled ? 'text-slate-900' : 'text-slate-900'}`}>
-                Daily Focus
-              </span>
-            </Link>
+    <nav
+      className={clsx(
+        "fixed top-0 left-0 right-0 z-50 transition-all duration-300 font-sans border-b",
+        scrolled
+          ? "bg-background/80 backdrop-blur-md border-border-subtle py-3"
+          : "bg-transparent border-transparent py-5"
+      )}
+    >
+      <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
+        {/* Logo */}
+        <Link href="/" className="flex items-center gap-2 group">
+          <div className="w-5 h-5 bg-slate-900 rounded-sm flex items-center justify-center text-white font-mono text-xs font-bold group-hover:bg-primary transition-colors">
+            DF
+          </div>
+          <span className="font-bold tracking-tight text-slate-900">DAILY FOCUS</span>
+        </Link>
 
-            {/* Desktop Navigation */}
-            <div className="hidden items-center gap-2 md:flex">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className={`relative px-4 py-2 text-sm font-medium rounded-lg transition-all ${
-                    link.primary
-                      ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-sm hover:shadow'
-                      : isActive(link.href)
-                        ? 'bg-slate-100 text-slate-900'
-                        : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
-                  }`}
-                >
-                  {link.primary ? (
-                    <span className="flex items-center gap-2">
-                      {link.label}
-                      <ArrowRight className="w-4 h-4" />
-                    </span>
-                  ) : (
-                    <>
-                      {link.label}
-                      {isActive(link.href) && (
-                        <motion.div
-                          layoutId="navbar-indicator"
-                          className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-blue-600"
-                          transition={{ type: 'spring', stiffness: 380, damping: 30 }}
-                        />
-                      )}
-                    </>
-                  )}
-                </Link>
-              ))}
-            </div>
-
-            {/* Mobile Menu Button */}
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className={`flex items-center justify-center w-10 h-10 rounded-lg transition-colors md:hidden ${
-                mobileMenuOpen ? 'bg-slate-100 text-slate-900' : 'text-slate-600 hover:bg-slate-50'
-              }`}
-              aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
-            >
-              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-            </button>
+        {/* Desktop Nav */}
+        <div className="hidden md:flex items-center gap-8">
+          <div className="flex gap-6 text-sm font-medium text-slate-500">
+             <Link href="#features" className="hover:text-primary transition-colors">Features</Link>
+             <Link href="#pricing" className="hover:text-primary transition-colors">Pricing</Link>
+             <Link href="/manifesto" className="hover:text-primary transition-colors">Manifesto</Link>
+          </div>
+          
+          <div className="flex items-center gap-4">
+             <Link href="/auth/login" className="text-sm font-mono font-bold text-slate-600 hover:text-primary transition-colors">
+               LOGIN
+             </Link>
+             <Link
+               href="/auth/register"
+               className="btn-tech-primary py-1.5 px-4 text-xs"
+             >
+               GET STARTED
+             </Link>
           </div>
         </div>
 
-        {/* Scroll Progress */}
-        <div
-          className="absolute bottom-0 left-0 h-0.5 bg-blue-600 transition-all duration-150"
-          style={{ width: `${progress}%` }}
-          aria-hidden
-        />
-      </nav>
+        {/* Mobile Toggle */}
+        <button
+          className="md:hidden p-2 text-slate-600"
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+        >
+          {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+        </button>
+      </div>
 
       {/* Mobile Menu */}
-      <AnimatePresence>
-        {mobileMenuOpen && (
-          <>
-            {/* Backdrop */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              className="fixed inset-0 z-40 md:hidden bg-slate-900/50 backdrop-blur-sm"
-              onClick={() => setMobileMenuOpen(false)}
-            />
-
-            {/* Menu Panel */}
-            <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
-              className="fixed top-20 inset-x-4 z-50 rounded-xl bg-white p-6 md:hidden shadow-xl border border-slate-200"
-            >
-              <div className="space-y-2">
-                {navLinks.map((link, index) => (
-                  <motion.div
-                    key={link.href}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.05 }}
-                  >
-                    <Link
-                      href={link.href}
-                      onClick={() => setMobileMenuOpen(false)}
-                      className={`flex items-center justify-between w-full px-4 py-3 rounded-lg text-base font-medium transition-all ${
-                        link.primary
-                          ? 'bg-blue-600 text-white justify-center shadow-md'
-                          : isActive(link.href)
-                            ? 'bg-slate-50 text-slate-900'
-                            : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
-                      }`}
-                    >
-                      {link.primary ? (
-                        <span className="flex items-center gap-2">
-                          {link.label}
-                          <ArrowRight className="w-4 h-4" />
-                        </span>
-                      ) : (
-                        <>
-                          <span>{link.label}</span>
-                          {isActive(link.href) && (
-                            <div className="w-2 h-2 rounded-full bg-blue-600" />
-                          )}
-                        </>
-                      )}
-                    </Link>
-                  </motion.div>
-                ))}
-              </div>
-
-              {/* Extra info in mobile menu */}
-              <div className="mt-6 pt-6 border-t border-slate-100">
-                <p className="text-sm text-center text-slate-400">
-                  Focus on what matters most
-                </p>
-              </div>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
-    </>
+      {mobileMenuOpen && (
+        <div className="md:hidden absolute top-full left-0 right-0 bg-background border-b border-border-subtle p-6 flex flex-col gap-4 animate-in slide-in-from-top-2">
+             <Link href="#features" className="text-sm font-medium text-slate-600" onClick={() => setMobileMenuOpen(false)}>Features</Link>
+             <Link href="#pricing" className="text-sm font-medium text-slate-600" onClick={() => setMobileMenuOpen(false)}>Pricing</Link>
+             <Link href="/manifesto" className="text-sm font-medium text-slate-600" onClick={() => setMobileMenuOpen(false)}>Manifesto</Link>
+             <hr className="border-border-subtle" />
+             <div className="flex flex-col gap-3">
+               <Link href="/auth/login" className="btn-tech-secondary justify-center text-center" onClick={() => setMobileMenuOpen(false)}>
+                 LOGIN
+               </Link>
+               <Link href="/auth/register" className="btn-tech-primary justify-center text-center" onClick={() => setMobileMenuOpen(false)}>
+                 GET STARTED
+               </Link>
+             </div>
+        </div>
+      )}
+    </nav>
   );
 }
