@@ -171,7 +171,7 @@ export default function HomePage() {
       </section>
 
       {/* 4. FEATURES BENTO GRID */}
-      <section className="py-24 bg-surface-panel border-t border-border-subtle">
+      <section id="features" className="py-24 bg-surface-panel border-t border-border-subtle">
         <div className="max-w-7xl mx-auto px-6">
           <div className="mb-16">
              <div className="inline-flex items-center gap-2 mb-4">
@@ -302,7 +302,7 @@ export default function HomePage() {
       </section>
 
       {/* 6. PRICING */}
-      <section className="py-24 bg-surface-panel border-t border-border-subtle">
+      <section id="pricing" className="py-24 bg-surface-panel border-t border-border-subtle">
          <div className="max-w-7xl mx-auto px-6">
             <div className="grid lg:grid-cols-3 gap-8 items-start">
                {/* Head */}
@@ -401,10 +401,10 @@ export default function HomePage() {
              </div>
              
              <div className="flex gap-8 font-mono text-xs text-slate-500">
-               <Link href="#" className="hover:text-primary transition-colors">/MANIFESTO</Link>
-               <Link href="#" className="hover:text-primary transition-colors">/CHANGELOG</Link>
-               <Link href="#" className="hover:text-primary transition-colors">/SOURCE</Link>
-               <Link href="#" className="hover:text-primary transition-colors">/PRIVACY</Link>
+               <Link href="/manifesto" className="hover:text-primary transition-colors">/MANIFESTO</Link>
+               <Link href="/changelog" className="hover:text-primary transition-colors">/CHANGELOG</Link>
+               <Link href="/source" className="hover:text-primary transition-colors">/SOURCE</Link>
+               <Link href="/privacy" className="hover:text-primary transition-colors">/PRIVACY</Link>
              </div>
    
              <div className="font-mono text-xs text-slate-400 flex items-center gap-2">
