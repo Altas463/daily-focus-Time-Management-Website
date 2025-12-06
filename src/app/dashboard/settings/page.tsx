@@ -4,7 +4,7 @@ import { ChangeEvent, FormEvent, useEffect, useMemo, useState } from "react";
 import clsx from "clsx";
 import { useSession } from "next-auth/react";
 import BackToDashboardLink from "@/components/BackToDashboardLink";
-import { Save, Bell, Clock, Shield, Palette, Smartphone, Mail, Calendar } from "lucide-react";
+import { Save, Bell, Clock, Shield, Palette, Smartphone, Mail, Calendar, Sun, Moon, Monitor } from "lucide-react";
 
 const notificationChannels = [
   { key: "emailNotifications", label: "Email Summaries", description: "Daily focus reports and reminders", icon: Mail },
@@ -258,24 +258,27 @@ export default function SettingsPage() {
 
             <div className="grid grid-cols-3 gap-2">
               {[
-                { value: "light", label: "LIGHT", icon: "☀️" },
-                { value: "dark", label: "DARK", icon: "🌙" },
-                { value: "system", label: "AUTO", icon: "💻" },
-              ].map((option) => (
-                <button
-                  key={option.value}
-                  onClick={() => handleThemeChange(option.value as "light" | "dark" | "system")}
-                  className={clsx(
-                    "flex flex-col items-center gap-2 p-3 border rounded-sm transition-all",
-                    theme === option.value
-                      ? "bg-primary/5 border-primary text-primary"
-                      : "bg-surface-panel border-border-subtle text-slate-500 hover:border-slate-400"
-                  )}
-                >
-                  <span className="text-lg">{option.icon}</span>
-                  <span className="text-[10px] font-mono font-bold">{option.label}</span>
-                </button>
-              ))}
+                { value: "light", label: "LIGHT", icon: Sun },
+                { value: "dark", label: "DARK", icon: Moon },
+                { value: "system", label: "AUTO", icon: Monitor },
+              ].map((option) => {
+                const Icon = option.icon;
+                return (
+                  <button
+                    key={option.value}
+                    onClick={() => handleThemeChange(option.value as "light" | "dark" | "system")}
+                    className={clsx(
+                      "flex flex-col items-center gap-2 p-3 border rounded-sm transition-all",
+                      theme === option.value
+                        ? "bg-primary/5 border-primary text-primary"
+                        : "bg-surface-panel border-border-subtle text-slate-500 hover:border-slate-400"
+                    )}
+                  >
+                    <Icon className="w-5 h-5" />
+                    <span className="text-[10px] font-mono font-bold">{option.label}</span>
+                  </button>
+                );
+              })}
             </div>
             {themeFeedback && (
               <div className="text-[10px] font-mono text-emerald-600 flex items-center gap-2">
